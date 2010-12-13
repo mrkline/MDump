@@ -70,6 +70,7 @@
     </Compile>
     <Compile Include="ImageMerger.cs" />
     <Compile Include="MDumpOptions.cs" />
+    <Compile Include="PNGOps.cs" />
     <Compile Include="PNGOptimizer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

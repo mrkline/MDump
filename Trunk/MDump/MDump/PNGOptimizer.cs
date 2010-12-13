@@ -32,7 +32,7 @@ namespace MDump
 
         //Use max compression (-l 9), RLE strategy (-z 3), and adaptive filtering (-f 5)
         //Also strip any color-correction data.
-        private const string argList = "-brute -l 9 -z 3 -f 5 -rem gAMA -rem cHRM -rem iCCP -rem sRGB ";
+        private const string argList = "-brute -l 9 -z 1 -f 5 -rem gAMA -rem cHRM -rem iCCP -rem sRGB ";
 
         /// <summary>
         /// Thread procedure.  Optimizes the image, then sets its wait handle.

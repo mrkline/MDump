@@ -67,9 +67,12 @@ namespace MDump
                 PixelFormat.Format32bppArgb);
 
             string filename = cd + tmpDir + "Merged.png";
-            merged.Save(filename, ImageFormat.Png);
-
-            PNGOptimizer.OptimizeImage(filename);
+            
+            //Test the libpng code out
+            BitmapData bmpData = merged.LockBits(new Rectangle(0, 0, merged.Width, merged.Height),
+                ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            PNGOps.SavePNG(bmpData.Scan0, bmpData.Width, bmpData.Height, filename);
+            merged.UnlockBits(bmpData);
         }
     }
 }
