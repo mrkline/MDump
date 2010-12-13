@@ -7,9 +7,10 @@
 #pragma comment(lib, "libpng14.lib")
 #pragma comment(lib, "zlib.lib")
 
-extern "C" __declspec(dllexport) ECode __cdecl SavePNG(unsigned char* bitmap, int width, int height, char* filename)
+extern "C" __declspec(dllexport) ECode __cdecl SavePNG(unsigned char* bitmap, int width, int height, char* filename,
+	bool flipRGB)
 {
-	if(bitmap == nullptr || width < 0 || height < 0 || filename == nullptr)
+		if(bitmap == nullptr || width < 0 || height < 0 || filename == nullptr)
 	{
 		return EC_BAD_ARGS;
 	}
@@ -49,9 +50,12 @@ extern "C" __declspec(dllexport) ECode __cdecl SavePNG(unsigned char* bitmap, in
 	}
 	//Use maximum compression level
 	png_set_compression_level(pngStruct, 9);
-	//Use RLE compression strategy
+	//Set compression strategy
 	png_set_compression_strategy(pngStruct, Z_FILTERED);
+	//Use all filters
 	png_set_filter(pngStruct, 0, PNG_ALL_FILTERS);
+	//Swap RGB to BGR (since the bitmaps appear to be supplied in this manner)
+	png_set_bgr(pngStruct);
 
 
 	//Write header
@@ -69,7 +73,7 @@ extern "C" __declspec(dllexport) ECode __cdecl SavePNG(unsigned char* bitmap, in
 
 	//Split image into rows
 	int rowLen = width * 4;
-	png_bytepp rowPointers = static_cast<png_bytepp>(malloc(height));
+	png_bytepp rowPointers = static_cast<png_bytepp>(malloc(height * sizeof(png_bytep)));
 	if(rowPointers == nullptr)
 	{
 		fclose(fp);

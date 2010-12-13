@@ -23,7 +23,7 @@ namespace MDump
     class PNGOps
     {
         [DllImport("PNGOps.dll")]
-        public static extern ECode SavePNG(IntPtr bitmap, int width, int height, string filename);
+        public static extern ECode SavePNG(IntPtr bitmap, int width, int height, string filename, bool flipRGB);
 
     }
 }

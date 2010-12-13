@@ -40,11 +40,13 @@
     <IncludePath>..\..\libpng;..\..\zlib;$(IncludePath)</IncludePath>
     <TargetExt>.dll</TargetExt>
     <LibraryPath>..\..\libpng\projects\vstudio\Release Library;..\..\zlib\VC10\Release;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)\MDump\bin\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>..\..\libpng;..\..\zlib;$(IncludePath)</IncludePath>
     <TargetExt>.dll</TargetExt>
     <LibraryPath>..\..\libpng\projects\vstudio\Release Library;..\..\zlib\VC10\Release;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)\MDump\bin\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -13,4 +13,5 @@ enum ECode
 };
 
 //PNG is assumed to be in 32-bpp RBGA format
-extern "C" __declspec(dllexport) ECode __cdecl SavePNG(unsigned char* bitmap, int width, int height, char* filename);
+extern "C" __declspec(dllexport) ECode __cdecl SavePNG(unsigned char* bitmap, int width, int height, char* filename,
+	bool flipRGB);
