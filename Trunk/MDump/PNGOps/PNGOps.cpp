@@ -1,11 +1,6 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #include <png.h>
 #include <stdlib.h>
 #include "PNGOps.h"
-
-#pragma comment(lib, "libpng14.lib")
-#pragma comment(lib, "zlib.lib")
 
 extern "C" __declspec(dllexport) ECode __cdecl SavePNG(unsigned char* bitmap, int width, int height, char* filename,
 	bool flipRGB)
