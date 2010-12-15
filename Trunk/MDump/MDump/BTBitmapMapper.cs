@@ -9,6 +9,9 @@ using System.Collections.Generic;
 /// </summary>
 class BTBitmapMapper
 {
+    /// <summary>
+    /// Used as binary tree node data while building the image map
+    /// </summary>
     class NodeData
     {
         public Bitmap Bmp { get; set; }
@@ -35,14 +38,26 @@ class BTBitmapMapper
             Bmp = bmp;
             Rect = rct;
         }
+        /// <summary>
+        /// Gets the area of this NodeData's rectangle
+        /// </summary>
         public int Area { get { return Rect.Width * Rect.Height; } }
     }
     
+    /// <summary>
+    /// A sort function that sorts bitmaps by their width, largest to smallest
+    /// </summary>
     private static int EdgeLenSorter(Bitmap bmp1, Bitmap bmp2)
     {
         return bmp2.Width - bmp1.Width;
     }
 
+    /// <summary>
+    /// Finds 
+    /// </summary>
+    /// <param name="root">The root node of the binary tree</param>
+    /// <param name="requiredSize">The size of the next image that needs to be fit in the tree</param>
+    /// <returns>the node to insert the next image in, if one can be found, null otherwise</returns>
     private static BinaryTreeNode<NodeData> GetNextAppropriateNode(BinaryTreeNode<NodeData> root,
         Size requiredSize)
     {
@@ -79,6 +94,8 @@ class BTBitmapMapper
             return null;
         }
 
+        //Pick the best node (closest to the top, to conserve height) to insert the next image in to.
+
         BinaryTreeNode<NodeData> bestNode = appropriateNodes[0];
 
         //Pick the best node (by smallest y value)
@@ -93,8 +110,16 @@ class BTBitmapMapper
         return bestNode;
     }
 
+    /// <summary>
+    /// Uses a binary tree to merge images into a single bitmap.
+    /// </summary>
+    /// <param name="bitmaps">Bitmaps to merge into one</param>
+    /// <param name="maxSize">The maximum size the merged bimap can take (in pixels)</param>
+    /// <param name="pixelFormat">The pixel format the merged image should use</param>
+    /// <returns>The single bitmap containing all the provided bitmaps.</returns>
     public static Bitmap MergeImages(IEnumerable<Bitmap> bitmaps, Size maxSize, PixelFormat pixelFormat)
     {
+        //Do a quick check to make sure the provided size is <= the total area of all images.
         int totalArea = 0;
         foreach (Bitmap bmp in bitmaps)
         {
@@ -105,8 +130,8 @@ class BTBitmapMapper
             throw new ArgumentException("The provided rectangle cannot fit the provided bitmaps.");
         }
 
-        int maxX = 0;
-        int maxY = 0;
+        //To be used later to clip final bitmap if it takes up less space than the given max
+        Size actualSize = new Size(0, 0);
 
         List<Bitmap> sortedBitmaps = new List<Bitmap>(bitmaps);
         sortedBitmaps.Sort(EdgeLenSorter);
@@ -121,13 +146,13 @@ class BTBitmapMapper
             Rectangle currRect = curr.Data.Rect;
 
             //Push the boundaries of our image
-            if (currRect.X + bmp.Width > maxX)
+            if (currRect.X + bmp.Width > maxSize.Width)
             {
-                maxX = currRect.X + bmp.Width;
+                maxSize.Width = currRect.X + bmp.Width;
             }
-            if (currRect.Y + bmp.Height > maxY)
+            if (currRect.Y + bmp.Height > maxSize.Height)
             {
-                maxY = currRect.Y + bmp.Height;
+                maxSize.Height = currRect.Y + bmp.Height;
             }
 
             Rectangle lRect, rRect;
@@ -152,7 +177,7 @@ class BTBitmapMapper
         }
 
         //Assemble our image
-        Bitmap merged = new Bitmap(maxX, maxY, pixelFormat);
+        Bitmap merged = new Bitmap(maxSize.Width, maxSize.Height, pixelFormat);
         using (Graphics g = Graphics.FromImage(merged))
         {
             foreach (NodeData data in root)

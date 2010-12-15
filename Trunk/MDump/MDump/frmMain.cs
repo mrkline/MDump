@@ -91,7 +91,7 @@ namespace MDump
                             bmp = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height),
                                 System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                         }
-                        bool mergedImg = ImageMerger.IsMergedImage(bmp);
+                        bool mergedImg = ImageMerger.IsMergedImage(filepath);
                         if (mergedImg && CurrentMode == Mode.Merge
                             || !mergedImg && CurrentMode == Mode.Split)
                         {
@@ -271,7 +271,12 @@ namespace MDump
             if (optsDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 MDumpOptions newOpts = optsDlg.GetOptions();
-                if (!newOpts.Equals(opts))
+                if (newOpts.IsDefaultOptions())
+                {
+                    opts = newOpts;
+                    File.Delete(MDumpOptions.fileName);
+                }
+                else if (!newOpts.Equals(opts))
                 {
                     opts = newOpts;
                     opts.SaveToFile(MDumpOptions.fileName);

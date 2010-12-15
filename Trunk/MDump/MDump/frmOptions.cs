@@ -8,14 +8,34 @@ using System.Windows.Forms;
 
 namespace MDump
 {
+    /// <summary>
+    /// Form to modify program options
+    /// </summary>
     public partial class frmOptions : Form
     {
+        /// <summary>
+        /// Construct the form using default options
+        /// </summary>
         public frmOptions() : this(new MDumpOptions())
         { }
 
+        /// <summary>
+        /// Construct this form using provided options
+        /// </summary>
+        /// <param name="opts">Options with which to initialize the form</param>
         public frmOptions(MDumpOptions opts)
         {
             InitializeComponent();
+            Setup(opts);
+        }
+
+        /// <summary>
+        /// Set this form using provided options.  Called by the constructor
+        /// and the "reset to defaults" button
+        /// </summary>
+        /// <param name="opts">Options with which to initialize the form</param>
+        private void Setup(MDumpOptions opts)
+        {
             switch (opts.MergePathOpts)
             {
                 case MDumpOptions.PathOptions.PreservePath:
@@ -30,7 +50,7 @@ namespace MDump
                     radDiscardFilenames.Checked = true;
                     break;
             }
-            nudMaxMergeSize.Value = Convert.ToDecimal(opts.MaxMergeSize);
+            nudMaxMergeSize.Value = Convert.ToDecimal(opts.MaxMergeSize / 1024);
             if (opts.PromptForSplitDestination)
             {
                 radSplitAsk.Checked = true;
@@ -57,6 +77,10 @@ namespace MDump
             }
         }
 
+        /// <summary>
+        /// Used to retrieve the options the user configured in this form.
+        /// </summary>
+        /// <returns>The options represented by the form controls</returns>
         public MDumpOptions GetOptions()
         {
             MDumpOptions opts = new MDumpOptions();
@@ -84,7 +108,7 @@ namespace MDump
             {
                 opts.SplitPathOpts = MDumpOptions.PathOptions.Discard;
             }
-            opts.MaxMergeSize = Convert.ToUInt32(nudMaxMergeSize.Value);
+            opts.MaxMergeSize = Convert.ToUInt64(nudMaxMergeSize.Value) * 1024;
             opts.PromptForSplitDestination = radSplitAsk.Enabled;
             opts.SplitDestination = txtSplitToFolder.Text;
             return opts;
@@ -125,6 +149,16 @@ namespace MDump
         private void radSplitToFolder_CheckedChanged(object sender, EventArgs e)
         {
             txtSplitToFolder.Enabled = btnSplitBrowse.Enabled = radSplitToFolder.Checked;
+        }
+
+        private void btnDefaults_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to reset all options to their default values?",
+                "Reset to defaults?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2)
+                == System.Windows.Forms.DialogResult.Yes)
+            {
+                Setup(new MDumpOptions());
+            }
         }
     }
 }

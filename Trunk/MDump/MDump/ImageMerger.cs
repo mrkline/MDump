@@ -10,46 +10,41 @@ using System.Runtime.InteropServices;
 namespace MDump
 {
     /// <summary>
-    /// Merges and saves images.
+    /// Merges and saves images in a separate thread, providing the wait dialog with callbacks
+    /// to indicate its progress.
     /// </summary>
     class ImageMerger
     {
+        /// <summary>
+        /// The magic string that determines if the file we're looking at is an MDump merged image
+        /// </summary>
         private const string MagicString = "MDmpMrge";
 
+        /// <summary>
+        /// The byte representation of the magic string
+        /// </summary>
         private static readonly byte[] magicBytes = new System.Text.UTF8Encoding().GetBytes(MagicString);
-        private static readonly int numMagicPixels = magicBytes.Length / 4
-            + (magicBytes.Length % 4 > 0 ? 1 : 0);
 
-        public static bool IsMergedImage(Bitmap bmp)
+        /// <summary>
+        /// Tests if the provided file is an MDump merged image
+        /// </summary>
+        /// <param name="file">Filename of the file to check</param>
+        /// <returns>true if the file is an MDump merged image, otherwise false</returns>
+        public static bool IsMergedImage(string file)
         {
-            if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
-            {
-                throw new ArgumentException("Bitmap must be 32-bit ARGB format");
-            }
-
-            Rectangle magicRect = new Rectangle(0, 0, numMagicPixels, 1);
-            BitmapData bd = bmp.LockBits(magicRect, ImageLockMode.ReadOnly, bmp.PixelFormat);
-            byte[] bmpBytes = new byte[magicBytes.Length];
-            Marshal.Copy(bd.Scan0, bmpBytes, 0, bmpBytes.Length);
-            bmp.UnlockBits(bd);
-            for (int c = 0; c < magicBytes.Length; ++c)
-            {
-                if (bmpBytes[c] != magicBytes[c])
-                    return false;
-            }
-
-            return true;
+            //TODO: Implement
+            return false;
         }
 
-
+        /// <summary>
+        /// Merges images in a separate thread,
+        /// passing a wait dialog updates on its current state via callbacks
+        /// </summary>
+        /// <param name="images">Bitmaps to merge and save</param>
+        /// <param name="opts">Options to use for merging the images</param>
         public static void MergeImages(IEnumerable<Bitmap> images, MDumpOptions opts)
         {
-            //TEMP: Save each image, then all the images.  This is a test to see if 
-            //the total size is similar to the sums of the individuals
-            const string tmpDir = @"\tmp\";
-            string cd = System.IO.Directory.GetCurrentDirectory();
-
-            System.IO.Directory.CreateDirectory(cd + tmpDir);
+            //TODO: Multithreading and callbacks
 
             //Merge images
             int maxWidth = 0;
@@ -66,7 +61,7 @@ namespace MDump
             Bitmap merged = BTBitmapMapper.MergeImages(images, new Size(maxWidth, maxHeight),
                 PixelFormat.Format32bppArgb);
 
-            string filename = cd + tmpDir + "Merged.png";
+            string filename = "Merged.png";
             
             //Test the libpng code out
             BitmapData bmpData = merged.LockBits(new Rectangle(0, 0, merged.Width, merged.Height),

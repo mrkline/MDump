@@ -51,6 +51,7 @@
             this.btnSplitBrowse = new System.Windows.Forms.Button();
             this.txtSplitToFolder = new System.Windows.Forms.TextBox();
             this.dlgFolderBrowse = new System.Windows.Forms.FolderBrowserDialog();
+            this.btnDefaults = new System.Windows.Forms.Button();
             this.tabOptions.SuspendLayout();
             this.tbpMerging.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxMergeSize)).BeginInit();
@@ -63,7 +64,7 @@
             // btnSaveOptions
             // 
             this.btnSaveOptions.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnSaveOptions.Location = new System.Drawing.Point(104, 258);
+            this.btnSaveOptions.Location = new System.Drawing.Point(51, 258);
             this.btnSaveOptions.Name = "btnSaveOptions";
             this.btnSaveOptions.Size = new System.Drawing.Size(100, 23);
             this.btnSaveOptions.TabIndex = 1;
@@ -74,7 +75,7 @@
             // btnCancelOptions
             // 
             this.btnCancelOptions.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnCancelOptions.Location = new System.Drawing.Point(210, 258);
+            this.btnCancelOptions.Location = new System.Drawing.Point(263, 258);
             this.btnCancelOptions.Name = "btnCancelOptions";
             this.btnCancelOptions.Size = new System.Drawing.Size(100, 23);
             this.btnCancelOptions.TabIndex = 2;
@@ -312,11 +313,22 @@
             // 
             this.dlgFolderBrowse.RootFolder = System.Environment.SpecialFolder.MyComputer;
             // 
+            // btnDefaults
+            // 
+            this.btnDefaults.Location = new System.Drawing.Point(157, 258);
+            this.btnDefaults.Name = "btnDefaults";
+            this.btnDefaults.Size = new System.Drawing.Size(100, 23);
+            this.btnDefaults.TabIndex = 6;
+            this.btnDefaults.Text = "Reset to Defaults";
+            this.btnDefaults.UseVisualStyleBackColor = true;
+            this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
+            // 
             // frmOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(414, 293);
+            this.Controls.Add(this.btnDefaults);
             this.Controls.Add(this.tabOptions);
             this.Controls.Add(this.btnCancelOptions);
             this.Controls.Add(this.btnSaveOptions);
@@ -365,6 +377,7 @@
         private System.Windows.Forms.RadioButton radIgnore;
         private System.Windows.Forms.Label lblKB;
         private System.Windows.Forms.FolderBrowserDialog dlgFolderBrowse;
+        private System.Windows.Forms.Button btnDefaults;
 
     }
 }

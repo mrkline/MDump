@@ -1,6 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// A basic template for a binary tree node
+/// </summary>
+/// <typeparam name="T">The type of data that the tree node will hold.</typeparam>
 class BinaryTreeNode<T> : IEnumerable<T>
 {
     public T Data { get; set; }
@@ -19,7 +23,6 @@ class BinaryTreeNode<T> : IEnumerable<T>
     /// <summary>
     /// Iterates through the current node and all its children
     /// </summary>
-    /// 
     public IEnumerator<T> GetEnumerator()
     {
         if (Left != null)
