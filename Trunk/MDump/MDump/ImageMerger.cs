@@ -16,16 +16,6 @@ namespace MDump
     class ImageMerger
     {
         /// <summary>
-        /// The magic string that determines if the file we're looking at is an MDump merged image
-        /// </summary>
-        private const string MagicString = "MDmpMrge";
-
-        /// <summary>
-        /// The byte representation of the magic string
-        /// </summary>
-        private static readonly byte[] magicBytes = new System.Text.UTF8Encoding().GetBytes(MagicString);
-
-        /// <summary>
         /// Tests if the provided file is an MDump merged image
         /// </summary>
         /// <param name="file">Filename of the file to check</param>
@@ -62,11 +52,11 @@ namespace MDump
                 PixelFormat.Format32bppArgb);
 
             string filename = "Merged.png";
-            
+
             //Test the libpng code out
             BitmapData bmpData = merged.LockBits(new Rectangle(0, 0, merged.Width, merged.Height),
                 ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-            PNGOps.SavePNG(bmpData.Scan0, bmpData.Width, bmpData.Height, filename, true);
+            PNGOps.SavePNG(bmpData.Scan0, bmpData.Width, bmpData.Height, filename, true, null, 0);
             merged.UnlockBits(bmpData);
         }
     }
