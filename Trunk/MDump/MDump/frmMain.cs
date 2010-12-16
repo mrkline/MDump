@@ -91,15 +91,19 @@ namespace MDump
                             bmp = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height),
                                 System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                         }
-                        bool mergedImg = ImageMerger.IsMergedImage(filepath);
-                        if (mergedImg && CurrentMode == Mode.Merge
-                            || !mergedImg && CurrentMode == Mode.Split)
+                        MergedCode mergedImg = ImageMerger.IsMergedImage(filepath);
+                        if (mergedImg == MergedCode.MC_ERROR)
+                        {
+                            throw new IOException();
+                        }
+                        else if (mergedImg == MergedCode.MC_MERGED && CurrentMode == Mode.Merge
+                            || mergedImg == MergedCode.MC_NOT_MERGED && CurrentMode == Mode.Split)
                         {
                             throw new InvalidOperationException();
                         }
                         else if (CurrentMode == Mode.NotSet)
                         {
-                            CurrentMode = mergedImg ? Mode.Split : Mode.Merge;
+                            CurrentMode = mergedImg == MergedCode.MC_MERGED ? Mode.Split : Mode.Merge;
                         }
 
                         bmp.Tag = filepath; //Save the filename for later comparison
@@ -107,10 +111,11 @@ namespace MDump
                         lvi.Tag = bmp; //Tag the image onto the list view item
                         lvImages.Items.Add(lvi);
                     }
+                    //TODO: Catch specific types of exceptions to give more specific errors
                     catch
                     {
-                        MessageBox.Show(name + " is not a valid image and could not be loaded.",
-                            "Invalid image", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(name + " could not be loaded.",
+                            "Problem loading image", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }

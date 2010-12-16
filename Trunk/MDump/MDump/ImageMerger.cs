@@ -20,10 +20,9 @@ namespace MDump
         /// </summary>
         /// <param name="file">Filename of the file to check</param>
         /// <returns>true if the file is an MDump merged image, otherwise false</returns>
-        public static bool IsMergedImage(string file)
+        public static MergedCode IsMergedImage(string file)
         {
-            //TODO: Implement
-            return false;
+            return PNGOps.IsMergedImage(file);
         }
 
         /// <summary>

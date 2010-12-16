@@ -6,13 +6,22 @@ static char* MagicString = "MDmpMrge";
 
 extern "C"
 {
-	__declspec(dllexport) bool __cdecl IsPNG(char* filename)
+	__declspec(dllexport) MergedCode __cdecl IsMergedImage(char* filename)
 	{
-		return false;
+		FILE* fp = fopen(filename, "rb");
+		if(fp == nullptr)
+		{
+			return MC_ERROR;
+		}
+
+
+		fclose(fp);
+		return MC_NOT_MERGED;
 	}
 
 
-	__declspec(dllexport) ECode __cdecl LoadPNG(char* filename, unsigned char** bitmapOut, int* widthOut, int* heightOut)
+	__declspec(dllexport) ECode __cdecl LoadMergedImage(char* filename, unsigned char** bitmapOut,
+		int* widthOut, int* heightOut, char** mdDataOut, int* mdDateLenOut)
 	{
 		FILE* fp = fopen(filename, "rb");
 		if(fp == nullptr)
