@@ -76,6 +76,7 @@ namespace MDump
                         MessageBox.Show(name + " is already added to this list.",
                             "Image already added", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         unique = false;
+                        break;
                     }
                 }
 
@@ -86,7 +87,7 @@ namespace MDump
                     {
                         Bitmap bmp = new Bitmap(filepath);
                         //Make sure we're in 32-bpp argb format
-                        if(bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+                        if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
                         {
                             bmp = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height),
                                 System.Drawing.Imaging.PixelFormat.Format32bppArgb);
@@ -111,10 +112,18 @@ namespace MDump
                         lvi.Tag = bmp; //Tag the image onto the list view item
                         lvImages.Items.Add(lvi);
                     }
-                    //TODO: Catch specific types of exceptions to give more specific errors
+                    catch (InvalidOperationException)
+                    {
+
+                        MessageBox.Show("MDump cannot split merged images at the same time it"
+                            + " merges individual images.  Please add either inidividual images to merge"
+                            + " or MDump merged images to split back up, but not both at once.",
+                            "Cannot split and merge at the same time", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                    }
                     catch
                     {
-                        MessageBox.Show(name + " could not be loaded.",
+                        MessageBox.Show(name + " could not be loaded.  It will not be added to the list.",
                             "Problem loading image", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
