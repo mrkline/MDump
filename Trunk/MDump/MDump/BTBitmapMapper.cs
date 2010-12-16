@@ -146,13 +146,13 @@ class BTBitmapMapper
             Rectangle currRect = curr.Data.Rect;
 
             //Push the boundaries of our image
-            if (currRect.X + bmp.Width > maxSize.Width)
+            if (currRect.X + bmp.Width > actualSize.Width)
             {
-                maxSize.Width = currRect.X + bmp.Width;
+                actualSize.Width = currRect.X + bmp.Width;
             }
-            if (currRect.Y + bmp.Height > maxSize.Height)
+            if (currRect.Y + bmp.Height > actualSize.Height)
             {
-                maxSize.Height = currRect.Y + bmp.Height;
+                actualSize.Height = currRect.Y + bmp.Height;
             }
 
             Rectangle lRect, rRect;
@@ -177,7 +177,7 @@ class BTBitmapMapper
         }
 
         //Assemble our image
-        Bitmap merged = new Bitmap(maxSize.Width, maxSize.Height, pixelFormat);
+        Bitmap merged = new Bitmap(actualSize.Width, actualSize.Height, pixelFormat);
         using (Graphics g = Graphics.FromImage(merged))
         {
             foreach (NodeData data in root)
