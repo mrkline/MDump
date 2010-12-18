@@ -9,6 +9,8 @@ extern "C"
 {
 	__declspec(dllexport) MergedCode __cdecl IsMergedImage(char* filename)
 	{
+		MergedCode ret = MC_NOT_MERGED;
+
 		FILE* fp = fopen(filename, "rb");
 		if(fp == nullptr)
 		{
@@ -18,13 +20,14 @@ extern "C"
 		//Read the first 8 bytes (the size of the png signiature)
 		//and check to see if it's a PNG
 		png_byte* rBuff = static_cast<unsigned char*>(malloc(8));
-		if(fread(rBuff, 1, 8, fp) != 8)
+		if(fread(rBuff, 1, kPngSigLen, fp) != kPngSigLen)
 		{
 			free(rBuff);
 			//There weren't even 8 bytes in the file.
-			return MC_NOT_MERGED;
+			//Any image would have at least 8
+			return MC_ERROR;
 		}
-		if(!png_sig_cmp(rBuff, 0, 8))
+		if(!png_sig_cmp(rBuff, 0, kPngSigLen))
 		{
 			//Not a PNG
 			free(rBuff);
@@ -40,17 +43,38 @@ extern "C"
 		}
 
 		png_infop info = png_create_info_struct(readStruct);
-		if(info == NULL)
+		if(info == nullptr)
 		{
 			png_destroy_read_struct(&readStruct, nullptr, nullptr);
 			return MC_ERROR;
 		}
 
-		//TODO: Pick up here
+		if(setjmp(png_jmpbuf(readStruct)))
+		{
+			fclose(fp);
+			png_destroy_read_struct(&readStruct, &info, nullptr);
+			return MC_ERROR;
+		}
+		png_init_io(readStruct, fp);
+		png_set_sig_bytes(readStruct, kPngSigLen);
+		//TODO: Jumping back to this for unexplained reason.  Figure out.
+		png_read_info(readStruct, info);
+
+		png_textp textInfo;
+		int numTextFields;
+
+		png_get_text(readStruct, info, &textInfo, &numTextFields);
+
+		//MDump files only have one text field and the key is the magic string
+		if(numTextFields == 1
+			&& strcmp(textInfo->key, MagicString) == 0)
+		{
+			ret = MC_MERGED;
+		}
 
 		fclose(fp);
 		png_destroy_read_struct(&readStruct, &info, nullptr);
-		return MC_NOT_MERGED;
+		return ret;
 	}
 
 
