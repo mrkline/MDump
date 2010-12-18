@@ -2,15 +2,16 @@
 
 enum ECode
 {
-	EC_SUCCESS,
-	EC_BAD_ARGS,
-	EC_INIT_FAILURE,
-	EC_IO_FAILURE,
-	EC_HEADER_FAILURE,
-	EC_ALLOC_FAILURE,
-	EC_WRITE_IMAGE_FAILURE,
-	EC_WRITE_INFO_FAILURE,
-	EC_WRITE_END_FAILURE
+    EC_SUCCESS,
+    EC_BAD_ARGS,
+	EC_BAD_FORMAT,
+    EC_INIT_FAILURE,
+    EC_IO_FAILURE,
+    EC_HEADER_FAILURE,
+    EC_ALLOC_FAILURE,
+    EC_RW_IMAGE_FAILURE,
+    EC_RW_INFO_FAILURE,
+    EC_RW_END_FAILURE
 };
 
 enum MergedCode
@@ -24,13 +25,13 @@ enum MergedCode
 
 extern "C"
 {
-	__declspec(dllexport) void FreeBitmap(void* ptr) { free(ptr); }
+	__declspec(dllexport) void FreeUnmanagedData(void* ptr) { free(ptr); }
 
 
 	__declspec(dllexport) MergedCode __cdecl IsMergedImage(char* filename);
 
 	__declspec(dllexport) ECode __cdecl LoadMergedImage(char* filename, png_bytepp bitmapOut,
-		int* widthOut, int* heightOut, char** mdDataOut, int* mdDateLenOut);
+		int* widthOut, int* heightOut, char** mdDataOut, int* mdDataLenOut);
 
 	//PNG is assumed to be in 32-bpp RBGA format
 	__declspec(dllexport) ECode __cdecl SavePNG(unsigned char* bitmap, int width, int height, char* filename,
