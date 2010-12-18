@@ -21,6 +21,7 @@ enum MergedCode
 	MC_HAMMER //Completely necessary
 };
 
+
 extern "C"
 {
 	__declspec(dllexport) void FreeBitmap(void* ptr) { free(ptr); }
@@ -28,7 +29,7 @@ extern "C"
 
 	__declspec(dllexport) MergedCode __cdecl IsMergedImage(char* filename);
 
-	__declspec(dllexport) ECode __cdecl LoadMergedImage(char* filename, unsigned char** bitmapOut,
+	__declspec(dllexport) ECode __cdecl LoadMergedImage(char* filename, png_bytepp bitmapOut,
 		int* widthOut, int* heightOut, char** mdDataOut, int* mdDateLenOut);
 
 	//PNG is assumed to be in 32-bpp RBGA format
