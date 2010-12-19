@@ -47,15 +47,18 @@ namespace MDump
                 maxHeight += bmp.Height;
             }
 
+            //TODO: Remove all null bytes from string by encoding ints in text format
+            Byte[] mdData;
             Bitmap merged = BTBitmapMapper.MergeImages(images, new Size(maxWidth, maxHeight),
-                PixelFormat.Format32bppArgb);
+                PixelFormat.Format32bppArgb, out mdData);
 
             string filename = "Merged.png";
 
             //Test the libpng code out
             BitmapData bmpData = merged.LockBits(new Rectangle(0, 0, merged.Width, merged.Height),
                 ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-            PNGOps.SavePNG(bmpData.Scan0, bmpData.Width, bmpData.Height, filename, true, null, 0);
+
+            PNGOps.SavePNG(bmpData.Scan0, bmpData.Width, bmpData.Height, filename, true, mdData, mdData.Length);
             merged.UnlockBits(bmpData);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections.Generic;
@@ -116,8 +117,10 @@ class BTBitmapMapper
     /// <param name="bitmaps">Bitmaps to merge into one</param>
     /// <param name="maxSize">The maximum size the merged bimap can take (in pixels)</param>
     /// <param name="pixelFormat">The pixel format the merged image should use</param>
+    /// <param name="mdData">MDump Data to save</param>
     /// <returns>The single bitmap containing all the provided bitmaps.</returns>
-    public static Bitmap MergeImages(IEnumerable<Bitmap> bitmaps, Size maxSize, PixelFormat pixelFormat)
+    public static Bitmap MergeImages(IEnumerable<Bitmap> bitmaps, Size maxSize, PixelFormat pixelFormat,
+        out byte[] mdData)
     {
         //Do a quick check to make sure the provided size is <= the total area of all images.
         int totalArea = 0;
@@ -176,20 +179,49 @@ class BTBitmapMapper
             curr.Right = new BinaryTreeNode<NodeData>(new NodeData(rRect));
         }
 
-        //Assemble our image
+        //Assemble our image and generate our data
         Bitmap merged = new Bitmap(actualSize.Width, actualSize.Height, pixelFormat);
+
+        MemoryStream mdStream = new MemoryStream();
+
+        System.Text.UTF8Encoding encoder = new System.Text.UTF8Encoding();
         using (Graphics g = Graphics.FromImage(merged))
         {
-            foreach (NodeData data in root)
+            using(BinaryWriter bw = new BinaryWriter(mdStream, System.Text.Encoding.UTF8))
             {
-                if (data.Bmp != null)
+                foreach (NodeData data in root)
                 {
-                    g.DrawImage(data.Bmp, data.Rect.X, data.Rect.Y,
-                        data.Bmp.Width, data.Bmp.Height);
+                    if (data.Bmp != null)
+                    {
+                        g.DrawImage(data.Bmp, data.Rect.X, data.Rect.Y,
+                            data.Bmp.Width, data.Bmp.Height);
+                        bw.Write(encoder.GetBytes((string)data.Bmp.Tag)); //Write filename, without usual string len prefix
+                        Rectangle r = data.Rect;
+                        //TODO: Convert these to UTF8/ASCII (We'll have to parse back later.)
+                        bw.Write(r.X);
+                        bw.Write(r.Y);
+                        bw.Write(r.Width);
+                        bw.Write(r.Height);
+                    }
                 }
             }
         }
 
+        Byte[] buff = mdStream.GetBuffer();
+        Byte[] retBuff = null;
+        //Trim the buffer
+        for (int c = buff.Length - 1; c > 0; --c)
+        {
+            if (buff[c] != 0)
+            {
+                retBuff = new Byte[c];
+                Buffer.BlockCopy(buff, 0, retBuff, 0, c);
+                break;
+            }
+        }
+
+
+        mdData = retBuff;
         return merged;
     }
 }

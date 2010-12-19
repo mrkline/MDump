@@ -273,7 +273,7 @@ extern "C"
 		}
 
 		//Set up MDump info
-		png_textp textInfo = static_cast<png_textp>(malloc(sizeof(png_textp)));
+		png_textp textInfo = static_cast<png_textp>(malloc(sizeof(png_text)));
 		if(textInfo == nullptr)
 		{
 			fclose(fp);
@@ -282,7 +282,7 @@ extern "C"
 		}
 
 		memset(textInfo, 0, sizeof(png_text));
-	
+
 		if(setjmp(png_jmpbuf(writeStruct)))
 		{
 			free(textInfo);
