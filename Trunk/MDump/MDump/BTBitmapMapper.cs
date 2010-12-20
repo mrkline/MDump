@@ -197,11 +197,16 @@ class BTBitmapMapper
                             data.Bmp.Width, data.Bmp.Height);
                         bw.Write(encoder.GetBytes((string)data.Bmp.Tag)); //Write filename, without usual string len prefix
                         Rectangle r = data.Rect;
-                        //TODO: Convert these to UTF8/ASCII (We'll have to parse back later.)
-                        bw.Write(r.X);
-                        bw.Write(r.Y);
-                        bw.Write(r.Width);
-                        bw.Write(r.Height);
+                        //Convert these to UTF8/ASCII (We'll have to parse back later.)
+                        bw.Write(';');
+                        bw.Write(encoder.GetBytes(r.X.ToString()));
+                        bw.Write(';');
+                        bw.Write(encoder.GetBytes(r.Y.ToString()));
+                        bw.Write(';');
+                        bw.Write(encoder.GetBytes(r.Width.ToString()));
+                        bw.Write(';');
+                        bw.Write(encoder.GetBytes(r.Height.ToString()));
+                        bw.Write('\n'); //Split each image and its data by newlines
                     }
                 }
             }
