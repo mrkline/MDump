@@ -235,6 +235,10 @@ namespace MDump
             {
                 lvImages.Items.Remove(lvi);
             }
+            if (lvImages.Items.Count == 0)
+            {
+                CurrentMode = Mode.NotSet;
+            }
         }
 
         private void btnUp_Click(object sender, EventArgs e)
@@ -268,6 +272,10 @@ namespace MDump
                 foreach(ListViewItem lvi in lvImages.SelectedItems)
                 {
                     lvi.Remove();
+                }
+                if (lvImages.Items.Count == 0)
+                {
+                    CurrentMode = Mode.NotSet;
                 }
             }
             else if (e.KeyCode == Keys.A && e.Control)

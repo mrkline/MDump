@@ -47,7 +47,6 @@ namespace MDump
                 maxHeight += bmp.Height;
             }
 
-            //TODO: Remove all null bytes from string by encoding ints in text format
             Byte[] mdData;
             Bitmap merged = BTBitmapMapper.MergeImages(images, new Size(maxWidth, maxHeight),
                 PixelFormat.Format32bppArgb, out mdData);
@@ -58,8 +57,23 @@ namespace MDump
             BitmapData bmpData = merged.LockBits(new Rectangle(0, 0, merged.Width, merged.Height),
                 ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
-            PNGOps.SavePNG(bmpData.Scan0, bmpData.Width, bmpData.Height, filename, true, mdData, mdData.Length);
+            IntPtr pngUnmanagedData;
+            int pngLen;
+            PNGOps.SavePNGToMemory(bmpData.Scan0, bmpData.Width, bmpData.Height, filename, true, mdData, mdData.Length,
+                out pngUnmanagedData, out pngLen);
             merged.UnlockBits(bmpData);
+
+            Byte[] pngData = new Byte[pngLen];
+            Marshal.Copy(pngUnmanagedData, pngData, 0, pngLen);
+            PNGOps.FreeUnmanagedData(pngUnmanagedData);
+            //Stream it to a file to test
+            using(FileStream fs = new FileStream(filename, FileMode.OpenOrCreate))
+            {
+                using (BinaryWriter ms = new BinaryWriter(fs))
+                {
+                    fs.Write(pngData, 0, pngLen);
+                }
+            }
         }
     }
 }
