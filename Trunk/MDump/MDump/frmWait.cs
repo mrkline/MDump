@@ -27,10 +27,12 @@ namespace MDump
             if (mode == frmMain.Mode.Merge)
             {
                 Text = "Merging Images...";
+                opts.SetBaseDirectory(bmpList);
                 ImageMerger.MergeImages(bmpList, opts);
             }
             else
             {
+                opts.BaseDirectory = string.Empty;
                 Text = "Splitting Images...";
             }
             Close();

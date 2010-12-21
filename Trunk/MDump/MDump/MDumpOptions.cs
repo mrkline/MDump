@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Drawing;
 using System.Xml.Serialization;
 
 namespace MDump
@@ -34,7 +35,48 @@ namespace MDump
         /// <summary>
         /// Default options file filename
         /// </summary>
+        [XmlIgnore]
         public const string fileName = "MDumpOptions.xml";
+
+        /// <summary>
+        /// Used as a placeholder for discarded filenames
+        /// </summary>
+        private const string kDiscardFn = "\a";
+
+        /// <summary>
+        /// The base directory that all images being merged share.
+        /// Used later for calculating relative paths to write into the merged image
+        /// </summary>
+        [XmlIgnore]
+        public string BaseDirectory { get; set; }
+
+        public void SetBaseDirectory(IEnumerable<Bitmap> bitmaps)
+        {
+            char[] baseDir = null;
+            foreach (Bitmap bmp in bitmaps)
+            {
+                char[] curr = Path.GetDirectoryName((string)bmp.Tag).ToCharArray();
+
+                //Set the base directory to the first item
+                if (baseDir == null)
+                {
+                    baseDir = curr;
+                    BaseDirectory = Path.GetDirectoryName((string)bmp.Tag);
+                    continue;
+                }
+
+                int shortest = curr.Length < baseDir.Length ? curr.Length : baseDir.Length;
+                for (int c = 0; c < shortest; ++c)
+                {
+                    if (baseDir[c] != curr[c])
+                    {
+                        BaseDirectory = ((string)bmp.Tag).Substring(0, c);
+                        baseDir = BaseDirectory.ToCharArray();
+                        break;
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Gets or sets the path options for saving file paths in to the merged image
@@ -59,12 +101,73 @@ namespace MDump
         public ulong MaxMergeSize { get; set; }
 
         /// <summary>
+        /// Formats a path based on the provided options
+        /// </summary>
+        /// <param name="path">path to format</param>
+        /// <param name="opts">options to format path by</param>
+        /// <returns>formatted path, or null if the options discard the path</returns>
+        private string FormatPathFromOpts(string path, PathOptions opts)
+        {
+            switch (opts)
+            {
+                case PathOptions.Discard:
+                    return kDiscardFn;
+
+                case PathOptions.PreserveName:
+                    if (path.Contains(Path.DirectorySeparatorChar.ToString()))
+                    {
+                        return path.Substring(path.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                    }
+                    else
+                    {
+                        return path;
+                    }
+
+                case PathOptions.PreservePath:
+                    return path.Remove(0, BaseDirectory.Length);
+
+                default:
+                    throw new ArgumentException("Did not pass FormatPathFromOpts a valid PathOptions value");
+            }
+        }
+
+        /// <summary>
+        /// Formats a given path based on the current state of MergePathOpts
+        /// </summary>
+        /// <param name="path">path to format</param>
+        /// <returns>formatted path</returns>
+        public string FormatPathForMerge(string path)
+        {
+            return FormatPathFromOpts(path, MergePathOpts);    
+        }
+
+        /// <summary>
+        /// Formats a given path based on the current state of SplitPathOpts
+        /// </summary>
+        /// <param name="path">path to format</param>
+        /// <returns>formatted path</returns>
+        public string FormatPathForSplit(string path)
+        {
+            return FormatPathFromOpts(path, SplitPathOpts);
+        }
+
+        /// <summary>
+        /// Returns whether or not the given filename should be discarded.
+        /// </summary>
+        /// <param name="filename">filename to check</param>
+        /// <returns>true if the filename should be discarded (if it equals kDiscardFn)</returns>
+        public bool DiscardFilename(string filename)
+        {
+            return filename == kDiscardFn;
+        }
+
+        /// <summary>
         /// Default constructor.  Initializes options to defaults.
         /// </summary>
         public MDumpOptions()
         {
-            MergePathOpts = PathOptions.Discard; //Discard file info while merging
-            SplitPathOpts = PathOptions.PreservePath; //Respect any file info when splitting
+            MergePathOpts = PathOptions.PreservePath; //Save file name while merging
+            SplitPathOpts = PathOptions.PreserveName; //Respect file name when splitting
             SplitDestination = string.Empty; //No initial split destination (see below)
             PromptForSplitDestination = true; //Prompt for split destination
             MaxMergeSize = 2048 * 1024; //Default max merge size of 2 megabytes

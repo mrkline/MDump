@@ -16,6 +16,11 @@ namespace MDump
     class ImageMerger
     {
         /// <summary>
+        /// Bytes per pixel, assuming 32-bit RGBA format
+        /// </summary>
+        private const int kBytesPerPix = 4;
+
+        /// <summary>
         /// Tests if the provided file is an MDump merged image
         /// </summary>
         /// <param name="file">Filename of the file to check</param>
@@ -49,7 +54,7 @@ namespace MDump
 
             Byte[] mdData;
             Bitmap merged = BTBitmapMapper.MergeImages(images, new Size(maxWidth, maxHeight),
-                PixelFormat.Format32bppArgb, out mdData);
+                PixelFormat.Format32bppArgb, opts, out mdData);
 
             string filename = "Merged.png";
 
