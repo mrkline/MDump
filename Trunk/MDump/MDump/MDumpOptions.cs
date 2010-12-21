@@ -52,26 +52,24 @@ namespace MDump
 
         public void SetBaseDirectory(IEnumerable<Bitmap> bitmaps)
         {
-            char[] baseDir = null;
+            BaseDirectory = null;
             foreach (Bitmap bmp in bitmaps)
             {
-                char[] curr = Path.GetDirectoryName((string)bmp.Tag).ToCharArray();
+                string curr = Path.GetDirectoryName((string)bmp.Tag);
 
-                //Set the base directory to the first item
-                if (baseDir == null)
+                //Initialize the base directory to the first item
+                if (BaseDirectory == null)
                 {
-                    baseDir = curr;
                     BaseDirectory = Path.GetDirectoryName((string)bmp.Tag);
                     continue;
                 }
 
-                int shortest = curr.Length < baseDir.Length ? curr.Length : baseDir.Length;
+                int shortest = curr.Length < BaseDirectory.Length ? curr.Length : BaseDirectory.Length;
                 for (int c = 0; c < shortest; ++c)
                 {
-                    if (baseDir[c] != curr[c])
+                    if (BaseDirectory[c] != curr[c])
                     {
                         BaseDirectory = ((string)bmp.Tag).Substring(0, c);
-                        baseDir = BaseDirectory.ToCharArray();
                         break;
                     }
                 }
