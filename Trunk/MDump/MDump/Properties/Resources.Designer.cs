@@ -81,13 +81,6 @@ namespace MDump.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap StandBy {
-            get {
-                object obj = ResourceManager.GetObject("StandBy", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         internal static System.Drawing.Bitmap UpArrowIcon {
             get {
                 object obj = ResourceManager.GetObject("UpArrowIcon", resourceCulture);

@@ -108,7 +108,7 @@ namespace MDump
             {
                 opts.SplitPathOpts = MDumpOptions.PathOptions.Discard;
             }
-            opts.MaxMergeSize = Convert.ToUInt64(nudMaxMergeSize.Value) * 1024;
+            opts.MaxMergeSize = Convert.ToInt32(nudMaxMergeSize.Value) * 1024;
             opts.PromptForSplitDestination = radSplitAsk.Enabled;
             opts.SplitDestination = txtSplitToFolder.Text;
             return opts;

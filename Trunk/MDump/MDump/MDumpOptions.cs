@@ -96,7 +96,7 @@ namespace MDump
         /// <summary>
         /// Gets or sets the maximum size of merged images (in bytes)
         /// </summary>
-        public ulong MaxMergeSize { get; set; }
+        public int MaxMergeSize { get; set; }
 
         /// <summary>
         /// Formats a path based on the provided options
@@ -180,8 +180,8 @@ namespace MDump
         /// <param name="promptForSplitDest">Prompt for destination of split images</param>
         /// <param name="maxMergeSz">Max size of merged images.</param>
         public MDumpOptions(PathOptions mergePathOpts, PathOptions splitPathOpts,
-            string splitDest, bool promptForSplitDest, uint maxMergeSz)
-        {
+            string splitDest, bool promptForSplitDest, int maxMergeSz)
+        {        
             MergePathOpts = mergePathOpts;
             SplitPathOpts = splitPathOpts;
             SplitDestination = splitDest;

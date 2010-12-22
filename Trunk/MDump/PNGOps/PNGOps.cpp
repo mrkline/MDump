@@ -155,7 +155,7 @@ extern "C"
 			return EC_RW_INFO_FAILURE;
 		}
 		//Get mdump data and copy it to a buffer
-		int mdDataLen = textInfo[0].text_length;
+		png_size_t mdDataLen = textInfo[0].text_length;
 		char* mdData = static_cast<char*>(malloc(mdDataLen));
 		if(mdData == nullptr)
 		{
