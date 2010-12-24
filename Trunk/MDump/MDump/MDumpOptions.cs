@@ -13,9 +13,12 @@ namespace MDump
     [Serializable]
     public class MDumpOptions 
     {
+        private const string invalidPathOptionsExMsg = "Did not pass FormatPathFromOpts a valid PathOptions value";
+
         /// <summary>
         /// Options for saving/loading paths into/from merged images
         /// </summary>
+        [XmlIgnore]
         public enum PathOptions
         {
             /// <summary>
@@ -85,6 +88,15 @@ namespace MDump
         /// </summary>
         public PathOptions SplitPathOpts { get; set; }
         /// <summary>
+        /// Gets or sets the folder to merge images in to
+        /// </summary>
+        public string MergeDestination { get; set; }
+        /// <summary>
+        /// Gets or sets whether or not the user should be prompted for a merge destination
+        /// <see cref="MergeDestination"/>
+        /// </summary>
+        public bool PromptForMergeDestination { get; set; }
+        /// <summary>
         /// Gets or sets the folder to split images in to
         /// </summary>
         public string SplitDestination { get; set; }
@@ -125,7 +137,7 @@ namespace MDump
                     return path.Remove(0, BaseDirectory.Length);
 
                 default:
-                    throw new ArgumentException("Did not pass FormatPathFromOpts a valid PathOptions value");
+                    throw new ArgumentException(invalidPathOptionsExMsg);
             }
         }
 

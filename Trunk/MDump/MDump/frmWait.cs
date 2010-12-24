@@ -11,30 +11,36 @@ namespace MDump
 {
     public partial class frmWait : Form
     {
+        private const string mergeTitle = "Merging Images...";
+        private const string splitTitle = "Splitting Images...";
+
         private frmMain.Mode mode;
         private List<Bitmap> bmpList;
         private MDumpOptions opts;
+        private string dir;
        
-        public frmWait(frmMain.Mode mode, List<Bitmap> bmpList, MDumpOptions opts)
+        public frmWait(frmMain.Mode mode, List<Bitmap> bmpList, MDumpOptions opts,
+            string dir)
         {
             InitializeComponent();
             this.mode = mode;
             this.bmpList = bmpList;
             this.opts = opts;
+            this.dir = dir;
         }
 
         private void frmWait_Shown(object sender, EventArgs e)
         {
             if (mode == frmMain.Mode.Merge)
             {
-                Text = "Merging Images...";
+                Text = mergeTitle;
                 opts.SetBaseDirectory(bmpList);
-                ImageMerger.MergeImages(bmpList, opts, MergeCallback);
+                ImageMerger.MergeImages(bmpList, opts, dir, MergeCallback);
             }
             else
             {
                 opts.BaseDirectory = string.Empty;
-                Text = "Splitting Images...";
+                Text = splitTitle;
             }
         }
 

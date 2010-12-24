@@ -34,7 +34,7 @@ extern "C"
 		int* widthOut, int* heightOut, char** mdDataOut, int* mdDataLenOut);
 
 	//PNG is assumed to be in 32-bpp RBGA format
-	__declspec(dllexport) ECode __cdecl SavePNGToMemory(png_bytep bitmap, int width, int height, char* filename,
+	__declspec(dllexport) ECode __cdecl SavePNGToMemory(png_bytep bitmap, int width, int height,
 		bool flipRGB, char* mdData, int mdDataLen, png_bytepp memPngOut, int* memPngLenOut);
 }
 

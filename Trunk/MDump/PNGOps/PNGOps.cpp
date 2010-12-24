@@ -218,7 +218,7 @@ extern "C"
 		return EC_SUCCESS;
 	}
 
-	__declspec(dllexport) ECode __cdecl SavePNGToMemory(png_bytep bitmap, int width, int height, char* filename,
+	__declspec(dllexport) ECode __cdecl SavePNGToMemory(png_bytep bitmap, int width, int height,
 		bool flipRGB, char* mdData, int mdDataLen, png_bytepp memPngOut, int* memPngLenOut)
 	{
 		//Set initial value of out arguments to null or 0, so if the function errors out, they have
@@ -226,7 +226,7 @@ extern "C"
 		*memPngOut = nullptr;
 		*memPngLenOut = 0;
 
-		if(bitmap == nullptr || width < 0 || height < 0 || filename == nullptr
+		if(bitmap == nullptr || width < 0 || height < 0
 					|| mdData == nullptr || mdDataLen == 0)
 			{
 				return EC_BAD_ARGS;

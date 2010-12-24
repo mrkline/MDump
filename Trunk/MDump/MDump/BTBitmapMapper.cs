@@ -11,6 +11,9 @@ namespace MDump
     /// </summary>
     class BTBitmapMapper
     {
+        private const string noNullRectExMsg = "A BTBitmapMapper tree node cannot have a null rectangle";
+        private const string rectCannotFitImageExMsg = "A BTBitmapMapper tree node cannot have a null rectangle";
+
         /// <summary>
         /// Used as binary tree node data while building the image map
         /// </summary>
@@ -25,7 +28,7 @@ namespace MDump
                 {
                     if (value == null)
                     {
-                        throw new ArgumentException("A BTBitmapMapper tree node cannot have a null rectangle");
+                        throw new ArgumentException(noNullRectExMsg);
                     }
                     _rect = value;
                 }
@@ -35,7 +38,7 @@ namespace MDump
             {
                 if (rct == null)
                 {
-                    throw new ArgumentException("A BTBitmapMapper tree node cannot have a null rectangle");
+                    throw new ArgumentException(noNullRectExMsg);
                 }
                 Bmp = bmp;
                 Rect = rct;
@@ -131,7 +134,7 @@ namespace MDump
             }
             if (totalArea > maxSize.Width * maxSize.Height)
             {
-                throw new ArgumentException("The provided rectangle cannot fit the provided bitmaps.");
+                throw new ArgumentException(rectCannotFitImageExMsg);
             }
 
             //To be used later to clip final bitmap if it takes up less space than the given max

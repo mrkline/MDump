@@ -59,6 +59,8 @@ namespace MDump
             {
                 radSplitToFolder.Enabled = true;
             }
+            txtMergeToFolder.Text = opts.MergeDestination;
+            txtMergeToFolder.Enabled = btnMergeBrowse.Enabled = !opts.PromptForMergeDestination;
             txtSplitToFolder.Text = opts.SplitDestination;
             txtSplitToFolder.Enabled = btnSplitBrowse.Enabled = !opts.PromptForSplitDestination;
             switch (opts.SplitPathOpts)
@@ -109,6 +111,8 @@ namespace MDump
                 opts.SplitPathOpts = MDumpOptions.PathOptions.Discard;
             }
             opts.MaxMergeSize = Convert.ToInt32(nudMaxMergeSize.Value) * 1024;
+            opts.PromptForMergeDestination = radMergeAsk.Enabled;
+            opts.MergeDestination = txtMergeToFolder.Text;
             opts.PromptForSplitDestination = radSplitAsk.Enabled;
             opts.SplitDestination = txtSplitToFolder.Text;
             return opts;

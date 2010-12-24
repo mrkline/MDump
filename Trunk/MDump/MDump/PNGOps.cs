@@ -81,11 +81,13 @@ namespace MDump
     /// </summary>
     class PNGOps
     {
+        private const string dllName = "PNGOps.dll";
+
         /// <summary>
         /// A simple wrapper around free() to release unmanaged memory once we've copied data out of it
         /// </summary>
         /// <param name="ptr">Pointer to the unmanaged memory</param>
-        [DllImport("PNGOps.dll")]
+        [DllImport(dllName)]
         public static extern void FreeUnmanagedData(IntPtr ptr);
 
         /// <summary>
@@ -94,7 +96,7 @@ namespace MDump
         /// </summary>
         /// <param name="filename">file to test</param>
         /// <returns>true if the file is an MDump PNG merged image</returns>
-        [DllImport("PNGOps.dll")]
+        [DllImport(dllName)]
         public static extern MergedCode IsMergedImage(string filename);
 
         /// <summary>
@@ -108,12 +110,12 @@ namespace MDump
         /// <param name="mdDataOut">is set to a pointer to the MDump data in unmanaged memory</param>
         /// <param name="mdDataLenOut">is set to the length of the MDump data</param>
         /// <returns></returns>
-        [DllImport("PNGOps.dll")]
+        [DllImport(dllName)]
         public static extern ECode LoadMergedImage(string filename, out IntPtr bitmapOut,
             out int widthOut, out int heightOut, out IntPtr mdDataOut, out int mdDataLenOut);
 
-        [DllImport("PNGOps.dll")]
-        public static extern ECode SavePNGToMemory(IntPtr bitmap, int width, int height, string filename,
+        [DllImport(dllName)]
+        public static extern ECode SavePNGToMemory(IntPtr bitmap, int width, int height,
             bool flipRGB, byte[] mdData, int mdDataLen, out IntPtr memPngOut, out int memPngLenOut);
     }
 }
