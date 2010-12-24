@@ -125,6 +125,9 @@ namespace MDump
             //Keep track of how many images have been merged
             int imagesMerged = 0;
 
+            //Keep track of the merges saved (we'll have to clean them up on error)
+            List<string> mergesSaved = new List<string>();
+
             while (imagesMerged < bitmaps.Count)
             {
                 callback(MergeCallbackStage.DeterminingNumPerMerge);
@@ -146,6 +149,7 @@ namespace MDump
                     {
                         MessageBox.Show(mergeFailedMsg, mergedFailedTitle, MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
+                        CleanupOnMergeError(mergesSaved, mergeDir, dirPreExisted);
                         //Break from both loops
                         imagesMerged = int.MaxValue;
                         break;
@@ -157,6 +161,7 @@ namespace MDump
                         {
                             MessageBox.Show(sizeTooSmallMsg, sizeTooSmallTitle, MessageBoxButtons.OK,
                                 MessageBoxIcon.Error);
+                            CleanupOnMergeError(mergesSaved, mergeDir, dirPreExisted);
                             //Break from both loops
                             imagesMerged = int.MaxValue;
                             break;
@@ -165,7 +170,6 @@ namespace MDump
                         //If the current merge size is over the limit but the last wasn't, use the last one
                         if(lastMergeSize <= maxMergeSize)
                         {
-                            PNGOps.FreeUnmanagedData(currentMergeMem);
                             callback(MergeCallbackStage.Saving);
 
                         }
@@ -182,14 +186,6 @@ namespace MDump
                 PNGOps.FreeUnmanagedData(lastMergeMem);
             }
           
-            //Stream it to a file to test
-            //using (FileStream fs = new FileStream(filename, FileMode.OpenOrCreate))
-            //{
-            //    using (BinaryWriter ms = new BinaryWriter(fs))
-            //    {
-            //        fs.Write(pngData, 0, pngLen);
-            //    }
-            //}
             callback(MergeCallbackStage.Done);
         }
 
@@ -257,20 +253,47 @@ namespace MDump
             ECode ret = PNGOps.SavePNGToMemory(bmpData.Scan0, bmpData.Width, bmpData.Height, true, mdData, mdData.Length,
                 out memImgOut, out imgSizeOut);
             merged.UnlockBits(bmpData);
-
             return ret;
         }
 
         /// <summary>
+        /// Saves a PNG in unmanaged memory to a file
+        /// </summary>
+        /// <param name="pngUnmangedMem">pointer to the PNG in unmanaged memory</param>
+        /// <param name="pngLen">length of the PNG, in bytes</param>
+        /// <param name="filename">filename to store the PNG to</param>
+        private static void SavePNG(IntPtr pngUnmangedMem, int pngLen, string filename)
+        {
+            Byte[] pngMem = new Byte[pngLen];
+            Marshal.Copy(pngUnmangedMem, pngMem, 0, pngLen);
+            using (FileStream fs = new FileStream(filename, FileMode.OpenOrCreate))
+            {
+                using (BinaryWriter ms = new BinaryWriter(fs))
+                {
+                    fs.Write(pngMem, 0, pngLen);
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Cleans up a half-done merge if an error occurs.
         /// </summary>
-        /// <param name="imagesSaved"></param>
-        /// <param name="mergeDirectory"></param>
-        /// <param name="dirPreviouslyExisted"></param>
-        private static void CleanupOnMergeError(List<String> imagesSaved,
+        /// <param name="mergesSaved">A list of the images saved so far (to now delete)</param>
+        /// <param name="mergeDirectory">The directory images are saved to.
+        /// Useful especially if no images have been saved yet.</param>
+        /// <param name="dirPreviouslyExisted">false if the directory was created to save the merges to</param>
+        private static void CleanupOnMergeError(List<string> mergesSaved,
             string mergeDirectory, bool dirPreviouslyExisted)
         {
-            //TODO: Pick up here.
+            foreach (string file in mergesSaved)
+            {
+                File.Delete(file);
+            }
+            if (!dirPreviouslyExisted)
+            {
+                Directory.Delete(mergeDirectory);
+            }
         }
     }
 }
