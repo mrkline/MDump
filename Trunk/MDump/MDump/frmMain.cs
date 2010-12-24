@@ -308,13 +308,52 @@ namespace MDump
 
         private void btnAction_Click(object sender, EventArgs e)
         {
+            string dir;
+
+            if (CurrentMode == Mode.Merge)
+            {
+                if (opts.PromptForMergeDestination)
+                {
+                    if (dlgMergeBrowse.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        dir = dlgMergeBrowse.SelectedPath;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    dir = opts.MergeDestination;
+                }
+            }
+            else
+            {
+                if (opts.PromptForSplitDestination)
+                {
+                    if (dlgSplitBrowse.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        dir = dlgSplitBrowse.SelectedPath;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    dir = opts.MergeDestination;
+                }
+            }
+
             //Compile a list of bitmaps to pass to our mergers or splitters
             List<Bitmap> bmpList = new List<Bitmap>();
             foreach(ListViewItem lvi in lvImages.Items)
             {
                 bmpList.Add((Bitmap)lvi.Tag);
             }
-            new frmWait(CurrentMode, bmpList, opts).ShowDialog();
+            new frmWait(CurrentMode, bmpList, opts, dir).ShowDialog();
         }
     }
 }

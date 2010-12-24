@@ -41,6 +41,8 @@
             this.btnDown = new System.Windows.Forms.Button();
             this.btnUp = new System.Windows.Forms.Button();
             this.dlgOpenImg = new System.Windows.Forms.OpenFileDialog();
+            this.dlgMergeBrowse = new System.Windows.Forms.FolderBrowserDialog();
+            this.dlgSplitBrowse = new System.Windows.Forms.FolderBrowserDialog();
             this.SuspendLayout();
             // 
             // lvImages
@@ -161,6 +163,14 @@
             this.dlgOpenImg.Filter = "Images|*gif;*jpg;*jpeg;*wmf;*bmp;*png";
             this.dlgOpenImg.Multiselect = true;
             // 
+            // dlgMergeBrowse
+            // 
+            this.dlgMergeBrowse.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            // 
+            // dlgSplitBrowse
+            // 
+            this.dlgSplitBrowse.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -195,6 +205,8 @@
         private System.Windows.Forms.ToolTip ttpMain;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.OpenFileDialog dlgOpenImg;
+        private System.Windows.Forms.FolderBrowserDialog dlgMergeBrowse;
+        private System.Windows.Forms.FolderBrowserDialog dlgSplitBrowse;
 
     }
 }

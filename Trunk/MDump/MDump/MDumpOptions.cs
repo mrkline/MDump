@@ -18,7 +18,6 @@ namespace MDump
         /// <summary>
         /// Options for saving/loading paths into/from merged images
         /// </summary>
-        [XmlIgnore]
         public enum PathOptions
         {
             /// <summary>
@@ -178,8 +177,8 @@ namespace MDump
         {
             MergePathOpts = PathOptions.PreservePath; //Save file name while merging
             SplitPathOpts = PathOptions.PreserveName; //Respect file name when splitting
-            SplitDestination = string.Empty; //No initial split destination (see below)
-            PromptForSplitDestination = true; //Prompt for split destination
+            MergeDestination = SplitDestination = string.Empty; //No initial split or merge destination (see below)
+            PromptForMergeDestination = PromptForSplitDestination = true; //Prompt for split and merge destinations
             MaxMergeSize = 2048 * 1024; //Default max merge size of 2 megabytes
         }
 
