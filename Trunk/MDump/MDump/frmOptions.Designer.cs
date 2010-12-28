@@ -45,32 +45,21 @@
             this.radUseFilename = new System.Windows.Forms.RadioButton();
             this.radUsePathInfo = new System.Windows.Forms.RadioButton();
             this.radIgnore = new System.Windows.Forms.RadioButton();
-            this.grpSplitDestination = new System.Windows.Forms.GroupBox();
-            this.radSplitAsk = new System.Windows.Forms.RadioButton();
-            this.radSplitToFolder = new System.Windows.Forms.RadioButton();
-            this.btnSplitBrowse = new System.Windows.Forms.Button();
-            this.txtSplitToFolder = new System.Windows.Forms.TextBox();
             this.dlgFolderBrowse = new System.Windows.Forms.FolderBrowserDialog();
             this.btnDefaults = new System.Windows.Forms.Button();
-            this.grpMergeDestination = new System.Windows.Forms.GroupBox();
-            this.radMergeAsk = new System.Windows.Forms.RadioButton();
-            this.radMergeToFolder = new System.Windows.Forms.RadioButton();
-            this.btnMergeBrowse = new System.Windows.Forms.Button();
-            this.txtMergeToFolder = new System.Windows.Forms.TextBox();
+            this.chkAddTitleBar = new System.Windows.Forms.CheckBox();
             this.tabOptions.SuspendLayout();
             this.tbpMerging.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxMergeSize)).BeginInit();
             this.grpImageNaming.SuspendLayout();
             this.tbpSplitting.SuspendLayout();
             this.grpSplitNames.SuspendLayout();
-            this.grpSplitDestination.SuspendLayout();
-            this.grpMergeDestination.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnSaveOptions
             // 
             this.btnSaveOptions.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnSaveOptions.Location = new System.Drawing.Point(51, 317);
+            this.btnSaveOptions.Location = new System.Drawing.Point(51, 237);
             this.btnSaveOptions.Name = "btnSaveOptions";
             this.btnSaveOptions.Size = new System.Drawing.Size(100, 23);
             this.btnSaveOptions.TabIndex = 1;
@@ -81,7 +70,7 @@
             // btnCancelOptions
             // 
             this.btnCancelOptions.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnCancelOptions.Location = new System.Drawing.Point(263, 317);
+            this.btnCancelOptions.Location = new System.Drawing.Point(263, 237);
             this.btnCancelOptions.Name = "btnCancelOptions";
             this.btnCancelOptions.Size = new System.Drawing.Size(100, 23);
             this.btnCancelOptions.TabIndex = 2;
@@ -99,12 +88,12 @@
             this.tabOptions.Location = new System.Drawing.Point(12, 12);
             this.tabOptions.Name = "tabOptions";
             this.tabOptions.SelectedIndex = 0;
-            this.tabOptions.Size = new System.Drawing.Size(390, 299);
+            this.tabOptions.Size = new System.Drawing.Size(390, 219);
             this.tabOptions.TabIndex = 5;
             // 
             // tbpMerging
             // 
-            this.tbpMerging.Controls.Add(this.grpMergeDestination);
+            this.tbpMerging.Controls.Add(this.chkAddTitleBar);
             this.tbpMerging.Controls.Add(this.lblKB);
             this.tbpMerging.Controls.Add(this.nudMaxMergeSize);
             this.tbpMerging.Controls.Add(this.lblMaxMergeSize);
@@ -112,7 +101,7 @@
             this.tbpMerging.Location = new System.Drawing.Point(4, 22);
             this.tbpMerging.Name = "tbpMerging";
             this.tbpMerging.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpMerging.Size = new System.Drawing.Size(382, 273);
+            this.tbpMerging.Size = new System.Drawing.Size(382, 193);
             this.tbpMerging.TabIndex = 0;
             this.tbpMerging.Text = "Merging Options";
             this.tbpMerging.UseVisualStyleBackColor = true;
@@ -120,7 +109,7 @@
             // lblKB
             // 
             this.lblKB.AutoSize = true;
-            this.lblKB.Location = new System.Drawing.Point(138, 238);
+            this.lblKB.Location = new System.Drawing.Point(138, 132);
             this.lblKB.Name = "lblKB";
             this.lblKB.Size = new System.Drawing.Size(72, 13);
             this.lblKB.TabIndex = 16;
@@ -128,7 +117,7 @@
             // 
             // nudMaxMergeSize
             // 
-            this.nudMaxMergeSize.Location = new System.Drawing.Point(12, 236);
+            this.nudMaxMergeSize.Location = new System.Drawing.Point(12, 130);
             this.nudMaxMergeSize.Maximum = new decimal(new int[] {
             1048576,
             0,
@@ -151,7 +140,7 @@
             // lblMaxMergeSize
             // 
             this.lblMaxMergeSize.AutoSize = true;
-            this.lblMaxMergeSize.Location = new System.Drawing.Point(6, 220);
+            this.lblMaxMergeSize.Location = new System.Drawing.Point(6, 114);
             this.lblMaxMergeSize.Name = "lblMaxMergeSize";
             this.lblMaxMergeSize.Size = new System.Drawing.Size(320, 13);
             this.lblMaxMergeSize.TabIndex = 14;
@@ -162,7 +151,7 @@
             this.grpImageNaming.Controls.Add(this.radSaveFilePath);
             this.grpImageNaming.Controls.Add(this.radSaveFilenames);
             this.grpImageNaming.Controls.Add(this.radDiscardFilenames);
-            this.grpImageNaming.Location = new System.Drawing.Point(6, 112);
+            this.grpImageNaming.Location = new System.Drawing.Point(6, 6);
             this.grpImageNaming.Name = "grpImageNaming";
             this.grpImageNaming.Size = new System.Drawing.Size(370, 93);
             this.grpImageNaming.TabIndex = 13;
@@ -205,11 +194,10 @@
             // tbpSplitting
             // 
             this.tbpSplitting.Controls.Add(this.grpSplitNames);
-            this.tbpSplitting.Controls.Add(this.grpSplitDestination);
             this.tbpSplitting.Location = new System.Drawing.Point(4, 22);
             this.tbpSplitting.Name = "tbpSplitting";
             this.tbpSplitting.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpSplitting.Size = new System.Drawing.Size(382, 273);
+            this.tbpSplitting.Size = new System.Drawing.Size(382, 278);
             this.tbpSplitting.TabIndex = 1;
             this.tbpSplitting.Text = "Spliting Options";
             this.tbpSplitting.UseVisualStyleBackColor = true;
@@ -219,7 +207,7 @@
             this.grpSplitNames.Controls.Add(this.radUseFilename);
             this.grpSplitNames.Controls.Add(this.radUsePathInfo);
             this.grpSplitNames.Controls.Add(this.radIgnore);
-            this.grpSplitNames.Location = new System.Drawing.Point(6, 112);
+            this.grpSplitNames.Location = new System.Drawing.Point(6, 6);
             this.grpSplitNames.Name = "grpSplitNames";
             this.grpSplitNames.Size = new System.Drawing.Size(370, 89);
             this.grpSplitNames.TabIndex = 1;
@@ -259,63 +247,6 @@
             this.radIgnore.Text = "Ignore it and ask for a name for the images instead";
             this.radIgnore.UseVisualStyleBackColor = true;
             // 
-            // grpSplitDestination
-            // 
-            this.grpSplitDestination.Controls.Add(this.radSplitAsk);
-            this.grpSplitDestination.Controls.Add(this.radSplitToFolder);
-            this.grpSplitDestination.Controls.Add(this.btnSplitBrowse);
-            this.grpSplitDestination.Controls.Add(this.txtSplitToFolder);
-            this.grpSplitDestination.Location = new System.Drawing.Point(6, 6);
-            this.grpSplitDestination.Name = "grpSplitDestination";
-            this.grpSplitDestination.Size = new System.Drawing.Size(370, 100);
-            this.grpSplitDestination.TabIndex = 0;
-            this.grpSplitDestination.TabStop = false;
-            this.grpSplitDestination.Text = "Where to put split images:";
-            // 
-            // radSplitAsk
-            // 
-            this.radSplitAsk.AutoSize = true;
-            this.radSplitAsk.Location = new System.Drawing.Point(6, 68);
-            this.radSplitAsk.Name = "radSplitAsk";
-            this.radSplitAsk.Size = new System.Drawing.Size(228, 17);
-            this.radSplitAsk.TabIndex = 16;
-            this.radSplitAsk.TabStop = true;
-            this.radSplitAsk.Text = "Ask me where to put split images each time";
-            this.radSplitAsk.UseVisualStyleBackColor = true;
-            // 
-            // radSplitToFolder
-            // 
-            this.radSplitToFolder.AutoSize = true;
-            this.radSplitToFolder.Location = new System.Drawing.Point(6, 19);
-            this.radSplitToFolder.Name = "radSplitToFolder";
-            this.radSplitToFolder.Size = new System.Drawing.Size(215, 17);
-            this.radSplitToFolder.TabIndex = 15;
-            this.radSplitToFolder.TabStop = true;
-            this.radSplitToFolder.Text = "Put split images in to the following folder:";
-            this.radSplitToFolder.UseVisualStyleBackColor = true;
-            this.radSplitToFolder.CheckedChanged += new System.EventHandler(this.radSplitToFolder_CheckedChanged);
-            // 
-            // btnSplitBrowse
-            // 
-            this.btnSplitBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSplitBrowse.Location = new System.Drawing.Point(289, 39);
-            this.btnSplitBrowse.Name = "btnSplitBrowse";
-            this.btnSplitBrowse.Size = new System.Drawing.Size(75, 23);
-            this.btnSplitBrowse.TabIndex = 14;
-            this.btnSplitBrowse.Text = "Browse...";
-            this.btnSplitBrowse.UseVisualStyleBackColor = true;
-            this.btnSplitBrowse.Click += new System.EventHandler(this.btnSplitBrowse_Click);
-            // 
-            // txtSplitToFolder
-            // 
-            this.txtSplitToFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSplitToFolder.Location = new System.Drawing.Point(6, 42);
-            this.txtSplitToFolder.Name = "txtSplitToFolder";
-            this.txtSplitToFolder.Size = new System.Drawing.Size(277, 20);
-            this.txtSplitToFolder.TabIndex = 13;
-            this.txtSplitToFolder.Leave += new System.EventHandler(this.txtSplitToFolder_Leave);
-            // 
             // dlgFolderBrowse
             // 
             this.dlgFolderBrowse.RootFolder = System.Environment.SpecialFolder.MyPictures;
@@ -323,7 +254,7 @@
             // btnDefaults
             // 
             this.btnDefaults.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnDefaults.Location = new System.Drawing.Point(157, 317);
+            this.btnDefaults.Location = new System.Drawing.Point(157, 237);
             this.btnDefaults.Name = "btnDefaults";
             this.btnDefaults.Size = new System.Drawing.Size(100, 23);
             this.btnDefaults.TabIndex = 6;
@@ -331,65 +262,21 @@
             this.btnDefaults.UseVisualStyleBackColor = true;
             this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
             // 
-            // grpMergeDestination
+            // chkAddTitleBar
             // 
-            this.grpMergeDestination.Controls.Add(this.radMergeAsk);
-            this.grpMergeDestination.Controls.Add(this.radMergeToFolder);
-            this.grpMergeDestination.Controls.Add(this.btnMergeBrowse);
-            this.grpMergeDestination.Controls.Add(this.txtMergeToFolder);
-            this.grpMergeDestination.Location = new System.Drawing.Point(6, 6);
-            this.grpMergeDestination.Name = "grpMergeDestination";
-            this.grpMergeDestination.Size = new System.Drawing.Size(370, 100);
-            this.grpMergeDestination.TabIndex = 17;
-            this.grpMergeDestination.TabStop = false;
-            this.grpMergeDestination.Text = "Where to put split images:";
-            // 
-            // radMergeAsk
-            // 
-            this.radMergeAsk.AutoSize = true;
-            this.radMergeAsk.Location = new System.Drawing.Point(6, 68);
-            this.radMergeAsk.Name = "radMergeAsk";
-            this.radMergeAsk.Size = new System.Drawing.Size(245, 17);
-            this.radMergeAsk.TabIndex = 16;
-            this.radMergeAsk.TabStop = true;
-            this.radMergeAsk.Text = "Ask me where to put merged images each time";
-            this.radMergeAsk.UseVisualStyleBackColor = true;
-            // 
-            // radMergeToFolder
-            // 
-            this.radMergeToFolder.AutoSize = true;
-            this.radMergeToFolder.Location = new System.Drawing.Point(6, 19);
-            this.radMergeToFolder.Name = "radMergeToFolder";
-            this.radMergeToFolder.Size = new System.Drawing.Size(232, 17);
-            this.radMergeToFolder.TabIndex = 15;
-            this.radMergeToFolder.TabStop = true;
-            this.radMergeToFolder.Text = "Put merged images in to the following folder:";
-            this.radMergeToFolder.UseVisualStyleBackColor = true;
-            // 
-            // btnMergeBrowse
-            // 
-            this.btnMergeBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMergeBrowse.Location = new System.Drawing.Point(289, 39);
-            this.btnMergeBrowse.Name = "btnMergeBrowse";
-            this.btnMergeBrowse.Size = new System.Drawing.Size(75, 23);
-            this.btnMergeBrowse.TabIndex = 14;
-            this.btnMergeBrowse.Text = "Browse...";
-            this.btnMergeBrowse.UseVisualStyleBackColor = true;
-            // 
-            // txtMergeToFolder
-            // 
-            this.txtMergeToFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtMergeToFolder.Location = new System.Drawing.Point(6, 42);
-            this.txtMergeToFolder.Name = "txtMergeToFolder";
-            this.txtMergeToFolder.Size = new System.Drawing.Size(277, 20);
-            this.txtMergeToFolder.TabIndex = 13;
+            this.chkAddTitleBar.AutoSize = true;
+            this.chkAddTitleBar.Location = new System.Drawing.Point(12, 165);
+            this.chkAddTitleBar.Name = "chkAddTitleBar";
+            this.chkAddTitleBar.Size = new System.Drawing.Size(274, 17);
+            this.chkAddTitleBar.TabIndex = 17;
+            this.chkAddTitleBar.Text = "Add \"Created with MDump\" image to merged images";
+            this.chkAddTitleBar.UseVisualStyleBackColor = true;
             // 
             // frmOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(414, 352);
+            this.ClientSize = new System.Drawing.Size(414, 272);
             this.Controls.Add(this.btnDefaults);
             this.Controls.Add(this.tabOptions);
             this.Controls.Add(this.btnCancelOptions);
@@ -409,10 +296,6 @@
             this.tbpSplitting.ResumeLayout(false);
             this.grpSplitNames.ResumeLayout(false);
             this.grpSplitNames.PerformLayout();
-            this.grpSplitDestination.ResumeLayout(false);
-            this.grpSplitDestination.PerformLayout();
-            this.grpMergeDestination.ResumeLayout(false);
-            this.grpMergeDestination.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -429,11 +312,6 @@
         private System.Windows.Forms.RadioButton radDiscardFilenames;
         private System.Windows.Forms.TabPage tbpSplitting;
         private System.Windows.Forms.GroupBox grpSplitNames;
-        private System.Windows.Forms.GroupBox grpSplitDestination;
-        private System.Windows.Forms.RadioButton radSplitAsk;
-        private System.Windows.Forms.RadioButton radSplitToFolder;
-        private System.Windows.Forms.Button btnSplitBrowse;
-        private System.Windows.Forms.TextBox txtSplitToFolder;
         private System.Windows.Forms.NumericUpDown nudMaxMergeSize;
         private System.Windows.Forms.Label lblMaxMergeSize;
         private System.Windows.Forms.RadioButton radUseFilename;
@@ -442,11 +320,7 @@
         private System.Windows.Forms.Label lblKB;
         private System.Windows.Forms.FolderBrowserDialog dlgFolderBrowse;
         private System.Windows.Forms.Button btnDefaults;
-        private System.Windows.Forms.GroupBox grpMergeDestination;
-        private System.Windows.Forms.RadioButton radMergeAsk;
-        private System.Windows.Forms.RadioButton radMergeToFolder;
-        private System.Windows.Forms.Button btnMergeBrowse;
-        private System.Windows.Forms.TextBox txtMergeToFolder;
+        private System.Windows.Forms.CheckBox chkAddTitleBar;
 
     }
 }

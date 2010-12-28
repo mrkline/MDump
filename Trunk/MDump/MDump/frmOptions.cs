@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace MDump
 {
@@ -13,6 +14,11 @@ namespace MDump
     /// </summary>
     public partial class frmOptions : Form
     {
+        private const string validMessage = " is an existing directory.";
+        private static readonly Color validColor = Color.Green;
+        private const string invalidMessage = " is not an existing directory.";
+        private static readonly Color invalidColor = Color.Red;
+
         /// <summary>
         /// Construct the form using default options
         /// </summary>
@@ -51,18 +57,7 @@ namespace MDump
                     break;
             }
             nudMaxMergeSize.Value = Convert.ToDecimal(opts.MaxMergeSize / 1024);
-            if (opts.PromptForSplitDestination)
-            {
-                radSplitAsk.Checked = true;
-            }
-            else
-            {
-                radSplitToFolder.Enabled = true;
-            }
-            txtMergeToFolder.Text = opts.MergeDestination;
-            txtMergeToFolder.Enabled = btnMergeBrowse.Enabled = !opts.PromptForMergeDestination;
-            txtSplitToFolder.Text = opts.SplitDestination;
-            txtSplitToFolder.Enabled = btnSplitBrowse.Enabled = !opts.PromptForSplitDestination;
+            chkAddTitleBar.Checked = opts.AddTitleBar;
             switch (opts.SplitPathOpts)
             {
                 case MDumpOptions.PathOptions.PreservePath:
@@ -111,10 +106,7 @@ namespace MDump
                 opts.SplitPathOpts = MDumpOptions.PathOptions.Discard;
             }
             opts.MaxMergeSize = Convert.ToInt32(nudMaxMergeSize.Value) * 1024;
-            opts.PromptForMergeDestination = radMergeAsk.Enabled;
-            opts.MergeDestination = txtMergeToFolder.Text;
-            opts.PromptForSplitDestination = radSplitAsk.Enabled;
-            opts.SplitDestination = txtSplitToFolder.Text;
+            opts.AddTitleBar = chkAddTitleBar.Checked;
             return opts;
         }
 
@@ -128,31 +120,6 @@ namespace MDump
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
             Close();
-        }
-
-        private void btnSplitBrowse_Click(object sender, EventArgs e)
-        {
-            if (dlgFolderBrowse.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                txtSplitToFolder.Text = dlgFolderBrowse.SelectedPath;
-            }
-        }
-
-        private void txtSplitToFolder_Leave(object sender, EventArgs e)
-        {
-            if (!txtSplitToFolder.Text.Equals(string.Empty) 
-                && !System.IO.Directory.Exists(txtSplitToFolder.Text))
-            {
-                MessageBox.Show(txtSplitToFolder.Text + " is not a valid folder", "Invalid Path",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtSplitToFolder.Focus();
-                txtSplitToFolder.SelectAll();
-            }
-        }
-
-        private void radSplitToFolder_CheckedChanged(object sender, EventArgs e)
-        {
-            txtSplitToFolder.Enabled = btnSplitBrowse.Enabled = radSplitToFolder.Checked;
         }
 
         private void btnDefaults_Click(object sender, EventArgs e)

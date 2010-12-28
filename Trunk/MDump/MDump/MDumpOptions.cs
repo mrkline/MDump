@@ -87,27 +87,13 @@ namespace MDump
         /// </summary>
         public PathOptions SplitPathOpts { get; set; }
         /// <summary>
-        /// Gets or sets the folder to merge images in to
-        /// </summary>
-        public string MergeDestination { get; set; }
-        /// <summary>
-        /// Gets or sets whether or not the user should be prompted for a merge destination
-        /// <see cref="MergeDestination"/>
-        /// </summary>
-        public bool PromptForMergeDestination { get; set; }
-        /// <summary>
-        /// Gets or sets the folder to split images in to
-        /// </summary>
-        public string SplitDestination { get; set; }
-        /// <summary>
-        /// Gets or sets whether or not the user should be prompted for a split destination
-        /// <see cref="SplitDestination"/>
-        /// </summary>
-        public bool PromptForSplitDestination { get; set; }
-        /// <summary>
         /// Gets or sets the maximum size of merged images (in bytes)
         /// </summary>
         public int MaxMergeSize { get; set; }
+        /// <summary>
+        /// Gets or sets whether or not merges will add title bars to merged images
+        /// </summary>
+        public bool AddTitleBar { get; set; }
 
         /// <summary>
         /// Formats a path based on the provided options
@@ -177,8 +163,6 @@ namespace MDump
         {
             MergePathOpts = PathOptions.PreservePath; //Save file name while merging
             SplitPathOpts = PathOptions.PreserveName; //Respect file name when splitting
-            MergeDestination = SplitDestination = string.Empty; //No initial split or merge destination (see below)
-            PromptForMergeDestination = PromptForSplitDestination = true; //Prompt for split and merge destinations
             MaxMergeSize = 2048 * 1024; //Default max merge size of 2 megabytes
         }
 
@@ -187,17 +171,17 @@ namespace MDump
         /// </summary>
         /// <param name="mergePathOpts">Merge path option</param>
         /// <param name="splitPathOpts">Split path option</param>
+        /// <param name="mergeDest">Destination of merged images</param>
         /// <param name="splitDest">Destination of split images</param>
-        /// <param name="promptForSplitDest">Prompt for destination of split images</param>
         /// <param name="maxMergeSz">Max size of merged images.</param>
+        /// <param name="titleBar">true if title bar is added to merged images</param>
         public MDumpOptions(PathOptions mergePathOpts, PathOptions splitPathOpts,
-            string splitDest, bool promptForSplitDest, int maxMergeSz)
+            int maxMergeSz, bool titleBar)
         {        
             MergePathOpts = mergePathOpts;
             SplitPathOpts = splitPathOpts;
-            SplitDestination = splitDest;
-            PromptForSplitDestination = promptForSplitDest;
             MaxMergeSize = maxMergeSz;
+            AddTitleBar = titleBar;
         }
 
         /// <summary>
@@ -228,7 +212,7 @@ namespace MDump
         }
 
         /// <summary>
-        /// Tests if one options object is the same as another
+        /// Tests if one options object is the same as another.
         /// </summary>
         /// <param name="obj">The other options object</param>
         /// <returns>true if the options are the same</returns>
@@ -239,9 +223,8 @@ namespace MDump
                 MDumpOptions other = (MDumpOptions)obj;
                 return MergePathOpts == other.MergePathOpts
                     && SplitPathOpts == other.SplitPathOpts
-                    && SplitDestination == other.SplitDestination
-                    && PromptForSplitDestination == other.PromptForSplitDestination
-                    && MaxMergeSize == other.MaxMergeSize;
+                    && MaxMergeSize == other.MaxMergeSize
+                    && AddTitleBar == other.AddTitleBar;
             }
             return false;
         }
@@ -253,11 +236,10 @@ namespace MDump
         /// <returns>Hash code of options object</returns>
         public override int GetHashCode()
         {
-            int hash = SplitDestination.GetHashCode();
-            hash += Convert.ToInt32(PromptForSplitDestination);
-            hash += (int)MergePathOpts;
+            int hash = (int)MergePathOpts;
             hash += (int)SplitPathOpts << 2;
             hash += Convert.ToInt32(MaxMergeSize);
+            hash += Convert.ToInt32(AddTitleBar);
             return hash;
         }
 
