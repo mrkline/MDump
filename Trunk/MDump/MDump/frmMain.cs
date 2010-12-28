@@ -310,7 +310,28 @@ namespace MDump
         {
             string dir = string.Empty;
 
-           //TODO: Fill in with dialog stuff
+            if (CurrentMode == Mode.Merge)
+            {
+                if (dlgMerge.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    dir = dlgMerge.FileName;
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else
+            {
+                if (dlgSplitSplit.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    dir = dlgSplitSplit.SelectedPath;
+                }
+                else
+                {
+                    return;
+                }
+            }
 
             //Compile a list of bitmaps to pass to our mergers or splitters
             List<Bitmap> bmpList = new List<Bitmap>();
@@ -319,6 +340,32 @@ namespace MDump
                 bmpList.Add((Bitmap)lvi.Tag);
             }
             new frmWait(CurrentMode, bmpList, opts, dir).ShowDialog();
+        }
+
+        /// <summary>
+        /// Assure that we're not overwriting other merges
+        /// </summary>
+        private void dlgMerge_FileOk(object sender, CancelEventArgs e)
+        {
+            //Get all files in the directory that start with the name provided
+            string[] dirFiles = Directory.GetFiles(Path.GetDirectoryName(dlgMerge.FileName));
+
+            //Keep track of merge files (we'll be deleting these if the user wants to overwrite)
+            List<string> mergeFiles = new List<string>();
+            
+            //Get requested filename
+            string name = Path.GetFileNameWithoutExtension(dlgMerge.FileName);
+
+            foreach (string file in dirFiles)
+            {
+                if (file.StartsWith(name, true, System.Globalization.CultureInfo.InvariantCulture))
+                {
+                    //Try to cast the remaining file name to an int.  If successful, we have a match.
+                    //TODO: Limt remainder length to 2?
+                    string remainder = file.Remove(0, name.Length);
+                    //TODO: Pick up here.
+                }
+            }
         }
     }
 }
