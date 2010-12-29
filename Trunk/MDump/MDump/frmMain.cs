@@ -347,6 +347,7 @@ namespace MDump
         /// </summary>
         private void dlgMerge_FileOk(object sender, CancelEventArgs e)
         {
+
             //Get all files in the directory that start with the name provided
             string[] dirFiles = Directory.GetFiles(Path.GetDirectoryName(dlgMerge.FileName));
 
@@ -356,15 +357,49 @@ namespace MDump
             //Get requested filename
             string name = Path.GetFileNameWithoutExtension(dlgMerge.FileName);
 
+            //Gather all merge files
             foreach (string file in dirFiles)
             {
-                if (file.StartsWith(name, true, System.Globalization.CultureInfo.InvariantCulture))
+                //The name format of merges is name.num.png
+                string[] tokens = Path.GetFileName(file).Split(new char['.'], StringSplitOptions.RemoveEmptyEntries);
+                if(tokens.Length == 3
+                    && tokens[0].Equals(name, StringComparison.InvariantCultureIgnoreCase)
+                    && IsInt(tokens[1])
+                    && tokens[2].Equals("png", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    //Try to cast the remaining file name to an int.  If successful, we have a match.
-                    //TODO: Limt remainder length to 2?
-                    string remainder = file.Remove(0, name.Length);
-                    //TODO: Pick up here.
+                    mergeFiles.Add(file);
                 }
+            }
+
+            if (mergeFiles.Count > 0)
+            {
+                if (MessageBox.Show("Merge files with the name " + name + " already exist in this folder."
+                    + " Overwrite?", "Confirm Overwrite", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    e.Cancel = false;
+                    foreach (string file in mergeFiles)
+                    {
+                        File.Delete(file);
+                    }
+                }
+            }
+            else
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private static bool IsInt(string str)
+        {
+            try
+            {
+                Convert.ToInt32(str);
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
     }
