@@ -308,13 +308,13 @@ namespace MDump
 
         private void btnAction_Click(object sender, EventArgs e)
         {
-            string dir = string.Empty;
+            string path = string.Empty;
 
             if (CurrentMode == Mode.Merge)
             {
                 if (dlgMerge.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    dir = dlgMerge.FileName;
+                    path = dlgMerge.FileName;
                 }
                 else
                 {
@@ -325,7 +325,7 @@ namespace MDump
             {
                 if (dlgSplitSplit.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    dir = dlgSplitSplit.SelectedPath;
+                    path = dlgSplitSplit.SelectedPath;
                 }
                 else
                 {
@@ -339,7 +339,7 @@ namespace MDump
             {
                 bmpList.Add((Bitmap)lvi.Tag);
             }
-            new frmWait(CurrentMode, bmpList, opts, dir).ShowDialog();
+            new frmWait(CurrentMode, bmpList, opts, path).ShowDialog();
         }
 
         /// <summary>
@@ -383,10 +383,14 @@ namespace MDump
                         File.Delete(file);
                     }
                 }
+                else
+                {
+                    e.Cancel = false;
+                }
             }
             else
             {
-                e.Cancel = true;
+                e.Cancel = false;
             }
         }
 

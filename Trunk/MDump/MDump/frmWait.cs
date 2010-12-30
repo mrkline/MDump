@@ -17,16 +17,16 @@ namespace MDump
         private frmMain.Mode mode;
         private List<Bitmap> bmpList;
         private MDumpOptions opts;
-        private string dir;
+        private string path;
        
         public frmWait(frmMain.Mode mode, List<Bitmap> bmpList, MDumpOptions opts,
-            string dir)
+            string path)
         {
             InitializeComponent();
             this.mode = mode;
             this.bmpList = bmpList;
             this.opts = opts;
-            this.dir = dir;
+            this.path = path;
         }
 
         private void frmWait_Shown(object sender, EventArgs e)
@@ -35,7 +35,7 @@ namespace MDump
             {
                 Text = mergeTitle;
                 opts.SetBaseDirectory(bmpList);
-                ImageMerger.MergeImages(bmpList, opts, dir, MergeCallback);
+                ImageMerger.MergeImages(bmpList, opts, path, MergeCallback);
             }
             else
             {
