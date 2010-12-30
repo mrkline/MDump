@@ -91,6 +91,10 @@ namespace MDump
         /// </summary>
         public int MaxMergeSize { get; set; }
         /// <summary>
+        /// Gets or set the compression level used by libpng/zlib
+        /// </summary>
+        public int CompressionLevel { get; set; }
+        /// <summary>
         /// Gets or sets whether or not merges will add title bars to merged images
         /// </summary>
         public bool AddTitleBar { get; set; }
@@ -164,6 +168,8 @@ namespace MDump
             MergePathOpts = PathOptions.PreservePath; //Save file name while merging
             SplitPathOpts = PathOptions.PreserveName; //Respect file name when splitting
             MaxMergeSize = 2048 * 1024; //Default max merge size of 2 megabytes
+            CompressionLevel = 6;
+            AddTitleBar = true;
         }
 
         /// <summary>
@@ -176,11 +182,12 @@ namespace MDump
         /// <param name="maxMergeSz">Max size of merged images.</param>
         /// <param name="titleBar">true if title bar is added to merged images</param>
         public MDumpOptions(PathOptions mergePathOpts, PathOptions splitPathOpts,
-            int maxMergeSz, bool titleBar)
+            int maxMergeSz, int compLevel, bool titleBar)
         {        
             MergePathOpts = mergePathOpts;
             SplitPathOpts = splitPathOpts;
             MaxMergeSize = maxMergeSz;
+            CompressionLevel = compLevel;
             AddTitleBar = titleBar;
         }
 

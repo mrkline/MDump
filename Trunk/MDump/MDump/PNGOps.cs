@@ -114,8 +114,10 @@ namespace MDump
         public static extern ECode LoadMergedImage(string filename, out IntPtr bitmapOut,
             out int widthOut, out int heightOut, out IntPtr mdDataOut, out int mdDataLenOut);
 
+
         [DllImport(dllName)]
         public static extern ECode SavePNGToMemory(IntPtr bitmap, int width, int height,
-            bool flipRGB, byte[] mdData, int mdDataLen, out IntPtr memPngOut, out int memPngLenOut);
+            bool flipRGB, byte[] mdData, int mdDataLen, int compLevel,
+            out IntPtr memPngOut, out int memPngLenOut);
     }
 }

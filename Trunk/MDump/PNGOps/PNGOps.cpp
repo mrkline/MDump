@@ -219,7 +219,7 @@ extern "C"
 	}
 
 	__declspec(dllexport) ECode __cdecl SavePNGToMemory(png_bytep bitmap, int width, int height,
-		bool flipRGB, char* mdData, int mdDataLen, png_bytepp memPngOut, int* memPngLenOut)
+		bool flipRGB, char* mdData, int mdDataLen, int compLevel,  png_bytepp memPngOut, int* memPngLenOut)
 	{
 		//Set initial value of out arguments to null or 0, so if the function errors out, they have
 		//this value on exit
@@ -273,7 +273,7 @@ extern "C"
 				return EC_INIT_FAILURE;
 			}
 			//Use maximum compression level
-			png_set_compression_level(writeStruct, 9);
+			png_set_compression_level(writeStruct, compLevel);
 			//Set compression strategy
 			png_set_compression_strategy(writeStruct, Z_FILTERED);
 			//Use all filters

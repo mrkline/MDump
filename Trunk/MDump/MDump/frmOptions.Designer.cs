@@ -33,6 +33,7 @@
             this.btnCancelOptions = new System.Windows.Forms.Button();
             this.tabOptions = new System.Windows.Forms.TabControl();
             this.tbpMerging = new System.Windows.Forms.TabPage();
+            this.chkAddTitleBar = new System.Windows.Forms.CheckBox();
             this.lblKB = new System.Windows.Forms.Label();
             this.nudMaxMergeSize = new System.Windows.Forms.NumericUpDown();
             this.lblMaxMergeSize = new System.Windows.Forms.Label();
@@ -47,19 +48,22 @@
             this.radIgnore = new System.Windows.Forms.RadioButton();
             this.dlgFolderBrowse = new System.Windows.Forms.FolderBrowserDialog();
             this.btnDefaults = new System.Windows.Forms.Button();
-            this.chkAddTitleBar = new System.Windows.Forms.CheckBox();
+            this.trkCompression = new System.Windows.Forms.TrackBar();
+            this.lblLessComp = new System.Windows.Forms.Label();
+            this.lblMoreComp = new System.Windows.Forms.Label();
             this.tabOptions.SuspendLayout();
             this.tbpMerging.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxMergeSize)).BeginInit();
             this.grpImageNaming.SuspendLayout();
             this.tbpSplitting.SuspendLayout();
             this.grpSplitNames.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trkCompression)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSaveOptions
             // 
             this.btnSaveOptions.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnSaveOptions.Location = new System.Drawing.Point(51, 237);
+            this.btnSaveOptions.Location = new System.Drawing.Point(51, 292);
             this.btnSaveOptions.Name = "btnSaveOptions";
             this.btnSaveOptions.Size = new System.Drawing.Size(100, 23);
             this.btnSaveOptions.TabIndex = 1;
@@ -70,7 +74,7 @@
             // btnCancelOptions
             // 
             this.btnCancelOptions.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnCancelOptions.Location = new System.Drawing.Point(263, 237);
+            this.btnCancelOptions.Location = new System.Drawing.Point(263, 292);
             this.btnCancelOptions.Name = "btnCancelOptions";
             this.btnCancelOptions.Size = new System.Drawing.Size(100, 23);
             this.btnCancelOptions.TabIndex = 2;
@@ -88,11 +92,14 @@
             this.tabOptions.Location = new System.Drawing.Point(12, 12);
             this.tabOptions.Name = "tabOptions";
             this.tabOptions.SelectedIndex = 0;
-            this.tabOptions.Size = new System.Drawing.Size(390, 219);
+            this.tabOptions.Size = new System.Drawing.Size(390, 274);
             this.tabOptions.TabIndex = 5;
             // 
             // tbpMerging
             // 
+            this.tbpMerging.Controls.Add(this.lblMoreComp);
+            this.tbpMerging.Controls.Add(this.lblLessComp);
+            this.tbpMerging.Controls.Add(this.trkCompression);
             this.tbpMerging.Controls.Add(this.chkAddTitleBar);
             this.tbpMerging.Controls.Add(this.lblKB);
             this.tbpMerging.Controls.Add(this.nudMaxMergeSize);
@@ -101,15 +108,25 @@
             this.tbpMerging.Location = new System.Drawing.Point(4, 22);
             this.tbpMerging.Name = "tbpMerging";
             this.tbpMerging.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpMerging.Size = new System.Drawing.Size(382, 193);
+            this.tbpMerging.Size = new System.Drawing.Size(382, 248);
             this.tbpMerging.TabIndex = 0;
             this.tbpMerging.Text = "Merging Options";
             this.tbpMerging.UseVisualStyleBackColor = true;
             // 
+            // chkAddTitleBar
+            // 
+            this.chkAddTitleBar.AutoSize = true;
+            this.chkAddTitleBar.Location = new System.Drawing.Point(9, 211);
+            this.chkAddTitleBar.Name = "chkAddTitleBar";
+            this.chkAddTitleBar.Size = new System.Drawing.Size(274, 17);
+            this.chkAddTitleBar.TabIndex = 17;
+            this.chkAddTitleBar.Text = "Add \"Created with MDump\" image to merged images";
+            this.chkAddTitleBar.UseVisualStyleBackColor = true;
+            // 
             // lblKB
             // 
             this.lblKB.AutoSize = true;
-            this.lblKB.Location = new System.Drawing.Point(138, 132);
+            this.lblKB.Location = new System.Drawing.Point(135, 178);
             this.lblKB.Name = "lblKB";
             this.lblKB.Size = new System.Drawing.Size(72, 13);
             this.lblKB.TabIndex = 16;
@@ -117,7 +134,7 @@
             // 
             // nudMaxMergeSize
             // 
-            this.nudMaxMergeSize.Location = new System.Drawing.Point(12, 130);
+            this.nudMaxMergeSize.Location = new System.Drawing.Point(9, 176);
             this.nudMaxMergeSize.Maximum = new decimal(new int[] {
             1048576,
             0,
@@ -140,7 +157,7 @@
             // lblMaxMergeSize
             // 
             this.lblMaxMergeSize.AutoSize = true;
-            this.lblMaxMergeSize.Location = new System.Drawing.Point(6, 114);
+            this.lblMaxMergeSize.Location = new System.Drawing.Point(3, 160);
             this.lblMaxMergeSize.Name = "lblMaxMergeSize";
             this.lblMaxMergeSize.Size = new System.Drawing.Size(320, 13);
             this.lblMaxMergeSize.TabIndex = 14;
@@ -197,7 +214,7 @@
             this.tbpSplitting.Location = new System.Drawing.Point(4, 22);
             this.tbpSplitting.Name = "tbpSplitting";
             this.tbpSplitting.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpSplitting.Size = new System.Drawing.Size(382, 278);
+            this.tbpSplitting.Size = new System.Drawing.Size(382, 193);
             this.tbpSplitting.TabIndex = 1;
             this.tbpSplitting.Text = "Spliting Options";
             this.tbpSplitting.UseVisualStyleBackColor = true;
@@ -254,7 +271,7 @@
             // btnDefaults
             // 
             this.btnDefaults.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnDefaults.Location = new System.Drawing.Point(157, 237);
+            this.btnDefaults.Location = new System.Drawing.Point(157, 292);
             this.btnDefaults.Name = "btnDefaults";
             this.btnDefaults.Size = new System.Drawing.Size(100, 23);
             this.btnDefaults.TabIndex = 6;
@@ -262,21 +279,42 @@
             this.btnDefaults.UseVisualStyleBackColor = true;
             this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
             // 
-            // chkAddTitleBar
+            // trkCompression
             // 
-            this.chkAddTitleBar.AutoSize = true;
-            this.chkAddTitleBar.Location = new System.Drawing.Point(12, 165);
-            this.chkAddTitleBar.Name = "chkAddTitleBar";
-            this.chkAddTitleBar.Size = new System.Drawing.Size(274, 17);
-            this.chkAddTitleBar.TabIndex = 17;
-            this.chkAddTitleBar.Text = "Add \"Created with MDump\" image to merged images";
-            this.chkAddTitleBar.UseVisualStyleBackColor = true;
+            this.trkCompression.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.trkCompression.LargeChange = 1;
+            this.trkCompression.Location = new System.Drawing.Point(120, 105);
+            this.trkCompression.Maximum = 6;
+            this.trkCompression.Name = "trkCompression";
+            this.trkCompression.Size = new System.Drawing.Size(104, 45);
+            this.trkCompression.TabIndex = 18;
+            this.trkCompression.Value = 3;
+            // 
+            // lblLessComp
+            // 
+            this.lblLessComp.AutoSize = true;
+            this.lblLessComp.Location = new System.Drawing.Point(26, 110);
+            this.lblLessComp.Name = "lblLessComp";
+            this.lblLessComp.Size = new System.Drawing.Size(59, 26);
+            this.lblLessComp.TabIndex = 19;
+            this.lblLessComp.Text = "Less Comp\r\n(temp)";
+            this.lblLessComp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblMoreComp
+            // 
+            this.lblMoreComp.AutoSize = true;
+            this.lblMoreComp.Location = new System.Drawing.Point(282, 107);
+            this.lblMoreComp.Name = "lblMoreComp";
+            this.lblMoreComp.Size = new System.Drawing.Size(61, 26);
+            this.lblMoreComp.TabIndex = 20;
+            this.lblMoreComp.Text = "More Comp\r\n(temp)";
+            this.lblMoreComp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // frmOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(414, 272);
+            this.ClientSize = new System.Drawing.Size(414, 327);
             this.Controls.Add(this.btnDefaults);
             this.Controls.Add(this.tabOptions);
             this.Controls.Add(this.btnCancelOptions);
@@ -296,6 +334,7 @@
             this.tbpSplitting.ResumeLayout(false);
             this.grpSplitNames.ResumeLayout(false);
             this.grpSplitNames.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trkCompression)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -321,6 +360,9 @@
         private System.Windows.Forms.FolderBrowserDialog dlgFolderBrowse;
         private System.Windows.Forms.Button btnDefaults;
         private System.Windows.Forms.CheckBox chkAddTitleBar;
+        private System.Windows.Forms.Label lblMoreComp;
+        private System.Windows.Forms.Label lblLessComp;
+        private System.Windows.Forms.TrackBar trkCompression;
 
     }
 }

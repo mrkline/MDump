@@ -298,8 +298,8 @@ namespace MDump
                 ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
             
-            ECode ret = PNGOps.SavePNGToMemory(bmpData.Scan0, bmpData.Width, bmpData.Height, true, mdData, mdData.Length,
-                out memImgOut, out imgSizeOut);
+            ECode ret = PNGOps.SavePNGToMemory(bmpData.Scan0, bmpData.Width, bmpData.Height, true,
+                mdData, mdData.Length, opts.CompressionLevel, out memImgOut, out imgSizeOut);
             merged.UnlockBits(bmpData);
             return ret;
         }

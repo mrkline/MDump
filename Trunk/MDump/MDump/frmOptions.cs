@@ -19,6 +19,9 @@ namespace MDump
         private const string invalidMessage = " is not an existing directory.";
         private static readonly Color invalidColor = Color.Red;
 
+        private const int kBytesPerKB = 1024;
+        private const int kSliderOffset = 3;
+
         /// <summary>
         /// Construct the form using default options
         /// </summary>
@@ -56,7 +59,8 @@ namespace MDump
                     radDiscardFilenames.Checked = true;
                     break;
             }
-            nudMaxMergeSize.Value = Convert.ToDecimal(opts.MaxMergeSize / 1024);
+            trkCompression.Value = opts.CompressionLevel - kSliderOffset;
+            nudMaxMergeSize.Value = Convert.ToDecimal(opts.MaxMergeSize / kBytesPerKB);
             chkAddTitleBar.Checked = opts.AddTitleBar;
             switch (opts.SplitPathOpts)
             {
@@ -105,7 +109,8 @@ namespace MDump
             {
                 opts.SplitPathOpts = MDumpOptions.PathOptions.Discard;
             }
-            opts.MaxMergeSize = Convert.ToInt32(nudMaxMergeSize.Value) * 1024;
+            opts.CompressionLevel = trkCompression.Value + kSliderOffset;
+            opts.MaxMergeSize = Convert.ToInt32(nudMaxMergeSize.Value) * kBytesPerKB;
             opts.AddTitleBar = chkAddTitleBar.Checked;
             return opts;
         }
