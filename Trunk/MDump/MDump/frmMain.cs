@@ -312,9 +312,10 @@ namespace MDump
 
             if (CurrentMode == Mode.Merge)
             {
+                dlgMerge.FileName = String.Empty;
                 if (dlgMerge.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    path = dlgMerge.FileName;
+                    path = dlgMerge.FileName.Replace(".png", String.Empty);
                 }
                 else
                 {
@@ -361,7 +362,8 @@ namespace MDump
             foreach (string file in dirFiles)
             {
                 //The name format of merges is name.num.png
-                string[] tokens = Path.GetFileName(file).Split(new char['.'], StringSplitOptions.RemoveEmptyEntries);
+                string test = Path.GetFileName(file);
+                string[] tokens = Path.GetFileName(file).Split('.');
                 if(tokens.Length == 3
                     && tokens[0].Equals(name, StringComparison.InvariantCultureIgnoreCase)
                     && IsInt(tokens[1])

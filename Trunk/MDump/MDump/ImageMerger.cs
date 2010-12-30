@@ -77,6 +77,7 @@ namespace MDump
         /// Bytes per pixel, assuming 32-bit RGBA format
         /// </summary>
         private const int kBytesPerPix = 4;
+        private const float kCompressedBytesPerPix = 1.0f;
 
         /// <summary>
         /// Tests if the provided file is an MDump merged image
@@ -136,6 +137,9 @@ namespace MDump
                     List<Bitmap> currMergeSet = new List<Bitmap>();
                     int currentMergeSize, lastMergeSize = 0;
 
+                    //Filename of the current merge image
+                    string filename = mergePath + "." + mergesSaved.Count + ".png";
+
                     //Start by determining the number of images that can be into one merge.
                     //A good starting guess is based on the uncompressed size of the images
                     currMergeSet = EstimateMerge(bitmaps, imagesMerged, maxMergeSize);
@@ -162,10 +166,11 @@ namespace MDump
                             else if (lastMergeMem != IntPtr.Zero && lastMergeSize <= maxMergeSize)
                             {
                                 callback(MergeCallbackStage.Saving);
-                                string filename = mergePath + "." + mergesSaved.Count + ".png";
                                 SavePNG(lastMergeMem, lastMergeSize, filename);
                                 mergesSaved.Add(filename);
-                                imagesMerged += currMergeSet.Count;
+                                //We've saved the current set count - 1 since we're using the last
+                                //merge
+                                imagesMerged += currMergeSet.Count - 1;
                                 break;
                             }
                             //Otherwise decrease the current merge set
@@ -181,9 +186,8 @@ namespace MDump
                             if (imagesMerged + currMergeSet.Count == bitmaps.Count
                                 || lastMergeMem != IntPtr.Zero && lastMergeSize > maxMergeSize)
                             {
-                                callback(MergeCallbackStage.Saving);
-                                string filename = mergePath + "." + mergesSaved.Count + ".png";
-                                SavePNG(lastMergeMem, lastMergeSize, filename);
+                                callback(MergeCallbackStage.Saving);                                
+                                SavePNG(currentMergeMem, currentMergeSize, filename);
                                 mergesSaved.Add(filename);
                                 imagesMerged += currMergeSet.Count;
                                 break;
@@ -198,8 +202,7 @@ namespace MDump
                         else
                         {
                             callback(MergeCallbackStage.Saving);
-                            string filename = mergePath + "." + mergesSaved.Count + ".png";
-                            SavePNG(lastMergeMem, lastMergeSize, filename);
+                            SavePNG(currentMergeMem, currentMergeSize, filename);
                             mergesSaved.Add(filename);
                             imagesMerged += currMergeSet.Count;
                             break;
@@ -250,7 +253,7 @@ namespace MDump
             {
                 Bitmap toAdd = all[mergedSoFar + ret.Count];
                 ret.Add(toAdd);
-                estMergeSize += BmpSize(toAdd);
+                estMergeSize += GestEstimatedCompressedSize(toAdd);
             }
             return ret;
         }
@@ -260,9 +263,9 @@ namespace MDump
         /// </summary>
         /// <param name="bmp">Bitmap to get the size of</param>
         /// <returns>size of the bitmap in bytes, assuming 32-bits per pixel</returns>
-        private  static int BmpSize(Bitmap bmp)
+        private  static int GestEstimatedCompressedSize(Bitmap bmp)
         {
-            return bmp.Width * bmp.Height * kBytesPerPix;
+            return (int)((float)bmp.Width * (float)bmp.Height * kCompressedBytesPerPix);
         }
 
         /// <summary>
