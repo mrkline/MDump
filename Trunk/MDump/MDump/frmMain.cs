@@ -411,5 +411,10 @@ namespace MDump
                 return false;
             }
         }
+
+        private void btnHowWork_Click(object sender, EventArgs e)
+        {
+            new frmHowItWorks().ShowDialog();
+        }
     }
 }

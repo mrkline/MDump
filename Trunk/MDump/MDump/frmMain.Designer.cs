@@ -39,6 +39,7 @@
             this.dlgOpenImg = new System.Windows.Forms.OpenFileDialog();
             this.dlgSplitSplit = new System.Windows.Forms.FolderBrowserDialog();
             this.dlgMerge = new System.Windows.Forms.SaveFileDialog();
+            this.btnHowWork = new System.Windows.Forms.Button();
             this.btnInfo = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnDown = new System.Windows.Forms.Button();
@@ -122,6 +123,17 @@
             this.dlgMerge.OverwritePrompt = false;
             this.dlgMerge.FileOk += new System.ComponentModel.CancelEventHandler(this.dlgMerge_FileOk);
             // 
+            // btnHowWork
+            // 
+            this.btnHowWork.Location = new System.Drawing.Point(245, 284);
+            this.btnHowWork.Name = "btnHowWork";
+            this.btnHowWork.Size = new System.Drawing.Size(110, 30);
+            this.btnHowWork.TabIndex = 9;
+            this.btnHowWork.Text = "How does it work?";
+            this.ttpMain.SetToolTip(this.btnHowWork, "Click to learn how MDump works");
+            this.btnHowWork.UseVisualStyleBackColor = true;
+            this.btnHowWork.Click += new System.EventHandler(this.btnHowWork_Click);
+            // 
             // btnInfo
             // 
             this.btnInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -179,6 +191,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(484, 362);
+            this.Controls.Add(this.btnHowWork);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.btnInfo);
             this.Controls.Add(this.btnAction);
@@ -210,6 +223,7 @@
         private System.Windows.Forms.OpenFileDialog dlgOpenImg;
         private System.Windows.Forms.FolderBrowserDialog dlgSplitSplit;
         private System.Windows.Forms.SaveFileDialog dlgMerge;
+        private System.Windows.Forms.Button btnHowWork;
 
     }
 }
