@@ -29,6 +29,26 @@ namespace MDump
         private const string unexpecError = "An unexpected error occurred while merging.";
 
         /// <summary>
+        /// Amount of horizontal padding to use for title bar
+        /// </summary>
+        private const int kTitleBarPaddingX = 1;
+        /// <summary>
+        /// Amount of vertical padding to use for title bar
+        /// </summary>
+        private const int kTitleBarPaddingY = 2;
+
+        /// <summary>
+        /// Bytes per pixel, assuming 32-bit RGBA format
+        /// </summary>
+        private const int kBytesPerPix = 4;
+        /// <summary>
+        /// Approximation of the number of bytes per pixel, once compressed.
+        /// Used for guessing output size before an image is actually run through libpng
+        /// TODO: Make dyanamic based on compression level?
+        /// </summary>
+        private const float kCompressedBytesPerPix = 1.0f;
+
+        /// <summary>
         /// Used to pass argumnents to the merge thread
         /// </summary>
         private class MergeThreadArgs
@@ -72,12 +92,6 @@ namespace MDump
         /// </summary>
         /// <param name="currStage">current stage in the merge process</param>
         public delegate void MergeCallback(MergeCallbackStage currStage);
-
-        /// <summary>
-        /// Bytes per pixel, assuming 32-bit RGBA format
-        /// </summary>
-        private const int kBytesPerPix = 4;
-        private const float kCompressedBytesPerPix = 1.0f;
 
         /// <summary>
         /// Tests if the provided file is an MDump merged image
@@ -292,6 +306,43 @@ namespace MDump
             Byte[] mdData;
             Bitmap merged = BTBitmapMapper.MergeImages(bitmaps, new Size(maxWidth, maxHeight),
                 PixelFormat.Format32bppArgb, opts, out mdData);
+
+            if (opts.AddTitleBar)
+            {
+                Bitmap titleBar;
+                int mWidth = merged.Width;
+                if (mWidth > MDump.Properties.Resources.TitleBar.Width + kTitleBarPaddingX + 1)
+                {
+                    titleBar = MDump.Properties.Resources.TitleBar;
+                }
+                else if (mWidth > MDump.Properties.Resources.TitleBarSm.Width + kTitleBarPaddingX + 1)
+                {
+                    titleBar = MDump.Properties.Resources.TitleBarSm;
+                }
+                else
+                {
+                    titleBar = MDump.Properties.Resources.TitleBarMin;
+                }
+                
+                int titleY = merged.Height + 1;
+                int titleHeight = titleBar.Height + 2 * kTitleBarPaddingY;
+
+                Bitmap mergedWithTitle = new Bitmap(merged.Width,
+                    merged.Height + titleHeight);
+
+                using (Graphics g = Graphics.FromImage(mergedWithTitle))
+                {
+                    g.DrawImageUnscaled(merged, 0, 0);
+                    g.DrawImageUnscaled(titleBar, 1, titleY);
+
+                    //Uncomment to add a background to the bar
+                    //Brush rectBrush = new SolidBrush(Color.Red);
+                    //g.FillRectangle(rectBrush, 0, titleY, merged.Width, titleHeight);
+                    g.DrawImageUnscaled(titleBar, kTitleBarPaddingX, titleY + kTitleBarPaddingY);
+                }
+                
+                merged = mergedWithTitle;
+            }
 
 
             BitmapData bmpData = merged.LockBits(new Rectangle(0, 0, merged.Width, merged.Height),

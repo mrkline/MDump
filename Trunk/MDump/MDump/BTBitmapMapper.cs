@@ -197,8 +197,7 @@ namespace MDump
                     {
                         if (data.Bmp != null)
                         {
-                            g.DrawImage(data.Bmp, data.Rect.X, data.Rect.Y,
-                                data.Bmp.Width, data.Bmp.Height);
+                            g.DrawImageUnscaled(data.Bmp, data.Rect.X, data.Rect.Y);
 
                             //Calculate filename to write and write it
                             bw.Write(encoder.GetBytes(opts.FormatPathForMerge((string)data.Bmp.Tag)));

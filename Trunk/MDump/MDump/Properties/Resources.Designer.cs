@@ -88,6 +88,27 @@ namespace MDump.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap TitleBar {
+            get {
+                object obj = ResourceManager.GetObject("TitleBar", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap TitleBarMin {
+            get {
+                object obj = ResourceManager.GetObject("TitleBarMin", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap TitleBarSm {
+            get {
+                object obj = ResourceManager.GetObject("TitleBarSm", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap UpArrowIcon {
             get {
                 object obj = ResourceManager.GetObject("UpArrowIcon", resourceCulture);
