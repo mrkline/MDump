@@ -67,13 +67,34 @@ namespace MDump
         /// Keeps the user updated to the actions of the worker thread
         /// </summary>
         /// <param name="currStage">Current stage in the merge process</param>
-        private void MergeCallback(ImageMerger.MergeCallbackStage currStage)
+        /// <param name="info">Additional stage-specific info</param>
+        private void MergeCallback(ImageMerger.MergeCallbackStage currStage, object info)
         {
             switch (currStage)
             {
                 case ImageMerger.MergeCallbackStage.DeterminingNumPerMerge:
+                    ImageMerger.LastAttemptInfo lastInfo = (ImageMerger.LastAttemptInfo)info;
+                    string msg = "Determining number of images we can fit in one merged image...\n";
+                    switch (lastInfo)
+                    {
+                        case ImageMerger.LastAttemptInfo.TooLarge:
+                            msg += "The last attempt created a PNG too large for the maximum size set in the options.\n"
+                                + "Now trying with fewer images";
+                            break;
+
+                        case ImageMerger.LastAttemptInfo.TooSmall:
+                            msg += "The last attempt created a PNG too large for the maximum size set in the options.\n"
+                                + "Now trying with more images";
+                            break;
+                    }
                     Invoke(new SetTextCallback(SetLabelText),
-                        new object[] { "Determining number of images we can fit in one merged image..." });
+                        new object[] { msg });
+                    break;
+
+                case ImageMerger.MergeCallbackStage.Saving:
+                    Invoke(new SetTextCallback(SetLabelText),
+                        new object[] { "Determined the most images that can be fit in this merged image.\n"
+                            + "Now saving " + (string)info });
                     break;
 
                 case ImageMerger.MergeCallbackStage.Done:
