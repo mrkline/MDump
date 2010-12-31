@@ -74,6 +74,13 @@ namespace MDump.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap QuestionIcon {
+            get {
+                object obj = ResourceManager.GetObject("QuestionIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Sidebar {
             get {
                 object obj = ResourceManager.GetObject("Sidebar", resourceCulture);

@@ -136,5 +136,9 @@ namespace MDump
                 Setup(new MDumpOptions());
             }
         }
+
+        private void ttpExplanations_Popup(object sender, PopupEventArgs e)
+        {
+        }
     }
 }

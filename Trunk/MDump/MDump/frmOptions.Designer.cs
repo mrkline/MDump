@@ -28,11 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmOptions));
             this.btnSaveOptions = new System.Windows.Forms.Button();
             this.btnCancelOptions = new System.Windows.Forms.Button();
             this.tabOptions = new System.Windows.Forms.TabControl();
             this.tbpMerging = new System.Windows.Forms.TabPage();
+            this.picExplainCompression = new System.Windows.Forms.PictureBox();
+            this.lblCompression = new System.Windows.Forms.Label();
+            this.lblMoreComp = new System.Windows.Forms.Label();
+            this.lblLessComp = new System.Windows.Forms.Label();
+            this.trkCompression = new System.Windows.Forms.TrackBar();
             this.chkAddTitleBar = new System.Windows.Forms.CheckBox();
             this.lblKB = new System.Windows.Forms.Label();
             this.nudMaxMergeSize = new System.Windows.Forms.NumericUpDown();
@@ -48,22 +54,25 @@
             this.radIgnore = new System.Windows.Forms.RadioButton();
             this.dlgFolderBrowse = new System.Windows.Forms.FolderBrowserDialog();
             this.btnDefaults = new System.Windows.Forms.Button();
-            this.trkCompression = new System.Windows.Forms.TrackBar();
-            this.lblLessComp = new System.Windows.Forms.Label();
-            this.lblMoreComp = new System.Windows.Forms.Label();
+            this.ttpExplanations = new System.Windows.Forms.ToolTip(this.components);
+            this.picExplainMaxSize = new System.Windows.Forms.PictureBox();
+            this.picExplainAddTitleBar = new System.Windows.Forms.PictureBox();
             this.tabOptions.SuspendLayout();
             this.tbpMerging.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainCompression)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trkCompression)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxMergeSize)).BeginInit();
             this.grpImageNaming.SuspendLayout();
             this.tbpSplitting.SuspendLayout();
             this.grpSplitNames.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trkCompression)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainMaxSize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainAddTitleBar)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSaveOptions
             // 
             this.btnSaveOptions.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnSaveOptions.Location = new System.Drawing.Point(51, 292);
+            this.btnSaveOptions.Location = new System.Drawing.Point(51, 308);
             this.btnSaveOptions.Name = "btnSaveOptions";
             this.btnSaveOptions.Size = new System.Drawing.Size(100, 23);
             this.btnSaveOptions.TabIndex = 1;
@@ -74,7 +83,7 @@
             // btnCancelOptions
             // 
             this.btnCancelOptions.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnCancelOptions.Location = new System.Drawing.Point(263, 292);
+            this.btnCancelOptions.Location = new System.Drawing.Point(263, 308);
             this.btnCancelOptions.Name = "btnCancelOptions";
             this.btnCancelOptions.Size = new System.Drawing.Size(100, 23);
             this.btnCancelOptions.TabIndex = 2;
@@ -92,11 +101,15 @@
             this.tabOptions.Location = new System.Drawing.Point(12, 12);
             this.tabOptions.Name = "tabOptions";
             this.tabOptions.SelectedIndex = 0;
-            this.tabOptions.Size = new System.Drawing.Size(390, 274);
+            this.tabOptions.Size = new System.Drawing.Size(390, 290);
             this.tabOptions.TabIndex = 5;
             // 
             // tbpMerging
             // 
+            this.tbpMerging.Controls.Add(this.picExplainAddTitleBar);
+            this.tbpMerging.Controls.Add(this.picExplainMaxSize);
+            this.tbpMerging.Controls.Add(this.picExplainCompression);
+            this.tbpMerging.Controls.Add(this.lblCompression);
             this.tbpMerging.Controls.Add(this.lblMoreComp);
             this.tbpMerging.Controls.Add(this.lblLessComp);
             this.tbpMerging.Controls.Add(this.trkCompression);
@@ -108,25 +121,76 @@
             this.tbpMerging.Location = new System.Drawing.Point(4, 22);
             this.tbpMerging.Name = "tbpMerging";
             this.tbpMerging.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpMerging.Size = new System.Drawing.Size(382, 248);
+            this.tbpMerging.Size = new System.Drawing.Size(382, 264);
             this.tbpMerging.TabIndex = 0;
             this.tbpMerging.Text = "Merging Options";
             this.tbpMerging.UseVisualStyleBackColor = true;
             // 
+            // picExplainCompression
+            // 
+            this.picExplainCompression.Image = global::MDump.Properties.Resources.QuestionIcon;
+            this.picExplainCompression.Location = new System.Drawing.Point(108, 107);
+            this.picExplainCompression.Name = "picExplainCompression";
+            this.picExplainCompression.Size = new System.Drawing.Size(20, 20);
+            this.picExplainCompression.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picExplainCompression.TabIndex = 22;
+            this.picExplainCompression.TabStop = false;
+            this.ttpExplanations.SetToolTip(this.picExplainCompression, resources.GetString("picExplainCompression.ToolTip"));
+            // 
+            // lblCompression
+            // 
+            this.lblCompression.AutoSize = true;
+            this.lblCompression.Location = new System.Drawing.Point(3, 111);
+            this.lblCompression.Name = "lblCompression";
+            this.lblCompression.Size = new System.Drawing.Size(99, 13);
+            this.lblCompression.TabIndex = 21;
+            this.lblCompression.Text = "Compression Level:";
+            // 
+            // lblMoreComp
+            // 
+            this.lblMoreComp.AutoSize = true;
+            this.lblMoreComp.Location = new System.Drawing.Point(229, 133);
+            this.lblMoreComp.Name = "lblMoreComp";
+            this.lblMoreComp.Size = new System.Drawing.Size(112, 39);
+            this.lblMoreComp.TabIndex = 20;
+            this.lblMoreComp.Text = "More Compression\r\nSlower\r\nFewer Merged Images";
+            this.lblMoreComp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblLessComp
+            // 
+            this.lblLessComp.AutoSize = true;
+            this.lblLessComp.Location = new System.Drawing.Point(6, 133);
+            this.lblLessComp.Name = "lblLessComp";
+            this.lblLessComp.Size = new System.Drawing.Size(107, 39);
+            this.lblLessComp.TabIndex = 19;
+            this.lblLessComp.Text = "Less Compression\r\nFaster\r\nMore Merged Images";
+            this.lblLessComp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // trkCompression
+            // 
+            this.trkCompression.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.trkCompression.LargeChange = 1;
+            this.trkCompression.Location = new System.Drawing.Point(119, 130);
+            this.trkCompression.Maximum = 6;
+            this.trkCompression.Name = "trkCompression";
+            this.trkCompression.Size = new System.Drawing.Size(104, 45);
+            this.trkCompression.TabIndex = 18;
+            this.trkCompression.Value = 3;
+            // 
             // chkAddTitleBar
             // 
             this.chkAddTitleBar.AutoSize = true;
-            this.chkAddTitleBar.Location = new System.Drawing.Point(9, 211);
+            this.chkAddTitleBar.Location = new System.Drawing.Point(12, 241);
             this.chkAddTitleBar.Name = "chkAddTitleBar";
-            this.chkAddTitleBar.Size = new System.Drawing.Size(274, 17);
+            this.chkAddTitleBar.Size = new System.Drawing.Size(261, 17);
             this.chkAddTitleBar.TabIndex = 17;
-            this.chkAddTitleBar.Text = "Add \"Created with MDump\" image to merged images";
+            this.chkAddTitleBar.Text = "Add \"Created with MDump\" bar to merged images";
             this.chkAddTitleBar.UseVisualStyleBackColor = true;
             // 
             // lblKB
             // 
             this.lblKB.AutoSize = true;
-            this.lblKB.Location = new System.Drawing.Point(135, 178);
+            this.lblKB.Location = new System.Drawing.Point(138, 208);
             this.lblKB.Name = "lblKB";
             this.lblKB.Size = new System.Drawing.Size(72, 13);
             this.lblKB.TabIndex = 16;
@@ -134,7 +198,7 @@
             // 
             // nudMaxMergeSize
             // 
-            this.nudMaxMergeSize.Location = new System.Drawing.Point(9, 176);
+            this.nudMaxMergeSize.Location = new System.Drawing.Point(12, 206);
             this.nudMaxMergeSize.Maximum = new decimal(new int[] {
             1048576,
             0,
@@ -157,11 +221,11 @@
             // lblMaxMergeSize
             // 
             this.lblMaxMergeSize.AutoSize = true;
-            this.lblMaxMergeSize.Location = new System.Drawing.Point(3, 160);
+            this.lblMaxMergeSize.Location = new System.Drawing.Point(6, 190);
             this.lblMaxMergeSize.Name = "lblMaxMergeSize";
-            this.lblMaxMergeSize.Size = new System.Drawing.Size(320, 13);
+            this.lblMaxMergeSize.Size = new System.Drawing.Size(340, 13);
             this.lblMaxMergeSize.TabIndex = 14;
-            this.lblMaxMergeSize.Text = "Maximum Size of merged images (max upload size of image board):";
+            this.lblMaxMergeSize.Text = "Maximum size of each merged image (max upload size of image board):";
             // 
             // grpImageNaming
             // 
@@ -214,7 +278,7 @@
             this.tbpSplitting.Location = new System.Drawing.Point(4, 22);
             this.tbpSplitting.Name = "tbpSplitting";
             this.tbpSplitting.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpSplitting.Size = new System.Drawing.Size(382, 193);
+            this.tbpSplitting.Size = new System.Drawing.Size(382, 264);
             this.tbpSplitting.TabIndex = 1;
             this.tbpSplitting.Text = "Spliting Options";
             this.tbpSplitting.UseVisualStyleBackColor = true;
@@ -229,7 +293,7 @@
             this.grpSplitNames.Size = new System.Drawing.Size(370, 89);
             this.grpSplitNames.TabIndex = 1;
             this.grpSplitNames.TabStop = false;
-            this.grpSplitNames.Text = "If merged images come with file names:";
+            this.grpSplitNames.Text = "If merged images come with file name or folder info:";
             // 
             // radUseFilename
             // 
@@ -271,7 +335,7 @@
             // btnDefaults
             // 
             this.btnDefaults.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnDefaults.Location = new System.Drawing.Point(157, 292);
+            this.btnDefaults.Location = new System.Drawing.Point(157, 308);
             this.btnDefaults.Name = "btnDefaults";
             this.btnDefaults.Size = new System.Drawing.Size(100, 23);
             this.btnDefaults.TabIndex = 6;
@@ -279,42 +343,44 @@
             this.btnDefaults.UseVisualStyleBackColor = true;
             this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
             // 
-            // trkCompression
+            // ttpExplanations
             // 
-            this.trkCompression.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.trkCompression.LargeChange = 1;
-            this.trkCompression.Location = new System.Drawing.Point(120, 105);
-            this.trkCompression.Maximum = 6;
-            this.trkCompression.Name = "trkCompression";
-            this.trkCompression.Size = new System.Drawing.Size(104, 45);
-            this.trkCompression.TabIndex = 18;
-            this.trkCompression.Value = 3;
+            this.ttpExplanations.AutomaticDelay = 0;
+            this.ttpExplanations.AutoPopDelay = 600000;
+            this.ttpExplanations.InitialDelay = 500;
+            this.ttpExplanations.ReshowDelay = 100;
+            this.ttpExplanations.Popup += new System.Windows.Forms.PopupEventHandler(this.ttpExplanations_Popup);
             // 
-            // lblLessComp
+            // picExplainMaxSize
             // 
-            this.lblLessComp.AutoSize = true;
-            this.lblLessComp.Location = new System.Drawing.Point(26, 110);
-            this.lblLessComp.Name = "lblLessComp";
-            this.lblLessComp.Size = new System.Drawing.Size(59, 26);
-            this.lblLessComp.TabIndex = 19;
-            this.lblLessComp.Text = "Less Comp\r\n(temp)";
-            this.lblLessComp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.picExplainMaxSize.Image = global::MDump.Properties.Resources.QuestionIcon;
+            this.picExplainMaxSize.Location = new System.Drawing.Point(216, 206);
+            this.picExplainMaxSize.Name = "picExplainMaxSize";
+            this.picExplainMaxSize.Size = new System.Drawing.Size(20, 20);
+            this.picExplainMaxSize.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picExplainMaxSize.TabIndex = 23;
+            this.picExplainMaxSize.TabStop = false;
+            this.ttpExplanations.SetToolTip(this.picExplainMaxSize, "Most image boards have a maximum allowed size per picture.\r\nSet this value to tha" +
+                    "t maximum size.\r\n\r\nThe default value is 2048 KB, the 4chan max size.\r\nThe max va" +
+                    "lue is 2 GB.");
             // 
-            // lblMoreComp
+            // picExplainAddTitleBar
             // 
-            this.lblMoreComp.AutoSize = true;
-            this.lblMoreComp.Location = new System.Drawing.Point(282, 107);
-            this.lblMoreComp.Name = "lblMoreComp";
-            this.lblMoreComp.Size = new System.Drawing.Size(61, 26);
-            this.lblMoreComp.TabIndex = 20;
-            this.lblMoreComp.Text = "More Comp\r\n(temp)";
-            this.lblMoreComp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.picExplainAddTitleBar.Image = global::MDump.Properties.Resources.QuestionIcon;
+            this.picExplainAddTitleBar.Location = new System.Drawing.Point(279, 239);
+            this.picExplainAddTitleBar.Name = "picExplainAddTitleBar";
+            this.picExplainAddTitleBar.Size = new System.Drawing.Size(20, 20);
+            this.picExplainAddTitleBar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picExplainAddTitleBar.TabIndex = 24;
+            this.picExplainAddTitleBar.TabStop = false;
+            this.ttpExplanations.SetToolTip(this.picExplainAddTitleBar, "Adding a title bar to the merged images\r\nwill make it easier for people to recogn" +
+                    "ize\r\nthem as MDump ones so they know\r\nto use the program to split them back up.");
             // 
             // frmOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(414, 327);
+            this.ClientSize = new System.Drawing.Size(414, 343);
             this.Controls.Add(this.btnDefaults);
             this.Controls.Add(this.tabOptions);
             this.Controls.Add(this.btnCancelOptions);
@@ -328,13 +394,16 @@
             this.tabOptions.ResumeLayout(false);
             this.tbpMerging.ResumeLayout(false);
             this.tbpMerging.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainCompression)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trkCompression)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxMergeSize)).EndInit();
             this.grpImageNaming.ResumeLayout(false);
             this.grpImageNaming.PerformLayout();
             this.tbpSplitting.ResumeLayout(false);
             this.grpSplitNames.ResumeLayout(false);
             this.grpSplitNames.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trkCompression)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainMaxSize)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainAddTitleBar)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -363,6 +432,11 @@
         private System.Windows.Forms.Label lblMoreComp;
         private System.Windows.Forms.Label lblLessComp;
         private System.Windows.Forms.TrackBar trkCompression;
+        private System.Windows.Forms.Label lblCompression;
+        private System.Windows.Forms.PictureBox picExplainCompression;
+        private System.Windows.Forms.ToolTip ttpExplanations;
+        private System.Windows.Forms.PictureBox picExplainAddTitleBar;
+        private System.Windows.Forms.PictureBox picExplainMaxSize;
 
     }
 }
