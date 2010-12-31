@@ -230,6 +230,7 @@ namespace MDump
                 MDumpOptions other = (MDumpOptions)obj;
                 return MergePathOpts == other.MergePathOpts
                     && SplitPathOpts == other.SplitPathOpts
+                    && CompressionLevel == other.CompressionLevel
                     && MaxMergeSize == other.MaxMergeSize
                     && AddTitleBar == other.AddTitleBar;
             }
@@ -245,7 +246,9 @@ namespace MDump
         {
             int hash = (int)MergePathOpts;
             hash += (int)SplitPathOpts << 2;
+            //Not guaranteed to be unique.  TODO: Fix
             hash += Convert.ToInt32(MaxMergeSize);
+            hash += Convert.ToInt32(CompressionLevel);
             hash += Convert.ToInt32(AddTitleBar);
             return hash;
         }
