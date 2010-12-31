@@ -356,7 +356,10 @@ namespace MDump
             List<string> mergeFiles = new List<string>();
             
             //Get requested filename
-            string name = Path.GetFileNameWithoutExtension(dlgMerge.FileName);
+            string fn = dlgMerge.FileName;
+            int idx = fn.LastIndexOf(System.IO.Path.DirectorySeparatorChar) + 1;
+            int len = fn.IndexOf('.') - idx;
+            string name = fn.Substring(idx, len);
 
             //Gather all merge files
             foreach (string file in dirFiles)
