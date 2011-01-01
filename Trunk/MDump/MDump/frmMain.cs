@@ -315,7 +315,7 @@ namespace MDump
                 dlgMerge.FileName = String.Empty;
                 if (dlgMerge.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    path = dlgMerge.FileName.Replace(".png", String.Empty);
+                    path = dlgMerge.FileName;
                 }
                 else
                 {
@@ -324,13 +324,27 @@ namespace MDump
             }
             else
             {
-                if (dlgSplitDir.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                if (opts.SplitPathOpts == MDumpOptions.PathOptions.Discard)
                 {
-                    path = dlgSplitDir.SelectedPath;
+                    if (dlgSplitPath.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        path = dlgSplitPath.FileName;
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
                 else
                 {
-                    return;
+                    if (dlgSplitDir.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        path = dlgSplitDir.SelectedPath;
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
             }
 
@@ -342,81 +356,48 @@ namespace MDump
             }
             new frmWait(CurrentMode, bmpList, opts, path).ShowDialog();
         }
-
-        /// <summary>
-        /// Assure that we're not overwriting other merges
-        /// </summary>
+        
         private void dlgMerge_FileOk(object sender, CancelEventArgs e)
         {
-            //Get all files in the directory that start with the name provided
-            string[] dirFiles = Directory.GetFiles(Path.GetDirectoryName(dlgMerge.FileName));
-
-            //Keep track of merge files (we'll be deleting these if the user wants to overwrite)
-            List<string> mergeFiles = new List<string>();
-            
-            //Get requested filename
-            string fn = dlgMerge.FileName;
-            int idx = fn.LastIndexOf(System.IO.Path.DirectorySeparatorChar) + 1;
-            int len = fn.IndexOf('.') - idx;
-            string name = fn.Substring(idx, len);
-
-            //Gather all merge files
-            foreach (string file in dirFiles)
-            {
-                //The name format of merges is name.num.png
-                string test = Path.GetFileName(file);
-                string[] tokens = Path.GetFileName(file).Split('.');
-                if(tokens.Length == 3
-                    && tokens[0].Equals(name, StringComparison.InvariantCultureIgnoreCase)
-                    && IsInt(tokens[1])
-                    && tokens[2].Equals("png", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    mergeFiles.Add(file);
-                }
-            }
-
-            if (mergeFiles.Count > 0)
-            {
-                if (MessageBox.Show("Merge files with the name " + name + " already exist in this folder."
-                    + " Overwrite?", "Confirm Overwrite", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes)
-                {
-                    e.Cancel = false;
-                    foreach (string file in mergeFiles)
-                    {
-                        File.Delete(file);
-                    }
-                }
-                else
-                {
-                    e.Cancel = false;
-                }
-            }
-            else
-            {
-                e.Cancel = false;
-            }
+            bool cancel;
+            dlgMerge.FileName = StripExtAndOverwrite(dlgMerge.FileName, out cancel);
+            e.Cancel = cancel;
         }
 
         private void dlgSplitPath_FileOk(object sender, CancelEventArgs e)
         {
+            bool cancel;
+            dlgSplitPath.FileName = StripExtAndOverwrite(dlgSplitPath.FileName, out cancel);
+            e.Cancel = cancel;
+        }
+
+        /// <summary>
+        /// For sets of files (such as merges or re-named splits), strip the filename
+        /// and overwrite all images in the set
+        /// </summary>
+        /// <param name="filename">Filename from the dialog</param>
+        /// <param name="cancelOk">upon exit, is true if the dialog shouldn't return OK yet</param>
+        /// <returns>filename stripped of its extension(s)</returns>
+        private string StripExtAndOverwrite(string filename, out bool cancelOk)
+        {
             //Get all files in the directory that start with the name provided
-            string[] dirFiles = Directory.GetFiles(Path.GetDirectoryName(dlgMerge.FileName));
+            string[] dirFiles = Directory.GetFiles(Path.GetDirectoryName(filename));
 
             //Keep track of merge files (we'll be deleting these if the user wants to overwrite)
             List<string> mergeFiles = new List<string>();
 
             //Get requested filename
             string fn = dlgMerge.FileName;
-            int idx = fn.LastIndexOf(System.IO.Path.DirectorySeparatorChar) + 1;
-            int len = fn.IndexOf('.') - idx;
-            string name = fn.Substring(idx, len);
+            int fnIdx = fn.LastIndexOf(System.IO.Path.DirectorySeparatorChar) + 1;
+            int extIdx = fn.IndexOf('.');
+            int fnLen = extIdx - fnIdx;
+            string name = fn.Substring(fnIdx, fnLen);
+            string strippedPath = filename.Substring(0, extIdx);
 
             //Gather all merge files
             foreach (string file in dirFiles)
             {
                 //The name format of merges is name.num.png
-                string test = Path.GetFileName(file);
                 string[] tokens = Path.GetFileName(file).Split('.');
                 if (tokens.Length == 3
                     && tokens[0].Equals(name, StringComparison.InvariantCultureIgnoreCase)
@@ -433,7 +414,7 @@ namespace MDump
                     + " Overwrite?", "Confirm Overwrite", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                     MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes)
                 {
-                    e.Cancel = false;
+                    cancelOk = false;
                     foreach (string file in mergeFiles)
                     {
                         File.Delete(file);
@@ -441,13 +422,14 @@ namespace MDump
                 }
                 else
                 {
-                    e.Cancel = false;
+                    cancelOk = true;
                 }
             }
             else
             {
-                e.Cancel = false;
+                cancelOk = false;
             }
+            return strippedPath;
         }
 
         private static bool IsInt(string str)
