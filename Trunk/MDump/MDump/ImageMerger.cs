@@ -363,7 +363,6 @@ namespace MDump
                 using (Graphics g = Graphics.FromImage(mergedWithTitle))
                 {
                     g.DrawImageUnscaled(merged, 0, 0);
-                    g.DrawImageUnscaled(titleBar, 1, titleY);
 
                     //Uncomment to add a background to the bar
                     //Brush rectBrush = new SolidBrush(Color.Red);
