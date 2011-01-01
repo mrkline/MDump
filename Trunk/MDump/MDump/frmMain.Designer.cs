@@ -37,13 +37,14 @@
             this.ttpMain = new System.Windows.Forms.ToolTip(this.components);
             this.btnAdd = new System.Windows.Forms.Button();
             this.dlgOpenImg = new System.Windows.Forms.OpenFileDialog();
-            this.dlgSplitSplit = new System.Windows.Forms.FolderBrowserDialog();
+            this.dlgSplitDir = new System.Windows.Forms.FolderBrowserDialog();
             this.dlgMerge = new System.Windows.Forms.SaveFileDialog();
             this.btnHowWork = new System.Windows.Forms.Button();
             this.btnInfo = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnDown = new System.Windows.Forms.Button();
             this.btnUp = new System.Windows.Forms.Button();
+            this.dlgSplitPath = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // lvImages
@@ -112,15 +113,16 @@
             this.dlgOpenImg.Filter = "Images|*gif;*jpg;*jpeg;*wmf;*bmp;*png";
             this.dlgOpenImg.Multiselect = true;
             // 
-            // dlgSplitSplit
+            // dlgSplitDir
             // 
-            this.dlgSplitSplit.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            this.dlgSplitDir.RootFolder = System.Environment.SpecialFolder.MyComputer;
             // 
             // dlgMerge
             // 
             this.dlgMerge.AddExtension = false;
             this.dlgMerge.Filter = "MDump Merges|*.png";
             this.dlgMerge.OverwritePrompt = false;
+            this.dlgMerge.SupportMultiDottedExtensions = true;
             this.dlgMerge.FileOk += new System.ComponentModel.CancelEventHandler(this.dlgMerge_FileOk);
             // 
             // btnHowWork
@@ -186,6 +188,14 @@
             this.btnUp.UseVisualStyleBackColor = true;
             this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
             // 
+            // dlgSplitPath
+            // 
+            this.dlgSplitPath.AddExtension = false;
+            this.dlgSplitPath.Filter = "MDump Split Images|*.png";
+            this.dlgSplitPath.OverwritePrompt = false;
+            this.dlgSplitPath.SupportMultiDottedExtensions = true;
+            this.dlgSplitPath.FileOk += new System.ComponentModel.CancelEventHandler(this.dlgSplitPath_FileOk);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -221,9 +231,10 @@
         private System.Windows.Forms.ToolTip ttpMain;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.OpenFileDialog dlgOpenImg;
-        private System.Windows.Forms.FolderBrowserDialog dlgSplitSplit;
+        private System.Windows.Forms.FolderBrowserDialog dlgSplitDir;
         private System.Windows.Forms.SaveFileDialog dlgMerge;
         private System.Windows.Forms.Button btnHowWork;
+        private System.Windows.Forms.SaveFileDialog dlgSplitPath;
 
     }
 }
