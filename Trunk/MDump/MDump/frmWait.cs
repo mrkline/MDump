@@ -82,17 +82,17 @@ namespace MDump
         /// <param name="currStage">current stage in the merge process</param>
         /// <param name="current">current number of images merged</param>
         /// <param name="info">Stage-specific additional info</param>
-        private void MergeCallback(ImageMerger.MergeCallbackStage currStage, int current, object info)
+        private void MergeCallback(ImageMerger.MergeStage currStage, int current, object info)
         {
             switch (currStage)
             {
-                case ImageMerger.MergeCallbackStage.Starting:
+                case ImageMerger.MergeStage.Starting:
                     Invoke(new SetTextCallback(SetLabelText), new object[] { "Starting merge process..." });
                     Invoke(new SetProgressCallback(SetMax), new object[] { prgOverall,  info });
                     Invoke(new SetProgressCallback(SetProgress), new object[] { prgOverall, current });
                     break;
 
-                case ImageMerger.MergeCallbackStage.DeterminingNumPerMerge:
+                case ImageMerger.MergeStage.DeterminingNumPerMerge:
                     ImageMerger.LastAttemptInfo lastInfo = (ImageMerger.LastAttemptInfo)info;
                     string msg = "Determining number of images we can fit in one merged image...\n";
                     switch (lastInfo)
@@ -112,14 +112,14 @@ namespace MDump
                     Invoke(new SetProgressCallback(SetProgress), new object[] { prgOverall, current });
                     break;
 
-                case ImageMerger.MergeCallbackStage.Saving:
+                case ImageMerger.MergeStage.Saving:
                     Invoke(new SetTextCallback(SetLabelText),
                         new object[] { "Determined the most images that can be fit in this merged image.\n"
                             + "Now saving " + (string)info });
                     Invoke(new SetProgressCallback(SetProgress), new object[] { prgOverall, current });
                     break;
 
-                case ImageMerger.MergeCallbackStage.Done:
+                case ImageMerger.MergeStage.Done:
                     Invoke(new CloseCallback(Close));
                     break;
             }

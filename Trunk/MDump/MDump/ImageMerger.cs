@@ -51,7 +51,7 @@ namespace MDump
         /// <summary>
         /// Callback stages for merging
         /// </summary>
-        public enum MergeCallbackStage
+        public enum MergeStage
         {
             /// <summary>
             /// Starting merge process.
@@ -100,7 +100,7 @@ namespace MDump
         /// <param name="currStage">current stage in the merge process</param>
         /// <param name="current">current number of images merged</param>
         /// <param name="info">Stage-specific additional info</param>
-        public delegate void MergeCallback(MergeCallbackStage currStage, int current, object info);
+        public delegate void MergeCallback(MergeStage currStage, int current, object info);
 
         /// <summary>
         /// Used to pass argumnents to the merge thread
@@ -167,7 +167,7 @@ namespace MDump
             //Keep track of how many images have been merged
             int imagesMerged = 0;
 
-            callback(MergeCallbackStage.Starting, 0, bitmaps.Count);
+            callback(MergeStage.Starting, 0, bitmaps.Count);
 
             //Keep track of the merges saved (we'll have to clean them up on error)
             List<string> mergesSaved = new List<string>();
@@ -189,7 +189,7 @@ namespace MDump
                     //A good starting guess is based on the uncompressed size of the images
                     currMergeSet = EstimateMerge(bitmaps, imagesMerged, maxMergeSize);
 
-                    callback(MergeCallbackStage.DeterminingNumPerMerge, imagesMerged,
+                    callback(MergeStage.DeterminingNumPerMerge, imagesMerged,
                        LastAttemptInfo.NoLastMege);
 
                     //Test the resulting PNG size of the current merge set, then add or remove images
@@ -213,7 +213,7 @@ namespace MDump
                             //If the current merge size is over the limit but the last wasn't, use the last one
                             else if (lastMergeMem != IntPtr.Zero && lastMergeSize <= maxMergeSize)
                             {
-                                callback(MergeCallbackStage.Saving, imagesMerged, filename);
+                                callback(MergeStage.Saving, imagesMerged, filename);
                                 SavePNG(lastMergeMem, lastMergeSize, filename);
                                 mergesSaved.Add(filename);
                                 //We've saved the current set count - 1 since we're using the last
@@ -224,7 +224,7 @@ namespace MDump
                             //Otherwise decrease the current merge set
                             else
                             {
-                                callback(MergeCallbackStage.DeterminingNumPerMerge,
+                                callback(MergeStage.DeterminingNumPerMerge,
                                   imagesMerged, LastAttemptInfo.TooLarge);
                                 currMergeSet.RemoveAt(currMergeSet.Count - 1);
                             }
@@ -236,7 +236,7 @@ namespace MDump
                             if (imagesMerged + currMergeSet.Count == bitmaps.Count
                                 || lastMergeMem != IntPtr.Zero && lastMergeSize > maxMergeSize)
                             {
-                                callback(MergeCallbackStage.Saving, imagesMerged, filename);                                
+                                callback(MergeStage.Saving, imagesMerged, filename);                                
                                 SavePNG(currentMergeMem, currentMergeSize, filename);
                                 mergesSaved.Add(filename);
                                 imagesMerged += currMergeSet.Count;
@@ -245,7 +245,7 @@ namespace MDump
                             //Otherwise increase the current merge set
                             else
                             {
-                               callback(MergeCallbackStage.DeterminingNumPerMerge,
+                               callback(MergeStage.DeterminingNumPerMerge,
                                    imagesMerged, LastAttemptInfo.TooSmall);
                                currMergeSet.Add(bitmaps[imagesMerged + currMergeSet.Count]);
                             }
@@ -253,7 +253,7 @@ namespace MDump
                         //The current merge is spot on
                         else
                         {
-                            callback(MergeCallbackStage.Saving, imagesMerged, filename);
+                            callback(MergeStage.Saving, imagesMerged, filename);
                             SavePNG(currentMergeMem, currentMergeSize, filename);
                             mergesSaved.Add(filename);
                             imagesMerged += currMergeSet.Count;
@@ -285,7 +285,7 @@ namespace MDump
             {
                 PNGOps.FreeUnmanagedData(currentMergeMem);
                 PNGOps.FreeUnmanagedData(lastMergeMem);
-                callback(MergeCallbackStage.Done, 0, null);
+                callback(MergeStage.Done, 0, null);
             }
         }
 
