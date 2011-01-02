@@ -33,13 +33,14 @@ namespace MDump
         {
             if (mode == frmMain.Mode.Merge)
             {
+                prgIndividual.Style = ProgressBarStyle.Marquee;
                 Text = mergeTitle;
                 opts.SetBaseDirectory(bmpList);
                 ImageMerger.MergeImages(bmpList, opts, path, MergeCallback);
             }
             else
             {
-                opts.BaseDirectory = string.Empty;
+                prgIndividual.Style = ProgressBarStyle.Blocks;
                 Text = splitTitle;
             }
         }
@@ -54,6 +55,8 @@ namespace MDump
         /// <param name="text">lblWaitStatus.Text will be set to this</param>
         private delegate void SetTextCallback(string text);
 
+        private delegate void SetProgressCallback(ProgressBar bar, int value);
+
         /// <summary>
         /// Used to invoke a text change from the worker thread
         /// </summary>
@@ -63,15 +66,32 @@ namespace MDump
             lblWaitStatus.Text = text;
         }
 
+        private void SetMax(ProgressBar bar, int max)
+        {
+            bar.Maximum = max;
+        }
+
+        private void SetProgress(ProgressBar bar, int prog)
+        {
+            bar.Value = prog;
+        }
+
         /// <summary>
         /// Keeps the user updated to the actions of the worker thread
         /// </summary>
-        /// <param name="currStage">Current stage in the merge process</param>
-        /// <param name="info">Additional stage-specific info</param>
-        private void MergeCallback(ImageMerger.MergeCallbackStage currStage, object info)
+        /// <param name="currStage">current stage in the merge process</param>
+        /// <param name="current">current number of images merged</param>
+        /// <param name="info">Stage-specific additional info</param>
+        private void MergeCallback(ImageMerger.MergeCallbackStage currStage, int current, object info)
         {
             switch (currStage)
             {
+                case ImageMerger.MergeCallbackStage.Starting:
+                    Invoke(new SetTextCallback(SetLabelText), new object[] { "Starting merge process..." });
+                    Invoke(new SetProgressCallback(SetMax), new object[] { prgOverall,  info });
+                    Invoke(new SetProgressCallback(SetProgress), new object[] { prgOverall, current });
+                    break;
+
                 case ImageMerger.MergeCallbackStage.DeterminingNumPerMerge:
                     ImageMerger.LastAttemptInfo lastInfo = (ImageMerger.LastAttemptInfo)info;
                     string msg = "Determining number of images we can fit in one merged image...\n";
@@ -89,12 +109,14 @@ namespace MDump
                     }
                     Invoke(new SetTextCallback(SetLabelText),
                         new object[] { msg });
+                    Invoke(new SetProgressCallback(SetProgress), new object[] { prgOverall, current });
                     break;
 
                 case ImageMerger.MergeCallbackStage.Saving:
                     Invoke(new SetTextCallback(SetLabelText),
                         new object[] { "Determined the most images that can be fit in this merged image.\n"
                             + "Now saving " + (string)info });
+                    Invoke(new SetProgressCallback(SetProgress), new object[] { prgOverall, current });
                     break;
 
                 case ImageMerger.MergeCallbackStage.Done:

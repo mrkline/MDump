@@ -54,6 +54,11 @@ namespace MDump
         public enum MergeCallbackStage
         {
             /// <summary>
+            /// Starting merge process.
+            /// Additional info is the total number of images to be merged
+            /// </summary>
+            Starting,
+            /// <summary>
             /// Determining how many images can be fit in to one merge.
             /// Additional info is a DeterminingNumPerMergeInfo class
             /// </summary>
@@ -69,13 +74,6 @@ namespace MDump
             /// </summary>
             Done
         }
-
-        /// <summary>
-        /// A callback to inform the GUI thread what the merge thread is doing
-        /// </summary>
-        /// <param name="currStage">current stage in the merge process</param>
-        /// <param name="info">Stage-specific additional info</param>
-        public delegate void MergeCallback(MergeCallbackStage currStage, object info);
 
         /// <summary>
         /// Information about the last merge attempt. Used for a callback
@@ -97,20 +95,28 @@ namespace MDump
         }
 
         /// <summary>
+        /// A callback to inform the GUI thread what the merge thread is doing
+        /// </summary>
+        /// <param name="currStage">current stage in the merge process</param>
+        /// <param name="current">current number of images merged</param>
+        /// <param name="info">Stage-specific additional info</param>
+        public delegate void MergeCallback(MergeCallbackStage currStage, int current, object info);
+
+        /// <summary>
         /// Used to pass argumnents to the merge thread
         /// </summary>
         private class MergeThreadArgs
         {
-            public List<Bitmap> Bitmaps { get; set; }
-            public MDumpOptions Opts { get; set; }
-            public string MergePath { get; set; }
-            public MergeCallback Callback { get; set; }
+            public List<Bitmap> Bitmaps { get; private set; }
+            public MDumpOptions Options { get; private set; }
+            public string MergePath { get; private set; }
+            public MergeCallback Callback { get; private set; }
 
             public MergeThreadArgs(List<Bitmap> bitmaps, MDumpOptions options,
                 string mPath, MergeCallback callback)
             {
                 Bitmaps = bitmaps;
-                Opts = options;
+                Options = options;
                 MergePath = mPath;
                 Callback = callback;
             }
@@ -154,12 +160,14 @@ namespace MDump
             //Cache commonly used values
             List<Bitmap> bitmaps = ta.Bitmaps;
             MergeCallback callback = ta.Callback;
-            MDumpOptions opts = ta.Opts;
+            MDumpOptions opts = ta.Options;
             string mergePath = ta.MergePath;
             int maxMergeSize = opts.MaxMergeSize;
 
             //Keep track of how many images have been merged
             int imagesMerged = 0;
+
+            callback(MergeCallbackStage.Starting, 0, bitmaps.Count);
 
             //Keep track of the merges saved (we'll have to clean them up on error)
             List<string> mergesSaved = new List<string>();
@@ -181,7 +189,7 @@ namespace MDump
                     //A good starting guess is based on the uncompressed size of the images
                     currMergeSet = EstimateMerge(bitmaps, imagesMerged, maxMergeSize);
 
-                    callback(MergeCallbackStage.DeterminingNumPerMerge,
+                    callback(MergeCallbackStage.DeterminingNumPerMerge, imagesMerged,
                        LastAttemptInfo.NoLastMege);
 
                     //Test the resulting PNG size of the current merge set, then add or remove images
@@ -205,7 +213,7 @@ namespace MDump
                             //If the current merge size is over the limit but the last wasn't, use the last one
                             else if (lastMergeMem != IntPtr.Zero && lastMergeSize <= maxMergeSize)
                             {
-                                callback(MergeCallbackStage.Saving, filename);
+                                callback(MergeCallbackStage.Saving, imagesMerged, filename);
                                 SavePNG(lastMergeMem, lastMergeSize, filename);
                                 mergesSaved.Add(filename);
                                 //We've saved the current set count - 1 since we're using the last
@@ -217,7 +225,7 @@ namespace MDump
                             else
                             {
                                 callback(MergeCallbackStage.DeterminingNumPerMerge,
-                                  LastAttemptInfo.TooLarge);
+                                  imagesMerged, LastAttemptInfo.TooLarge);
                                 currMergeSet.RemoveAt(currMergeSet.Count - 1);
                             }
                         }
@@ -228,7 +236,7 @@ namespace MDump
                             if (imagesMerged + currMergeSet.Count == bitmaps.Count
                                 || lastMergeMem != IntPtr.Zero && lastMergeSize > maxMergeSize)
                             {
-                                callback(MergeCallbackStage.Saving, filename);                                
+                                callback(MergeCallbackStage.Saving, imagesMerged, filename);                                
                                 SavePNG(currentMergeMem, currentMergeSize, filename);
                                 mergesSaved.Add(filename);
                                 imagesMerged += currMergeSet.Count;
@@ -238,14 +246,14 @@ namespace MDump
                             else
                             {
                                callback(MergeCallbackStage.DeterminingNumPerMerge,
-                                    LastAttemptInfo.TooSmall);
+                                   imagesMerged, LastAttemptInfo.TooSmall);
                                currMergeSet.Add(bitmaps[imagesMerged + currMergeSet.Count]);
                             }
                         }
                         //The current merge is spot on
                         else
                         {
-                            callback(MergeCallbackStage.Saving, filename);
+                            callback(MergeCallbackStage.Saving, imagesMerged, filename);
                             SavePNG(currentMergeMem, currentMergeSize, filename);
                             mergesSaved.Add(filename);
                             imagesMerged += currMergeSet.Count;
@@ -277,7 +285,7 @@ namespace MDump
             {
                 PNGOps.FreeUnmanagedData(currentMergeMem);
                 PNGOps.FreeUnmanagedData(lastMergeMem);
-                callback(MergeCallbackStage.Done, null);
+                callback(MergeCallbackStage.Done, 0, null);
             }
         }
 

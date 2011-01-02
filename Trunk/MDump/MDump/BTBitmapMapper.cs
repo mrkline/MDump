@@ -188,11 +188,22 @@ namespace MDump
 
             MemoryStream mdStream = new MemoryStream();
 
+            int numImages = 0;
+            foreach(NodeData data in root)
+            {
+                if (data.Bmp != null)
+                {
+                    ++numImages;
+                }
+            }
+
             System.Text.UTF8Encoding encoder = new System.Text.UTF8Encoding();
             using (Graphics g = Graphics.FromImage(merged))
             {
                 using (BinaryWriter bw = new BinaryWriter(mdStream, System.Text.Encoding.UTF8))
                 {
+                    bw.Write(encoder.GetBytes(numImages.ToString()));
+                    bw.Write('\n');
                     foreach (NodeData data in root)
                     {
                         if (data.Bmp != null)
