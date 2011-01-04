@@ -42,6 +42,7 @@ namespace MDump
             {
                 prgIndividual.Style = ProgressBarStyle.Blocks;
                 Text = splitTitle;
+                ImageSplitter.SplitImages(bmpList, opts, path, SplitCallback);
             }
         }
 
@@ -77,51 +78,73 @@ namespace MDump
         }
 
         /// <summary>
-        /// Keeps the user updated to the actions of the worker thread
+        /// Keeps the user updated to the actions of the merge thread
         /// </summary>
         /// <param name="currStage">current stage in the merge process</param>
         /// <param name="current">current number of images merged</param>
         /// <param name="info">Stage-specific additional info</param>
         private void MergeCallback(ImageMerger.MergeStage currStage, int current, object info)
         {
-            switch (currStage)
+            if(InvokeRequired)
             {
-                case ImageMerger.MergeStage.Starting:
-                    Invoke(new SetTextCallback(SetLabelText), new object[] { "Starting merge process..." });
-                    Invoke(new SetProgressCallback(SetMax), new object[] { prgOverall,  info });
-                    Invoke(new SetProgressCallback(SetProgress), new object[] { prgOverall, current });
-                    break;
+                Invoke(new ImageMerger.MergeCallback(MergeCallback),
+                    new object[] { currStage, current, info });
+            }
+            else
+            {
+                switch (currStage)
+                {
+                    case ImageMerger.MergeStage.Starting:
+                        lblWaitStatus.Text = "Starting merge process...";
+                        prgOverall.Maximum = (int)info;
+                        prgOverall.Value = current;
+                        break;
 
-                case ImageMerger.MergeStage.DeterminingNumPerMerge:
-                    ImageMerger.LastAttemptInfo lastInfo = (ImageMerger.LastAttemptInfo)info;
-                    string msg = "Determining number of images we can fit in one merged image...\n";
-                    switch (lastInfo)
-                    {
-                        case ImageMerger.LastAttemptInfo.TooLarge:
-                            msg += "The last attempt created a PNG too large for the maximum size set in the options.\n"
-                                + "Now trying with fewer images";
-                            break;
+                    case ImageMerger.MergeStage.DeterminingNumPerMerge:
+                        ImageMerger.LastAttemptInfo lastInfo = (ImageMerger.LastAttemptInfo)info;
+                        string msg = "Determining number of images we can fit in one merged image...\n";
+                        switch (lastInfo)
+                        {
+                            case ImageMerger.LastAttemptInfo.TooLarge:
+                                msg += "The last attempt created a PNG too large for the maximum size set in the options.\n"
+                                    + "Now trying with fewer images";
+                                break;
 
-                        case ImageMerger.LastAttemptInfo.TooSmall:
-                            msg += "The last attempt created a PNG too large for the maximum size set in the options.\n"
-                                + "Now trying with more images";
-                            break;
-                    }
-                    Invoke(new SetTextCallback(SetLabelText),
-                        new object[] { msg });
-                    Invoke(new SetProgressCallback(SetProgress), new object[] { prgOverall, current });
-                    break;
+                            case ImageMerger.LastAttemptInfo.TooSmall:
+                                msg += "The last attempt created a PNG too large for the maximum size set in the options.\n"
+                                    + "Now trying with more images";
+                                break;
+                        }
+                        lblWaitStatus.Text = msg;
+                        prgOverall.Value = current;
+                        break;
 
-                case ImageMerger.MergeStage.Saving:
-                    Invoke(new SetTextCallback(SetLabelText),
-                        new object[] { "Determined the most images that can be fit in this merged image.\n"
-                            + "Now saving " + (string)info });
-                    Invoke(new SetProgressCallback(SetProgress), new object[] { prgOverall, current });
-                    break;
+                    case ImageMerger.MergeStage.Saving:
+                        lblWaitStatus.Text = "Determined the most images that can be fit in this merged image.\n"
+                                + "Now saving " + (string)info;
+                        prgOverall.Value = current;
+                        break;
 
-                case ImageMerger.MergeStage.Done:
-                    Invoke(new CloseCallback(Close));
-                    break;
+                    case ImageMerger.MergeStage.Done:
+                        Close();
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Keeps the user updated to the actions of the split thread
+        /// </summary>
+        /// <param name="stage">Current stage of split procedure</param>
+        /// <param name="value">Has different menaing for each stage</param>
+        private void SplitCallback(ImageSplitter.SplitStage stage, int value)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new ImageSplitter.SplitCallback(SplitCallback), new object[] { stage, value });
+            }
+            else
+            {
             }
         }
     }
