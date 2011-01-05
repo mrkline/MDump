@@ -117,41 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="ttpMain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="ttpMain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="dlgSplitDir.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="btnDown.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAA0AAAAPCAYAAAA/I0V3AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        DAAACwwBP0AiyAAAAAd0SU1FB9oMAxExBHTg3eoAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJ
-        TVBXgQ4XAAAA2UlEQVQ4T9XRuw4BQRTG8SUiiFut1XoCjcYD6EQkVERBoiEqCkoPodNpPIlahEbiGqER
-        Df5fMhK3tbWT/HJ25syZzMxa1vdIMT1C2qb+Me1ipo0jutDYMbSogxN6cDt2mJ3/vSnOPZLwmwvbPYSX
-        egIxrRtiihI8Ng+hF8xigoGaKtjihhrCb08eZFw09QO5oaYQ6lhBk030oZ+rXDWb7sn66VE1KbRbGWfs
-        sMAFM6zNd4sceTQ85xyDJa7QcWUDHds2fFQKmJsGbaDjBX41qabGDMbIQ0d/iTsyojagTGvOnQAAAABJ
-        RU5ErkJggg==
-</value>
-  </data>
-  <data name="btnUp.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAA0AAAAPCAYAAAA/I0V3AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        DAAACwwBP0AiyAAAAAd0SU1FB9oMAxEwN9Irjb0AAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJ
-        TVBXgQ4XAAAA1ElEQVQ4T93RPwtBURzG8UuKEHaj1SswGbwAG6XYZCATmRgYvQijyeKVmEUpUv4kFlnw
-        fepc5d7rvgC3Pt1zfuf3nE7nWJb7i1AqYo4KYh49X6UwsyrWeGGHJqJ+wTKLWzxNSMGDCbpycSp13HHG
-        Bg+sTEjjHpJ2UoE29rigizGu5q/jHXFCHykFG6aoo7SQwAA3jKBNa9C6Nu0oNMUSOl4IAUcoyFxKWGCi
-        UAY52DfkFVKfbjaLtCbO71fIq/dT+9eQHlGPOzTX7XsJ9mKewQwFr+43zDc2oHC5e9MAAAAASUVORK5C
-        YII=
-</value>
-  </data>
-  <metadata name="dlgOpenImg.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>112, 17</value>
-  </metadata>
-  <metadata name="dlgMerge.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>458, 17</value>
-  </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAQAMDAAAAEAIACoJQAARgAAACAgAAABACAAqBAAAO4lAAAYGAAAAQAgAIgJAACWNgAAEBAAAAEA

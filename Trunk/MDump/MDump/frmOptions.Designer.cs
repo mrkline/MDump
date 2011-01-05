@@ -34,6 +34,8 @@
             this.btnCancelOptions = new System.Windows.Forms.Button();
             this.tabOptions = new System.Windows.Forms.TabControl();
             this.tbpMerging = new System.Windows.Forms.TabPage();
+            this.picExplainAddTitleBar = new System.Windows.Forms.PictureBox();
+            this.picExplainMaxSize = new System.Windows.Forms.PictureBox();
             this.picExplainCompression = new System.Windows.Forms.PictureBox();
             this.lblCompression = new System.Windows.Forms.Label();
             this.lblMoreComp = new System.Windows.Forms.Label();
@@ -55,18 +57,16 @@
             this.dlgFolderBrowse = new System.Windows.Forms.FolderBrowserDialog();
             this.btnDefaults = new System.Windows.Forms.Button();
             this.ttpExplanations = new System.Windows.Forms.ToolTip(this.components);
-            this.picExplainMaxSize = new System.Windows.Forms.PictureBox();
-            this.picExplainAddTitleBar = new System.Windows.Forms.PictureBox();
             this.tabOptions.SuspendLayout();
             this.tbpMerging.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainAddTitleBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainMaxSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picExplainCompression)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trkCompression)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxMergeSize)).BeginInit();
             this.grpImageNaming.SuspendLayout();
             this.tbpSplitting.SuspendLayout();
             this.grpSplitNames.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picExplainMaxSize)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picExplainAddTitleBar)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSaveOptions
@@ -125,6 +125,31 @@
             this.tbpMerging.TabIndex = 0;
             this.tbpMerging.Text = "Merging Options";
             this.tbpMerging.UseVisualStyleBackColor = true;
+            // 
+            // picExplainAddTitleBar
+            // 
+            this.picExplainAddTitleBar.Image = global::MDump.Properties.Resources.QuestionIcon;
+            this.picExplainAddTitleBar.Location = new System.Drawing.Point(279, 239);
+            this.picExplainAddTitleBar.Name = "picExplainAddTitleBar";
+            this.picExplainAddTitleBar.Size = new System.Drawing.Size(20, 20);
+            this.picExplainAddTitleBar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picExplainAddTitleBar.TabIndex = 24;
+            this.picExplainAddTitleBar.TabStop = false;
+            this.ttpExplanations.SetToolTip(this.picExplainAddTitleBar, "Adding a title bar to the merged images\r\nwill make it easier for people to recogn" +
+                    "ize\r\nthem as MDump ones so they know\r\nto use the program to split them back up.");
+            // 
+            // picExplainMaxSize
+            // 
+            this.picExplainMaxSize.Image = global::MDump.Properties.Resources.QuestionIcon;
+            this.picExplainMaxSize.Location = new System.Drawing.Point(216, 206);
+            this.picExplainMaxSize.Name = "picExplainMaxSize";
+            this.picExplainMaxSize.Size = new System.Drawing.Size(20, 20);
+            this.picExplainMaxSize.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picExplainMaxSize.TabIndex = 23;
+            this.picExplainMaxSize.TabStop = false;
+            this.ttpExplanations.SetToolTip(this.picExplainMaxSize, "Most image boards have a maximum allowed size per picture.\r\nSet this value to tha" +
+                    "t maximum size.\r\n\r\nThe default value is 2048 KB, the 4chan max size.\r\nThe max va" +
+                    "lue is 2 GB.");
             // 
             // picExplainCompression
             // 
@@ -351,31 +376,6 @@
             this.ttpExplanations.ReshowDelay = 100;
             this.ttpExplanations.Popup += new System.Windows.Forms.PopupEventHandler(this.ttpExplanations_Popup);
             // 
-            // picExplainMaxSize
-            // 
-            this.picExplainMaxSize.Image = global::MDump.Properties.Resources.QuestionIcon;
-            this.picExplainMaxSize.Location = new System.Drawing.Point(216, 206);
-            this.picExplainMaxSize.Name = "picExplainMaxSize";
-            this.picExplainMaxSize.Size = new System.Drawing.Size(20, 20);
-            this.picExplainMaxSize.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picExplainMaxSize.TabIndex = 23;
-            this.picExplainMaxSize.TabStop = false;
-            this.ttpExplanations.SetToolTip(this.picExplainMaxSize, "Most image boards have a maximum allowed size per picture.\r\nSet this value to tha" +
-                    "t maximum size.\r\n\r\nThe default value is 2048 KB, the 4chan max size.\r\nThe max va" +
-                    "lue is 2 GB.");
-            // 
-            // picExplainAddTitleBar
-            // 
-            this.picExplainAddTitleBar.Image = global::MDump.Properties.Resources.QuestionIcon;
-            this.picExplainAddTitleBar.Location = new System.Drawing.Point(279, 239);
-            this.picExplainAddTitleBar.Name = "picExplainAddTitleBar";
-            this.picExplainAddTitleBar.Size = new System.Drawing.Size(20, 20);
-            this.picExplainAddTitleBar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picExplainAddTitleBar.TabIndex = 24;
-            this.picExplainAddTitleBar.TabStop = false;
-            this.ttpExplanations.SetToolTip(this.picExplainAddTitleBar, "Adding a title bar to the merged images\r\nwill make it easier for people to recogn" +
-                    "ize\r\nthem as MDump ones so they know\r\nto use the program to split them back up.");
-            // 
             // frmOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -390,10 +390,13 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmOptions";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Options";
             this.tabOptions.ResumeLayout(false);
             this.tbpMerging.ResumeLayout(false);
             this.tbpMerging.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainAddTitleBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainMaxSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picExplainCompression)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trkCompression)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxMergeSize)).EndInit();
@@ -402,8 +405,6 @@
             this.tbpSplitting.ResumeLayout(false);
             this.grpSplitNames.ResumeLayout(false);
             this.grpSplitNames.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picExplainMaxSize)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picExplainAddTitleBar)).EndInit();
             this.ResumeLayout(false);
 
         }

@@ -68,6 +68,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmHowItWorks";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "How MDumpWorks";
             this.ResumeLayout(false);
 

@@ -66,17 +66,17 @@
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmMergeName.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmMergeName.Designer.cs">
-      <DependentUpon>frmMergeName.cs</DependentUpon>
-    </Compile>
     <Compile Include="frmOptions.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmOptions.Designer.cs">
       <DependentUpon>frmOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSplitDest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSplitDest.Designer.cs">
+      <DependentUpon>frmSplitDest.cs</DependentUpon>
     </Compile>
     <Compile Include="frmWait.cs">
       <SubType>Form</SubType>
@@ -100,12 +100,12 @@
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmMergeName.resx">
-      <DependentUpon>frmMergeName.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="frmOptions.resx">
       <DependentUpon>frmOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSplitDest.resx">
+      <DependentUpon>frmSplitDest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmWait.resx">
       <DependentUpon>frmWait.cs</DependentUpon>

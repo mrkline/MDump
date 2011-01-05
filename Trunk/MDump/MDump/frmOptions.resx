@@ -120,9 +120,6 @@
   <metadata name="ttpExplanations.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>160, 17</value>
   </metadata>
-  <metadata name="ttpExplanations.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>160, 17</value>
-  </metadata>
   <data name="picExplainCompression.ToolTip" xml:space="preserve">
     <value>Set the compression level the PNG image format should use while compressing
 the image.
