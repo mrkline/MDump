@@ -111,8 +111,8 @@ namespace MDump
         /// <param name="mdDataLenOut">is set to the length of the MDump data</param>
         /// <returns></returns>
         [DllImport(dllName)]
-        public static extern ECode LoadMergedImage(string filename, out IntPtr bitmapOut,
-            out int widthOut, out int heightOut, out IntPtr mdDataOut, out int mdDataLenOut);
+        public static extern ECode LoadMergedImageData(string filename, 
+            out IntPtr mdDataOut, out int mdDataLenOut);
 
 
         [DllImport(dllName)]

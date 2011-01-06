@@ -402,13 +402,7 @@ namespace MDump
         {
             Byte[] pngMem = new Byte[pngLen];
             Marshal.Copy(pngUnmangedMem, pngMem, 0, pngLen);
-            using (FileStream fs = new FileStream(filename, FileMode.OpenOrCreate))
-            {
-                using (BinaryWriter ms = new BinaryWriter(fs))
-                {
-                    fs.Write(pngMem, 0, pngLen);
-                }
-            }
+            File.WriteAllBytes(filename, pngMem);
         }
 
 

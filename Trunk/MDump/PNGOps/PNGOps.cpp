@@ -86,14 +86,13 @@ extern "C"
 	}
 
 
-	__declspec(dllexport) ECode __cdecl LoadMergedImage(char* filename, png_bytepp bitmapOut,
-		int* widthOut, int* heightOut, char** mdDataOut, int* mdDataLenOut)
+	__declspec(dllexport) ECode __cdecl LoadMergedImageData(char* filename,
+		char** mdDataOut, int* mdDataLenOut)
 	{
 		//Set initial value of out arguments to null or 0, so if the function errors out, they have
 		//this value on exit
-		*bitmapOut = nullptr;
 		*mdDataOut = nullptr;
-		*widthOut = *heightOut = *mdDataLenOut = 0;
+		*mdDataLenOut = 0;
 
 		FILE* fp = fopen(filename, "rb");
 		if(fp == nullptr)
@@ -133,15 +132,6 @@ extern "C"
 		}
 		png_read_info(readStruct, info);
 
-		//Make sure our image 32-bpp
-		if(png_get_bit_depth(readStruct, info) != kBitDepth
-			|| png_get_color_type(readStruct, info) != PNG_COLOR_TYPE_RGBA)
-		{
-			fclose(fp);
-			png_destroy_read_struct(&readStruct, &info, nullptr);
-			return EC_BAD_FORMAT;
-		}
-
 		png_textp textInfo;
 		int numTextFields;
 		png_get_text(readStruct, info, &textInfo, &numTextFields);
@@ -164,54 +154,11 @@ extern "C"
 			return EC_ALLOC_FAILURE;
 		}
 		memcpy(mdData, textInfo[0].text, mdDataLen);
-
-		int height = png_get_image_height(readStruct, info);
-		int width = png_get_image_width(readStruct, info);
-		int rowLen = width * kBytesPerPix;
-		
-		//Split image into rows
-		png_bytep bitmap = static_cast<png_bytep>(malloc(rowLen * height));
-		if(bitmap == nullptr)
-		{
-			free(mdData);
-			fclose(fp);
-			png_destroy_read_struct(&readStruct, &info, nullptr);
-			return EC_ALLOC_FAILURE;
-		}
-
-		png_bytepp rowPointers = static_cast<png_bytepp>(malloc(height * sizeof(png_bytep)));
-		if(rowPointers == nullptr)
-		{
-			free(mdData);
-			free(bitmap);
-			fclose(fp);
-			png_destroy_read_struct(&readStruct, &info, nullptr);
-			return EC_ALLOC_FAILURE;
-		}
-
-		png_bytep rowStart = bitmap;
-		for(int c = 0; c < height; ++c)
-		{
-			rowPointers[c] = rowStart;
-			rowStart += rowLen;
-		}
-
-		//Read in the image
-		if(setjmp(png_jmpbuf(readStruct)))
-		{
-			free(mdData);
-			free(bitmap);
-			fclose(fp);
-			png_destroy_read_struct(&readStruct, &info, nullptr);
-			return EC_RW_IMAGE_FAILURE;
-		}
-		png_read_image(readStruct, rowPointers);
-
+				
 
 		//Assign the out arguments with their values
 		*mdDataLenOut = mdDataLen;
 		*mdDataOut = mdData;
-		*bitmapOut = bitmap;
 		//Close up shop
 		fclose(fp);
 		png_destroy_read_struct(&readStruct, &info, nullptr);

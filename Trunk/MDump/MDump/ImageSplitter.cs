@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace MDump
 {
@@ -71,7 +72,25 @@ namespace MDump
         {
             SplitThreadArgs sa = args as SplitThreadArgs;
 
+            SplitCallback callback = sa.Callback;
 
+            try
+            {
+                foreach (Bitmap image in sa.Bitmaps)
+                {
+                    string filename = image.Tag as string;
+                    IntPtr unmanagedData = IntPtr.Zero;
+                    int dataLen;
+                    PNGOps.LoadMergedImageData(filename, out unmanagedData, out dataLen);
+                    byte[] data = new byte[dataLen];
+                    //TODO: Continue here
+                    PNGOps.FreeUnmanagedData(unmanagedData);
+                }
+            }
+            finally
+            {
+                callback(SplitStage.Done, 0);
+            }
         }
     }
 }

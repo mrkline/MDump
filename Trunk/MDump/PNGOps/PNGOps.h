@@ -30,8 +30,8 @@ extern "C"
 
 	__declspec(dllexport) MergedCode __cdecl IsMergedImage(char* filename);
 
-	__declspec(dllexport) ECode __cdecl LoadMergedImage(char* filename, png_bytepp bitmapOut,
-		int* widthOut, int* heightOut, char** mdDataOut, int* mdDataLenOut);
+	__declspec(dllexport) ECode __cdecl LoadMergedImageData(char* filename,
+		char** mdDataOut, int* mdDataLenOut);
 
 	//PNG is assumed to be in 32-bpp RBGA format
 	__declspec(dllexport) ECode __cdecl SavePNGToMemory(png_bytep bitmap, int width, int height,
