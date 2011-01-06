@@ -50,7 +50,7 @@ namespace MDump
 
         private void frmSplitDest_Load(object sender, EventArgs e)
         {
-            lblSelectFilename.Text = string.Empty;
+            txtFilename.Text = string.Empty;
             lblSelectFilename.BackColor = DefaultBackColor;
             btnOK.Enabled = false;
             if (opts.SplitPathOpts == MDumpOptions.PathOptions.Discard)

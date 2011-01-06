@@ -197,12 +197,12 @@ namespace MDump
                 }
             }
 
-            System.Text.UTF8Encoding encoder = new System.Text.UTF8Encoding();
+            System.Text.Encoding dataEncoding = ImageMerger.MDDataEncoding;
             using (Graphics g = Graphics.FromImage(merged))
             {
                 using (BinaryWriter bw = new BinaryWriter(mdStream, System.Text.Encoding.UTF8))
                 {
-                    bw.Write(encoder.GetBytes(numImages.ToString()));
+                    bw.Write(dataEncoding.GetBytes(numImages.ToString()));
                     bw.Write('\n');
                     foreach (NodeData data in root)
                     {
@@ -210,19 +210,13 @@ namespace MDump
                         {
                             g.DrawImageUnscaled(data.Bmp, data.Rect.X, data.Rect.Y);
 
-                            //Calculate filename to write and write it
-                            bw.Write(encoder.GetBytes(opts.FormatPathForMerge((string)data.Bmp.Tag)));
                             Rectangle r = data.Rect;
-                            //Convert these to UTF8/ASCII (We'll have to parse back later.)
-                            bw.Write(';');
-                            bw.Write(encoder.GetBytes(r.X.ToString()));
-                            bw.Write(';');
-                            bw.Write(encoder.GetBytes(r.Y.ToString()));
-                            bw.Write(';');
-                            bw.Write(encoder.GetBytes(r.Width.ToString()));
-                            bw.Write(';');
-                            bw.Write(encoder.GetBytes(r.Height.ToString()));
-                            bw.Write('\n'); //Split each image and its data by newlines
+                            Bitmap b = data.Bmp;
+                            //Calculate filename to write and write it
+                            string mdDataString = opts.FormatPathForMerge((string)data.Bmp.Tag) + ';'
+                                + r.X.ToString() + ';' + r.Y.ToString() + ';'
+                                + b.Width.ToString() + ';' + b.Height + '\n';
+                            bw.Write(dataEncoding.GetBytes(mdDataString));
                         }
                     }
                 }

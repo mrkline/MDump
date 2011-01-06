@@ -77,6 +77,10 @@ namespace MDump
                 }
             }
         }
+        public void ClearBaseDirectory()
+        {
+            BaseDirectory = string.Empty;
+        }
 
         /// <summary>
         /// Gets or sets the path options for saving file paths in to the merged image
@@ -113,17 +117,16 @@ namespace MDump
                     return kDiscardFn;
 
                 case PathOptions.PreserveName:
-                    if (path.Contains(Path.DirectorySeparatorChar.ToString()))
-                    {
-                        return path.Substring(path.LastIndexOf(Path.DirectorySeparatorChar) + 1);
-                    }
-                    else
-                    {
-                        return path;
-                    }
+                        return Path.GetFileNameWithoutExtension(path);
 
                 case PathOptions.PreservePath:
-                    return path.Remove(0, BaseDirectory.Length);
+                    //Drop extension
+                    string ret = path.Remove(0, BaseDirectory.Length);
+                    if (Path.HasExtension(ret))
+                    {
+                        ret = ret.Substring(0, ret.IndexOf('.'));
+                    }
+                    return ret;
 
                 default:
                     throw new ArgumentException(invalidPathOptionsExMsg);
@@ -167,6 +170,7 @@ namespace MDump
         {
             MergePathOpts = PathOptions.PreservePath; //Save file name while merging
             SplitPathOpts = PathOptions.PreserveName; //Respect file name when splitting
+            BaseDirectory = string.Empty;
             MaxMergeSize = 2048 * 1024; //Default max merge size of 2 megabytes
             CompressionLevel = 6;
             AddTitleBar = true;
@@ -186,6 +190,7 @@ namespace MDump
         {        
             MergePathOpts = mergePathOpts;
             SplitPathOpts = splitPathOpts;
+            BaseDirectory = string.Empty;
             MaxMergeSize = maxMergeSz;
             CompressionLevel = compLevel;
             AddTitleBar = titleBar;

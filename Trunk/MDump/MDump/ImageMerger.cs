@@ -10,18 +10,18 @@ using System.Runtime.InteropServices;
 
 namespace MDump
 {
-    class MergeException : ApplicationException
-    {
-        public MergeException(string msg)
-            : base(msg) {}
-    }
-
     /// <summary>
     /// Merges and saves images in a separate thread, providing the wait dialog with callbacks
     /// to indicate its progress.
     /// </summary>
     class ImageMerger
     {
+        private class MergeException : ApplicationException
+        {
+            public MergeException(string msg)
+                : base(msg) { }
+        }
+
         private const string mergeFailedMsg = "An error occurred while merging imgaes";
         private const string mergedFailedTitle = "Error while merging";
         private const string sizeTooSmallMsg = "The maximum merge size is too small to fit one of the images."
@@ -49,6 +49,14 @@ namespace MDump
         private const float kCompressedBytesPerPix = 1.0f;
 
         /// <summary>
+        /// Gets the text encoding used for storing the MDump data in the PNG
+        /// </summary>
+        public static Encoding MDDataEncoding
+        {
+            get { return Encoding.UTF8; }
+        }
+
+        /// <summary>
         /// Callback stages for merging
         /// </summary>
         public enum MergeStage
@@ -60,7 +68,7 @@ namespace MDump
             Starting,
             /// <summary>
             /// Determining how many images can be fit in to one merge.
-            /// Additional info is a DeterminingNumPerMergeInfo class
+            /// Additional info is an LastAttemptInfo enum.
             /// </summary>
             DeterminingNumPerMerge,
             /// <summary>

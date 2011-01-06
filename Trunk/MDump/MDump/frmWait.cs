@@ -42,6 +42,7 @@ namespace MDump
             {
                 prgIndividual.Style = ProgressBarStyle.Blocks;
                 Text = splitTitle;
+                opts.ClearBaseDirectory();
                 ImageSplitter.SplitImages(bmpList, opts, path, SplitCallback);
             }
         }
@@ -136,15 +137,21 @@ namespace MDump
         /// Keeps the user updated to the actions of the split thread
         /// </summary>
         /// <param name="stage">Current stage of split procedure</param>
-        /// <param name="value">Has different menaing for each stage</param>
-        private void SplitCallback(ImageSplitter.SplitStage stage, int value)
+        /// <param name="data">Has different menaing for each stage</param>
+        private void SplitCallback(ImageSplitter.SplitStage stage, ImageSplitter.SplitCallbackData data)
         {
             if (InvokeRequired)
             {
-                Invoke(new ImageSplitter.SplitCallback(SplitCallback), new object[] { stage, value });
+                Invoke(new ImageSplitter.SplitCallback(SplitCallback), new object[] { stage, data });
             }
             else
             {
+                switch (stage)
+                {
+                    case ImageSplitter.SplitStage.Done:
+                        Close();
+                        break;
+                }
             }
         }
     }
