@@ -17,9 +17,11 @@ namespace MDump
                 : base(msg) { }
         }
 
+        private const string successMsg = "Images were all successfully split in to ";
         private const string dataExtractionErrorMsg = "An error occurred while retrieving the MDump data "
             + "from the merged image";
         private const string unexpecError = "An unexpected error occurred while splitting.";
+        private const string successTitle = "Success";
         private const string splitFailedTitle = "Error while splitting";
 
         public static string SplitKeyword
@@ -122,7 +124,7 @@ namespace MDump
             SplitCallback callback = sa.Callback;
             MDumpOptions opts = sa.Options;
             string splitPath = sa.SplitPath;
-            string splitDir = Path.GetDirectoryName(splitPath);
+            string splitDir = Path.GetDirectoryName(splitPath) + Path.DirectorySeparatorChar;
             List<string> splitsSaved = new List<string>();
 
             callback(SplitStage.Starting, new SplitCallbackData(sa.Bitmaps.Count));
@@ -182,6 +184,7 @@ namespace MDump
                     }
                     callback(SplitStage.FinishedMerge, new SplitCallbackData(++imagesMerged));
                 }
+                MessageBox.Show(successMsg + splitDir, successTitle);
             }
             catch (SplitException ex)
             {
