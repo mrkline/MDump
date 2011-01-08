@@ -185,8 +185,6 @@ namespace MDump
             {
                 while (imagesMerged < bitmaps.Count)
                 {
-                    //TODO: Pass info back
-
                     List<Bitmap> currMergeSet = new List<Bitmap>();
                     int currentMergeSize, lastMergeSize = 0;
 
@@ -378,12 +376,13 @@ namespace MDump
 
                 using (Graphics g = Graphics.FromImage(mergedWithTitle))
                 {
-                    g.DrawImageUnscaled(merged, 0, 0);
+                    g.DrawImage(merged, 0, 0, merged.Width, merged.Height);
 
                     //Uncomment to add a background to the bar
                     //Brush rectBrush = new SolidBrush(Color.Red);
                     //g.FillRectangle(rectBrush, 0, titleY, merged.Width, titleHeight);
-                    g.DrawImageUnscaled(titleBar, kTitleBarPaddingX, titleY + kTitleBarPaddingY);
+                    g.DrawImage(titleBar, kTitleBarPaddingX, titleY + kTitleBarPaddingY,
+                        titleBar.Width, titleBar.Height);
                 }
                 
                 merged = mergedWithTitle;

@@ -206,9 +206,10 @@ namespace MDump
                     bw.Write('\n');
                     foreach (NodeData data in root)
                     {
-                        if (data.Bmp != null)
+                        Bitmap bmp = data.Bmp;
+                        if (bmp != null)
                         {
-                            g.DrawImageUnscaled(data.Bmp, data.Rect.X, data.Rect.Y);
+                            g.DrawImage(data.Bmp, data.Rect.X, data.Rect.Y, bmp.Width, bmp.Height);
 
                             Rectangle r = data.Rect;
                             Bitmap b = data.Bmp;
