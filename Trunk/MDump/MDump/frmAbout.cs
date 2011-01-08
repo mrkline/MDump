@@ -39,7 +39,9 @@ namespace MDump
         {
             get
             {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                Version ver = Assembly.GetExecutingAssembly().GetName().Version;
+                return ver.Major.ToString() + '.'
+                    + ver.Minor.ToString() + " Revision " + ver.Revision.ToString();
             }
         }
 

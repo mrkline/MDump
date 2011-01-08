@@ -44,10 +44,15 @@ namespace MDump
             SplittingNewMerge,
             /// <summary>
             /// Splitting an image out of a merged image.
-            /// String value is the name of the merged image.
+            /// String value is the name of the image being split from the merge.
             /// Integer value is the number of images split out of the current merge so far.
             /// </summary>
             SplittingImage,
+            /// <summary>
+            /// Finished splitting a merged image.
+            /// Integer value is the number of images merged so far.
+            /// </summary>
+            FinishedMerge,
             /// <summary>
             /// Split operation done. Data is not used and can be null
             /// </summary>
@@ -74,7 +79,7 @@ namespace MDump
             public SplitCallbackData(int i)
             {
                 StringValue = string.Empty;
-                IntegerValue = 0;
+                IntegerValue = i;
             }
         }
 
@@ -124,6 +129,7 @@ namespace MDump
 
             try
             {
+                int imagesMerged = 0;
                 foreach (Bitmap image in sa.Bitmaps)
                 {
                     string filename = image.Tag as string;
@@ -167,13 +173,14 @@ namespace MDump
                         Rectangle rect = new Rectangle(x, y, width, height);
                         //Save the image
                         Bitmap splitImage = new Bitmap(width, height);
-                        using(Graphics g = Graphics.FromImage(splitImage))
+                        using (Graphics g = Graphics.FromImage(splitImage))
                         {
                             g.DrawImage(image, 0, 0, rect, GraphicsUnit.Pixel);
                         }
                         splitImage.Save(savePath, System.Drawing.Imaging.ImageFormat.Png);
                         splitsSaved.Add(savePath);
                     }
+                    callback(SplitStage.FinishedMerge, new SplitCallbackData(++imagesMerged));
                 }
             }
             catch (SplitException ex)

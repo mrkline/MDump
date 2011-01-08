@@ -39,7 +39,7 @@
             // prgIndividual
             // 
             this.prgIndividual.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.prgIndividual.Location = new System.Drawing.Point(156, 136);
+            this.prgIndividual.Location = new System.Drawing.Point(156, 111);
             this.prgIndividual.Name = "prgIndividual";
             this.prgIndividual.Size = new System.Drawing.Size(200, 23);
             this.prgIndividual.TabIndex = 0;
@@ -51,7 +51,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.lblWaitStatus.Location = new System.Drawing.Point(12, 9);
             this.lblWaitStatus.Name = "lblWaitStatus";
-            this.lblWaitStatus.Size = new System.Drawing.Size(350, 124);
+            this.lblWaitStatus.Size = new System.Drawing.Size(350, 99);
             this.lblWaitStatus.TabIndex = 1;
             this.lblWaitStatus.Text = "Fill at runtime";
             this.lblWaitStatus.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -60,7 +60,7 @@
             // 
             this.lblIndividualProgress.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.lblIndividualProgress.AutoSize = true;
-            this.lblIndividualProgress.Location = new System.Drawing.Point(19, 141);
+            this.lblIndividualProgress.Location = new System.Drawing.Point(19, 116);
             this.lblIndividualProgress.Name = "lblIndividualProgress";
             this.lblIndividualProgress.Size = new System.Drawing.Size(131, 13);
             this.lblIndividualProgress.TabIndex = 2;
@@ -69,7 +69,7 @@
             // prgOverall
             // 
             this.prgOverall.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.prgOverall.Location = new System.Drawing.Point(156, 165);
+            this.prgOverall.Location = new System.Drawing.Point(156, 140);
             this.prgOverall.Name = "prgOverall";
             this.prgOverall.Size = new System.Drawing.Size(200, 23);
             this.prgOverall.TabIndex = 3;
@@ -88,7 +88,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.ClientSize = new System.Drawing.Size(374, 197);
+            this.ClientSize = new System.Drawing.Size(374, 172);
             this.ControlBox = false;
             this.Controls.Add(this.lblOverallProgress);
             this.Controls.Add(this.prgOverall);

@@ -168,7 +168,7 @@ namespace MDump
         /// </summary>
         public MDumpOptions()
         {
-            MergePathOpts = PathOptions.PreservePath; //Save file name while merging
+            MergePathOpts = PathOptions.PreservePath; //Save file path while merging
             SplitPathOpts = PathOptions.PreserveName; //Respect file name when splitting
             BaseDirectory = string.Empty;
             MaxMergeSize = 2048 * 1024; //Default max merge size of 2 megabytes

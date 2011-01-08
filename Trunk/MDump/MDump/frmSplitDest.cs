@@ -13,8 +13,8 @@ namespace MDump
     {
         private const string ignoreInfoLabel = "Select a name to save all split images as:";
         private const string useInfoLabel = "Select a name to use for any merges that didn't save file info:";
-        private const string overwriteFilenameStatus = "Split files with this name already exist in this folder. They will be overwritten.";
-        private const string hasExtensionFilenameStatus = "Do not add an extension to the file name.  It will be done automatically";
+        private const string overwriteFilenameStatus = "Split files with this name already exist in this folder.\nThey will be overwritten.";
+        private const string hasExtensionFilenameStatus = "Do not add an extension to the file name.\nIt will be done automatically";
         private const string invalidFilenameStatus = "This is not a valid file name.";
 
         private readonly Color validColor = Color.Green;
@@ -23,6 +23,7 @@ namespace MDump
         private readonly Color validBGColor = Color.LightGreen;
         private readonly Color warningBGColor = Color.Yellow;
         private readonly Color invalidBGColor = Color.PaleVioletRed;
+        private readonly Color defaultTextBackColor;
         private readonly MDumpOptions opts;
 
         public frmSplitDest(MDumpOptions options)
@@ -30,6 +31,7 @@ namespace MDump
             opts = options;
             InitializeComponent();
             lblDirStatus.ForeColor = invalidColor;
+            defaultTextBackColor = txtFilename.BackColor;
         }
 
         public string SplitPath
@@ -51,7 +53,7 @@ namespace MDump
         private void frmSplitDest_Load(object sender, EventArgs e)
         {
             txtFilename.Text = string.Empty;
-            lblSelectFilename.BackColor = DefaultBackColor;
+            txtFilename.BackColor = defaultTextBackColor;
             btnOK.Enabled = false;
             if (opts.SplitPathOpts == MDumpOptions.PathOptions.Discard)
             {
@@ -76,7 +78,7 @@ namespace MDump
             if (txtDir.Text.Length == 0)
             {
                 lblDirStatus.Visible = false;
-                txtDir.BackColor = DefaultBackColor;
+                txtDir.BackColor = defaultTextBackColor;
             }
             else if (Directory.Exists(txtDir.Text))
             {
@@ -102,7 +104,7 @@ namespace MDump
             if(txtFilename.Text.Length == 0)
             {
                 lblFilenameStatus.Visible = false;
-                txtFilename.BackColor = DefaultBackColor;
+                txtFilename.BackColor = defaultTextBackColor;
                 btnOK.Enabled = false;
             }
             //File name has invalid characters
@@ -146,7 +148,7 @@ namespace MDump
                     //The name format of merges is <name>.split<num>.png
                     string test = Path.GetFileName(file);
                     string[] tokens = Path.GetFileName(file).Split('.');
-                    if (tokens.Length == 4
+                    if (tokens.Length == 3
                         && tokens[0].Equals(txtFilename.Text, StringComparison.InvariantCultureIgnoreCase)
                         && tokens[1].StartsWith(ImageSplitter.SplitKeyword)
                         && IsInt(tokens[1].Substring(ImageSplitter.SplitKeyword.Length))
@@ -163,7 +165,7 @@ namespace MDump
                     lblFilenameStatus.Text = overwriteFilenameStatus;
                     lblFilenameStatus.Visible = true;
                     txtFilename.BackColor = warningBGColor;
-                    btnOK.Enabled = false;
+                    btnOK.Enabled = true;
                 }
                 //Filename is good to go
                 else
@@ -184,7 +186,33 @@ namespace MDump
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            //TODO: Overwrite code here
+            //Overwrite any needed files
+            //Get all files in the directory that start with the name provided
+            string[] dirFiles = Directory.GetFiles(txtDir.Text);
+
+            //Get requested filename
+            string fn = SplitPath;
+                
+            //Check if we need an overwrite
+            List<string> filesToOverwrite = new List<string>();
+            foreach (string file in dirFiles)
+            {
+                //The name format of merges is <name>.split<num>.png
+                string test = Path.GetFileName(file);
+                string[] tokens = Path.GetFileName(file).Split('.');
+                if (tokens.Length == 3
+                    && tokens[0].Equals(txtFilename.Text, StringComparison.InvariantCultureIgnoreCase)
+                    && tokens[1].StartsWith(ImageSplitter.SplitKeyword)
+                    && IsInt(tokens[1].Substring(ImageSplitter.SplitKeyword.Length))
+                    && tokens[2].Equals("png", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    filesToOverwrite.Add(file);
+                }
+            }
+            foreach (string file in filesToOverwrite)
+            {
+                File.Delete(file);
+            }
 
             DialogResult = System.Windows.Forms.DialogResult.OK;
             Close();
@@ -208,7 +236,5 @@ namespace MDump
                 return false;
             }
         }
-       
-
     }
 }

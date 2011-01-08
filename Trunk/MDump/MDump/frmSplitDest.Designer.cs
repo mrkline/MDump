@@ -41,15 +41,11 @@
             this.lblDirStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // dlgSplitDir
-            // 
-            this.dlgSplitDir.RootFolder = System.Environment.SpecialFolder.MyComputer;
-            // 
             // btnOK
             // 
             this.btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnOK.Enabled = false;
-            this.btnOK.Location = new System.Drawing.Point(99, 154);
+            this.btnOK.Location = new System.Drawing.Point(99, 174);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 0;
@@ -61,7 +57,7 @@
             // 
             this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(180, 154);
+            this.btnCancel.Location = new System.Drawing.Point(180, 174);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 1;
@@ -144,7 +140,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(354, 187);
+            this.ClientSize = new System.Drawing.Size(354, 207);
             this.Controls.Add(this.lblDirStatus);
             this.Controls.Add(this.lblFilenameStatus);
             this.Controls.Add(this.txtFilename);

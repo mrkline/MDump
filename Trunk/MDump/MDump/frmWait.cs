@@ -18,6 +18,8 @@ namespace MDump
         private List<Bitmap> bmpList;
         private MDumpOptions opts;
         private string path;
+
+        private string currentMerge;
        
         public frmWait(frmMain.Mode mode, List<Bitmap> bmpList, MDumpOptions opts,
             string path)
@@ -148,6 +150,30 @@ namespace MDump
             {
                 switch (stage)
                 {
+                    case ImageSplitter.SplitStage.Starting:
+                        lblWaitStatus.Text = "Starting the split operation on "
+                            + data.IntegerValue.ToString() + " merged images.";
+                        prgOverall.Value = 0;
+                        prgOverall.Maximum = data.IntegerValue;
+                        break;
+
+                    case ImageSplitter.SplitStage.SplittingNewMerge:
+                        currentMerge = data.StringValue;
+                        lblWaitStatus.Text = "Splitting " + data.StringValue + "...\n";
+                        prgIndividual.Maximum = data.IntegerValue;
+                        prgIndividual.Value = 0;
+                        break;
+
+                    case ImageSplitter.SplitStage.SplittingImage:
+                        lblWaitStatus.Text = "Splitting " + data.StringValue
+                            + " from " + currentMerge;
+                        prgIndividual.Value = data.IntegerValue;
+                        break;
+
+                    case ImageSplitter.SplitStage.FinishedMerge:
+                        prgOverall.Value = data.IntegerValue;
+                        break;
+
                     case ImageSplitter.SplitStage.Done:
                         Close();
                         break;
