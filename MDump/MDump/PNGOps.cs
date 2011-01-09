@@ -87,6 +87,11 @@ namespace MDump
             get { return _dllName; }
         }
 
+        public static bool DllIsPresent
+        {
+            get { return System.IO.File.Exists(_dllName); }
+        }
+
         /// <summary>
         /// A simple wrapper around free() to release unmanaged memory once we've copied data out of it
         /// </summary>

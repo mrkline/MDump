@@ -101,7 +101,7 @@
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(75, 30);
             this.btnAdd.TabIndex = 8;
-            this.btnAdd.Text = "Add Image";
+            this.btnAdd.Text = "Add Images";
             this.ttpMain.SetToolTip(this.btnAdd, "Add an Image to the list");
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
