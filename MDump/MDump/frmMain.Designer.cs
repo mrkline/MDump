@@ -108,6 +108,7 @@
             // 
             // btnHowWork
             // 
+            this.btnHowWork.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnHowWork.Location = new System.Drawing.Point(245, 284);
             this.btnHowWork.Name = "btnHowWork";
             this.btnHowWork.Size = new System.Drawing.Size(110, 30);
@@ -197,7 +198,7 @@
             this.Controls.Add(this.btnUp);
             this.Controls.Add(this.lvImages);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(340, 200);
+            this.MinimumSize = new System.Drawing.Size(460, 200);
             this.Name = "frmMain";
             this.Text = "MDump";
             this.Load += new System.EventHandler(this.frmMain_Load);
