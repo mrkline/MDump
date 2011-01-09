@@ -34,6 +34,21 @@ namespace MDump
             defaultTextBackColor = txtFilename.BackColor;
         }
 
+        public string SplitDir
+        {
+            get
+            {
+                if (txtDir.Text.Length == 0)
+                {
+                    return Directory.GetCurrentDirectory();
+                }
+                else
+                {
+                    return txtDir.Text;
+                }
+            }
+        }
+
         public string SplitPath
         {
             get
@@ -41,11 +56,11 @@ namespace MDump
                 if (txtDir.Text.EndsWith(Path.DirectorySeparatorChar.ToString())
                     || txtDir.Text.EndsWith(Path.AltDirectorySeparatorChar.ToString()))
                 {
-                    return txtDir.Text + txtFilename.Text;
+                    return SplitDir + txtFilename.Text;
                 }
                 else
                 {
-                    return txtDir.Text + Path.DirectorySeparatorChar + txtFilename.Text;
+                    return SplitDir + Path.DirectorySeparatorChar + txtFilename.Text;
                 }
             }
         }
@@ -136,7 +151,7 @@ namespace MDump
             else if (Directory.Exists(txtDir.Text))
             {
                 //Get all files in the directory that start with the name provided
-                string[] dirFiles = Directory.GetFiles(txtDir.Text);
+                string[] dirFiles = Directory.GetFiles(SplitDir);
 
                 //Get requested filename
                 string fn = SplitPath;
@@ -188,7 +203,7 @@ namespace MDump
         {
             //Overwrite any needed files
             //Get all files in the directory that start with the name provided
-            string[] dirFiles = Directory.GetFiles(txtDir.Text);
+            string[] dirFiles = Directory.GetFiles(SplitDir);
 
             //Get requested filename
             string fn = SplitPath;

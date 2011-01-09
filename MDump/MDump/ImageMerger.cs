@@ -22,10 +22,12 @@ namespace MDump
                 : base(msg) { }
         }
 
+        private const string successMsg = "Images were all successfully merged in to ";
         private const string mergeFailedMsg = "An error occurred while merging imgaes";
         private const string mergedFailedTitle = "Error while merging";
         private const string sizeTooSmallMsg = "The maximum merge size is too small to fit one of the images."
                                                 + " Make it larger and try again";
+        private const string successTitle = "Success";
         private const string unexpecError = "An unexpected error occurred while merging.";
 
         /// <summary>
@@ -185,8 +187,6 @@ namespace MDump
             {
                 while (imagesMerged < bitmaps.Count)
                 {
-                    //TODO: Pass info back
-
                     List<Bitmap> currMergeSet = new List<Bitmap>();
                     int currentMergeSize, lastMergeSize = 0;
 
@@ -278,6 +278,7 @@ namespace MDump
                     //Reset the pointers
                     currentMergeMem = lastMergeMem = IntPtr.Zero;
                 }
+                MessageBox.Show(successMsg + mergePath, successTitle);
             }
             catch (MergeException ex)
             {
@@ -378,12 +379,13 @@ namespace MDump
 
                 using (Graphics g = Graphics.FromImage(mergedWithTitle))
                 {
-                    g.DrawImageUnscaled(merged, 0, 0);
+                    g.DrawImage(merged, 0, 0, merged.Width, merged.Height);
 
                     //Uncomment to add a background to the bar
                     //Brush rectBrush = new SolidBrush(Color.Red);
                     //g.FillRectangle(rectBrush, 0, titleY, merged.Width, titleHeight);
-                    g.DrawImageUnscaled(titleBar, kTitleBarPaddingX, titleY + kTitleBarPaddingY);
+                    g.DrawImage(titleBar, kTitleBarPaddingX, titleY + kTitleBarPaddingY,
+                        titleBar.Width, titleBar.Height);
                 }
                 
                 merged = mergedWithTitle;
