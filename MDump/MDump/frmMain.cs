@@ -477,7 +477,13 @@ namespace MDump
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-
+            if (!PNGOps.DllIsPresent)
+            {
+                MessageBox.Show(PNGOps.DllName + " could not be found."
+                    + " Make sure it is in the same folder as this program.",
+                    "Couldn't find DLL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close();
+            }
         }
     }
 }

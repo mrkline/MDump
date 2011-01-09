@@ -22,10 +22,12 @@ namespace MDump
                 : base(msg) { }
         }
 
+        private const string successMsg = "Images were all successfully merged in to ";
         private const string mergeFailedMsg = "An error occurred while merging imgaes";
         private const string mergedFailedTitle = "Error while merging";
         private const string sizeTooSmallMsg = "The maximum merge size is too small to fit one of the images."
                                                 + " Make it larger and try again";
+        private const string successTitle = "Success";
         private const string unexpecError = "An unexpected error occurred while merging.";
 
         /// <summary>
@@ -276,6 +278,7 @@ namespace MDump
                     //Reset the pointers
                     currentMergeMem = lastMergeMem = IntPtr.Zero;
                 }
+                MessageBox.Show(successMsg + mergePath, successTitle);
             }
             catch (MergeException ex)
             {
