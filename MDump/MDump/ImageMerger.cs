@@ -25,8 +25,6 @@ namespace MDump
         private const string successMsg = "Images were all successfully merged in to ";
         private const string mergeFailedMsg = "An error occurred while merging imgaes";
         private const string mergedFailedTitle = "Error while merging";
-        private const string sizeTooSmallMsg = "The maximum merge size is too small to fit one of the images."
-                                                + " Make it larger and try again";
         private const string successTitle = "Success";
         private const string unexpecError = "An unexpected error occurred while merging.\n";
 
@@ -219,7 +217,7 @@ namespace MDump
                                 //If not even a single image could fit in the merge, we have an issue
                                 if (currMergeSet.Count == 1)
                                 {
-                                    throw new MergeException(sizeTooSmallMsg);
+                                    throw new MergeException(GenerateTooSmallMessage((string)currMergeSet[0].Tag));
                                 }
 
                                 //If the current merge size is over the limit but the last wasn't, use the last one
@@ -305,6 +303,20 @@ namespace MDump
             {
                 callback(MergeStage.Done, 0, null);
             }
+        }
+
+        private static string GenerateTooSmallMessage(string filepath)
+        {
+           string ret = "The maximum merge size is too small to fit the image " + Path.GetFileName(filepath)
+                + ". Increasing the maximum merge size may help.";
+                if(filepath.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase)
+                    || filepath.EndsWith(".jpeg", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    ret += " Please note that PNG cannot compress large images as well as JPEG"
+                        + " since JPEG sacrifices information to make the image smaller."
+                        + " The next major release of MDump will support saving merged images as JPEG ones.";
+                }
+            return ret;
         }
 
         /// <summary>
