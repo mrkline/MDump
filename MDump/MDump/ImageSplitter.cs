@@ -20,7 +20,7 @@ namespace MDump
         private const string successMsg = "Images were all successfully split in to ";
         private const string dataExtractionErrorMsg = "An error occurred while retrieving the MDump data "
             + "from the merged image";
-        private const string unexpecError = "An unexpected error occurred while splitting.";
+        private const string unexpecError = "An unexpected error occurred while splitting.\n";
         private const string successTitle = "Success";
         private const string splitFailedTitle = "Error while splitting";
 
@@ -193,8 +193,9 @@ namespace MDump
             }
             catch(Exception ex)
             {
-                string test = ex.Message;
-                MessageBox.Show(unexpecError, splitFailedTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandling.LogException(ex);
+                MessageBox.Show(unexpecError + ErrorHandling.ErrorMessage,
+                    splitFailedTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 CleanupOnSplitFail(splitsSaved);
             }
             finally

@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="BinaryTree.cs" />
     <Compile Include="BTBitmapMapper.cs" />
+    <Compile Include="ErrorHandling.cs" />
     <Compile Include="frmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
