@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("MDump")]
-[assembly: AssemblyDescription("MDump automatically merges multiple images into a single image file, making it ideal for dumping a series of images onto an image board. MDump can also break the combined images back down into the originals after download.")]
+[assembly: AssemblyDescription("MDump automatically merges multiple images into a single image file, making it ideal for dumping a series of images onto an image board. MDump can also break the combined images back down in to the originals after download.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("MDump")]
-[assembly: AssemblyCopyright("Copyright Matt Kline ©  2010")]
+[assembly: AssemblyCopyright("Copyright Matt Kline ©  2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.2.0")]
-[assembly: AssemblyFileVersion("0.1.2.0")]
+[assembly: AssemblyVersion("0.1.3.0")]
+[assembly: AssemblyFileVersion("0.1.3.0")]
