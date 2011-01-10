@@ -10,7 +10,7 @@ namespace MDump
     {
         public static string SupportEmail
         {
-            get { return "Support.MDump@gmail.com"; }
+            get { return "MDumpHelp@gmail.com"; }
         }
 
         public static string ErrorFilename
@@ -31,19 +31,28 @@ namespace MDump
 
         public static void LogException(Exception ex)
         {
-            using(StreamWriter sw = new StreamWriter(ErrorFilename, true, Encoding.UTF8))
+            try
             {
-                Version ver = Assembly.GetExecutingAssembly().GetName().Version;
-                sw.WriteLine("Error on " + DateTime.Now.ToShortDateString());
-                sw.WriteLine("MDump version " + ver.Major.ToString() + '.'
-                    + ver.Minor.ToString() + " Build " + ver.Build.ToString());
-                sw.WriteLine();
-                sw.WriteLine("Exception message is as follows:");
-                sw.WriteLine(ex.Message);
-                sw.WriteLine();
-                sw.WriteLine("Stack trace:");
-                sw.WriteLine(ex.StackTrace);
-                sw.WriteLine();
+                using (StreamWriter sw = new StreamWriter(ErrorFilename, true, Encoding.UTF8))
+                {
+                    Version ver = Assembly.GetExecutingAssembly().GetName().Version;
+                    sw.WriteLine("Error on " + DateTime.Now.ToShortDateString());
+                    sw.WriteLine("MDump version " + ver.Major.ToString() + '.'
+                        + ver.Minor.ToString() + " Build " + ver.Build.ToString());
+                    sw.WriteLine();
+                    sw.WriteLine("Exception message is as follows:");
+                    sw.WriteLine(ex.Message);
+                    sw.WriteLine();
+                    sw.WriteLine("Stack trace:");
+                    sw.WriteLine(ex.StackTrace);
+                    sw.WriteLine();
+                }
+            }
+            catch
+            {
+                System.Windows.Forms.MessageBox.Show("An error occurred, and another error occurred while"
+                    + " trying to save info about the error.  This program will now go cry in a corner.",
+                    "Error recording error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
             }
         }
     }
