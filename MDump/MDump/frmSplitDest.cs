@@ -13,9 +13,12 @@ namespace MDump
     {
         private const string ignoreInfoLabel = "Select a name to save all split images as:";
         private const string useInfoLabel = "Select a name to use for any merges that didn't save file info:";
+        private const string invalidDirStatus = "This is not an existing folder";
+        private const string noRelativeDirsStatus = "Relative directories are not allowed";
         private const string overwriteFilenameStatus = "Split files with this name already exist in this folder.\nThey will be overwritten.";
         private const string hasExtensionFilenameStatus = "Do not add an extension to the file name.\nIt will be done automatically";
         private const string invalidFilenameStatus = "This is not a valid file name.";
+
 
         private readonly Color validColor = Color.Green;
         private readonly Color warningColor = Color.Goldenrod;
@@ -95,15 +98,23 @@ namespace MDump
                 lblDirStatus.Visible = false;
                 txtDir.BackColor = defaultTextBackColor;
             }
-            else if (Directory.Exists(txtDir.Text))
+            else if (!Directory.Exists(txtDir.Text))
             {
-                lblDirStatus.Visible = false;
-                txtDir.BackColor = validBGColor;
+                lblDirStatus.Text = invalidDirStatus;
+                lblDirStatus.Visible = true;
+                txtDir.BackColor = invalidBGColor;
+            }
+            //Relative paths are not allowed
+            else if (txtDir.Text.Contains(".."))
+            {
+                lblDirStatus.Text = noRelativeDirsStatus;
+                lblDirStatus.Visible = true;
+                txtDir.BackColor = invalidBGColor;
             }
             else
             {
-                lblDirStatus.Visible = true;
-                txtDir.BackColor = invalidBGColor;
+                lblDirStatus.Visible = false;
+                txtDir.BackColor = validBGColor;
             }
             UpdateFilenameAndOKStatus();
         }
@@ -148,7 +159,7 @@ namespace MDump
                 btnOK.Enabled = true;
             }
             //Check if directory is valid and check if an overwrite would be needed
-            else if (Directory.Exists(txtDir.Text))
+            else if (Directory.Exists(txtDir.Text) && !txtDir.Text.Contains(".."))
             {
                 //Get all files in the directory that start with the name provided
                 string[] dirFiles = Directory.GetFiles(SplitDir);
