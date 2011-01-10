@@ -12,9 +12,19 @@ namespace MDump
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmMain());
+            try
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new frmMain());
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.LogException(ex);
+                MessageBox.Show("A fatal unexpected error occurred.\n"
+                    + ErrorHandling.ErrorMessage, "Unexpected fatal error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
     }
 }

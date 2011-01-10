@@ -129,9 +129,9 @@
             this.lblDirStatus.AutoSize = true;
             this.lblDirStatus.Location = new System.Drawing.Point(12, 61);
             this.lblDirStatus.Name = "lblDirStatus";
-            this.lblDirStatus.Size = new System.Drawing.Size(137, 13);
+            this.lblDirStatus.Size = new System.Drawing.Size(87, 13);
             this.lblDirStatus.TabIndex = 8;
-            this.lblDirStatus.Text = "This is not an existing folder";
+            this.lblDirStatus.Text = "Status goes here";
             this.lblDirStatus.Visible = false;
             // 
             // frmSplitDest
