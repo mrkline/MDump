@@ -16,10 +16,17 @@ namespace MDump
     /// </summary>
     class ImageMerger
     {
+        /// <summary>
+        /// Thrown in this class.
+        /// Used to differentiate between expected exceptions and unexpected dones.
+        /// </summary>
         private class MergeException : ApplicationException
         {
             public MergeException(string msg)
                 : base(msg) { }
+
+            public MergeException(string msg, Exception inner)
+                : base(msg, inner) { }
         }
 
         private const string successMsg = "Images were all successfully merged in to ";
@@ -131,23 +138,13 @@ namespace MDump
         }
 
         /// <summary>
-        /// Tests if the provided file is an MDump merged image
-        /// </summary>
-        /// <param name="file">Filename of the file to check</param>
-        /// <returns>true if the file is an MDump merged image, otherwise false</returns>
-        public static MergedCode IsMergedImage(string file)
-        {
-            return PNGOps.IsMergedImage(file);
-        }
-
-        /// <summary>
         /// Merges images in a separate thread,
         /// passing a wait dialog updates on its current state via callbacks
         /// </summary>
-        /// <param name="images">Bitmaps to merge and save</param>
+        /// <param name="images">Bitmaps to merge and save. Their tag contains afile name or path.</param>
         /// <param name="opts">Options to use for merging the images</param>
         /// <param name="mergeDir">Directory to merge images to</param>
-        /// <param name="callback">Callback for display form to show user what is going on</param>
+        /// <param name="callback">Callback for wait form to show user what is going on</param>
         public static void MergeImages(List<Bitmap> images, MDumpOptions opts, string mergeDir,
             MergeCallback callback)
         {
@@ -185,7 +182,6 @@ namespace MDump
                 while (imagesMerged < bitmaps.Count)
                 {
                     List<Bitmap> currMergeSet = new List<Bitmap>();
-                    int currentMergeSize, lastMergeSize = 0;
 
                     //Filename of the current merge image
                     string filename = mergePath + "." + mergesSaved.Count + ".png";
@@ -197,95 +193,83 @@ namespace MDump
                     callback(MergeStage.DeterminingNumPerMerge, imagesMerged,
                        LastAttemptInfo.NoLastMege);
 
-                    //Pointer variables are placed here so they can be accessed form the finally block
-                    IntPtr currentMergeMem = IntPtr.Zero, lastMergeMem = IntPtr.Zero;
+                    byte[] currentMergeMem = null, lastMergeMem = null;
 
-                    try
+                    //Test the resulting PNG size of the current merge set, then add or remove images
+                    //in order to get as close as we can to the max without going over
+                    while (true)
                     {
-                        //Test the resulting PNG size of the current merge set, then add or remove images
-                        //in order to get as close as we can to the max without going over
-                        while (true)
+                        //If the PNG merge code weirds out, break out of here.
+                        try
                         {
-                            //If the PNG merge code weirds out, break out of here.
-                            if (CreateMergedImage(currMergeSet, opts, out currentMergeMem, out currentMergeSize)
-                                != ECode.EC_SUCCESS)
+                            currentMergeMem = CreateMergedImage(currMergeSet, opts);
+                        }
+                        catch(PNGOpsException ex)
+                        {
+                            throw new MergeException(mergeFailedMsg, ex);
+                        }
+                        if (currentMergeMem.Length > maxMergeSize)
+                        {
+                            //If not even a single image could fit in the merge, we have an issue
+                            if (currMergeSet.Count == 1)
                             {
-                                throw new MergeException(mergeFailedMsg);
+                                throw new MergeException(GenerateTooSmallMessage((string)currMergeSet[0].Tag));
                             }
-                            if (currentMergeSize > maxMergeSize)
-                            {
-                                //If not even a single image could fit in the merge, we have an issue
-                                if (currMergeSet.Count == 1)
-                                {
-                                    throw new MergeException(GenerateTooSmallMessage((string)currMergeSet[0].Tag));
-                                }
 
-                                //If the current merge size is over the limit but the last wasn't, use the last one
-                                else if (lastMergeMem != IntPtr.Zero && lastMergeSize <= maxMergeSize)
-                                {
-                                    callback(MergeStage.Saving, imagesMerged, filename);
-                                    SavePNG(lastMergeMem, lastMergeSize, filename);
-                                    mergesSaved.Add(filename);
-                                    //We've saved the current set count - 1 since we're using the last
-                                    //merge
-                                    imagesMerged += currMergeSet.Count - 1;
-                                    break;
-                                }
-                                //Otherwise decrease the current merge set
-                                else
-                                {
-                                    callback(MergeStage.DeterminingNumPerMerge,
-                                      imagesMerged, LastAttemptInfo.TooLarge);
-                                    currMergeSet.RemoveAt(currMergeSet.Count - 1);
-                                }
-                            }
-                            else if (currentMergeSize < maxMergeSize)
-                            {
-                                //If the current merge size is under the limit but the last wasn't
-                                //or we've reached the end of our merge set, use the current merge
-                                if (imagesMerged + currMergeSet.Count == bitmaps.Count
-                                    || lastMergeMem != IntPtr.Zero && lastMergeSize > maxMergeSize)
-                                {
-                                    callback(MergeStage.Saving, imagesMerged, filename);
-                                    SavePNG(currentMergeMem, currentMergeSize, filename);
-                                    mergesSaved.Add(filename);
-                                    imagesMerged += currMergeSet.Count;
-                                    break;
-                                }
-                                //Otherwise increase the current merge set
-                                else
-                                {
-                                    callback(MergeStage.DeterminingNumPerMerge,
-                                        imagesMerged, LastAttemptInfo.TooSmall);
-                                    currMergeSet.Add(bitmaps[imagesMerged + currMergeSet.Count]);
-                                }
-                            }
-                            //The current merge is spot on
-                            else
+                            //If the current merge size is over the limit but the last wasn't, use the last one
+                            else if (lastMergeMem != null && currentMergeMem.Length <= maxMergeSize)
                             {
                                 callback(MergeStage.Saving, imagesMerged, filename);
-                                SavePNG(currentMergeMem, currentMergeSize, filename);
+                                File.WriteAllBytes(filename, lastMergeMem);
+                                mergesSaved.Add(filename);
+                                //We've saved the current set count - 1 since we're using the last
+                                //merge
+                                imagesMerged += currMergeSet.Count - 1;
+                                break;
+                            }
+                            //Otherwise decrease the current merge set
+                            else
+                            {
+                                callback(MergeStage.DeterminingNumPerMerge,
+                                    imagesMerged, LastAttemptInfo.TooLarge);
+                                currMergeSet.RemoveAt(currMergeSet.Count - 1);
+                            }
+                        }
+                        else if (currentMergeMem.Length < maxMergeSize)
+                        {
+                            //If the current merge size is under the limit but the last wasn't
+                            //or we've reached the end of our merge set, use the current merge
+                            if (imagesMerged + currMergeSet.Count == bitmaps.Count
+                                || lastMergeMem != null && lastMergeMem.Length > maxMergeSize)
+                            {
+                                callback(MergeStage.Saving, imagesMerged, filename);
+                                File.WriteAllBytes(filename, currentMergeMem);
                                 mergesSaved.Add(filename);
                                 imagesMerged += currMergeSet.Count;
                                 break;
                             }
-                            PNGOps.FreeUnmanagedData(lastMergeMem);
-                            lastMergeMem = currentMergeMem;
-                            lastMergeSize = currentMergeSize;
+                            //Otherwise increase the current merge set
+                            else
+                            {
+                                callback(MergeStage.DeterminingNumPerMerge,
+                                    imagesMerged, LastAttemptInfo.TooSmall);
+                                currMergeSet.Add(bitmaps[imagesMerged + currMergeSet.Count]);
+                            }
                         }
+                        //The current merge is spot on
+                        else
+                        {
+                            callback(MergeStage.Saving, imagesMerged, filename);
+                            File.WriteAllBytes(filename, currentMergeMem);
+                            mergesSaved.Add(filename);
+                            imagesMerged += currMergeSet.Count;
+                            break;
+                        }
+                        lastMergeMem = currentMergeMem;
                     }
-                    catch
-                    {
-                        throw;
-                    }
-                    finally
-                    {
-                        //Free any memory we might have
-                        PNGOps.FreeUnmanagedData(currentMergeMem);
-                        PNGOps.FreeUnmanagedData(lastMergeMem);
-                    }
+                    
                 }
-                MessageBox.Show(successMsg + mergePath, successTitle);
+                MessageBox.Show(successMsg + Path.GetDirectoryName(mergePath), successTitle);
             }
             catch (MergeException ex)
             {
@@ -305,6 +289,12 @@ namespace MDump
             }
         }
 
+        /// <summary>
+        /// Generates the message for a MessageBox informing the user that one of their images
+        /// is too large for the max merge size.
+        /// </summary>
+        /// <param name="filepath">Name of the file that is too large</param>
+        /// <returns>message to display</returns>
         private static string GenerateTooSmallMessage(string filepath)
         {
            string ret = "The maximum merge size is too small to fit the image " + Path.GetFileName(filepath)
@@ -351,14 +341,12 @@ namespace MDump
         }
 
         /// <summary>
-        /// Creates the merged image in memory, passing back a pointer to the image along with its size.
+        /// Creates the merged PNG image in memory, passing back the buffer that contains the image.
         /// </summary>
         /// <param name="bitmaps">Bitmaps to merge into a PNG</param>
         /// <param name="opts">Options to use while merging</param>
-        /// <param name="memImgOut">Pointer to the PNG file now residing in unmanaged memory</param>
-        /// <param name="imgSizeOut">Size of PNG residing in memory (in bytes)</param>
-        /// <returns>the error code of PNGOps.SavePNGToMemory</returns>
-        private static ECode CreateMergedImage(IEnumerable<Bitmap> bitmaps, MDumpOptions opts, out IntPtr memImgOut, out int imgSizeOut)
+        /// <returns>The </returns>
+        private static byte[] CreateMergedImage(IEnumerable<Bitmap> bitmaps, MDumpOptions opts)
         {
             int maxWidth = 0;
             int maxHeight = 0;
@@ -371,14 +359,17 @@ namespace MDump
                 maxHeight += bmp.Height;
             }
 
-            Byte[] mdData;
+            byte[] mdData;
+            //Merge our images and generate our data
             Bitmap merged = BTBitmapMapper.MergeImages(bitmaps, new Size(maxWidth, maxHeight),
                 PixelFormat.Format32bppArgb, opts, out mdData);
 
+            //Tack on the title bar if requested to
             if (opts.AddTitleBar)
             {
                 Bitmap titleBar;
                 int mWidth = merged.Width;
+                //There are three versions of the title bar. Pick the largest one that will fit on the image.
                 if (mWidth > MDump.Properties.Resources.TitleBar.Width + kTitleBarPaddingX + 1)
                 {
                     titleBar = MDump.Properties.Resources.TitleBar;
@@ -398,6 +389,7 @@ namespace MDump
                 Bitmap mergedWithTitle = new Bitmap(merged.Width,
                     merged.Height + titleHeight);
 
+                //Draw the title bar
                 using (Graphics g = Graphics.FromImage(mergedWithTitle))
                 {
                     g.DrawImage(merged, 0, 0, merged.Width, merged.Height);
@@ -412,30 +404,8 @@ namespace MDump
                 merged = mergedWithTitle;
             }
 
-
-            BitmapData bmpData = merged.LockBits(new Rectangle(0, 0, merged.Width, merged.Height),
-                ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
-            
-            ECode ret = PNGOps.SavePNGToMemory(bmpData.Scan0, bmpData.Width, bmpData.Height, true,
-                mdData, mdData.Length, opts.CompressionLevel, out memImgOut, out imgSizeOut);
-            merged.UnlockBits(bmpData);
-            return ret;
+            return PNGOps.SavePNGToMemory(merged, mdData, opts.CompressionLevel);
         }
-
-        /// <summary>
-        /// Saves a PNG in unmanaged memory to a file
-        /// </summary>
-        /// <param name="pngUnmangedMem">pointer to the PNG in unmanaged memory</param>
-        /// <param name="pngLen">length of the PNG, in bytes</param>
-        /// <param name="filename">filename to store the PNG to</param>
-        private static void SavePNG(IntPtr pngUnmangedMem, int pngLen, string filename)
-        {
-            Byte[] pngMem = new Byte[pngLen];
-            Marshal.Copy(pngUnmangedMem, pngMem, 0, pngLen);
-            File.WriteAllBytes(filename, pngMem);
-        }
-
 
         /// <summary>
         /// Cleans up a half-done merge if an error occurs.

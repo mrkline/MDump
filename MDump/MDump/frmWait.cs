@@ -37,14 +37,12 @@ namespace MDump
             {
                 prgIndividual.Style = ProgressBarStyle.Marquee;
                 Text = mergeTitle;
-                opts.SetBaseDirectory(bmpList);
                 ImageMerger.MergeImages(bmpList, opts, path, MergeCallback);
             }
             else
             {
                 prgIndividual.Style = ProgressBarStyle.Blocks;
                 Text = splitTitle;
-                opts.ClearBaseDirectory();
                 ImageSplitter.SplitImages(bmpList, opts, path, SplitCallback);
             }
         }

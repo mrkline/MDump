@@ -9,21 +9,23 @@ using System.Windows.Forms;
 
 namespace MDump
 {
+    /// <summary>
+    /// Splits and saves images in a separate thread, providing the wait dialog with callbacks
+    /// to indicate its progress.
+    /// </summary>
     class ImageSplitter
     {
-        private class SplitException : ApplicationException
-        {
-            public SplitException(string msg)
-                : base(msg) { }
-        }
-
         private const string successMsg = "Images were all successfully split in to ";
-        private const string dataExtractionErrorMsg = "An error occurred while retrieving the MDump data "
+        private const string dataExtractionErrorMsg = "An error occurred while retrieving the MDump data."
             + "from the merged image";
         private const string unexpecError = "An unexpected error occurred while splitting.\n";
         private const string successTitle = "Success";
         private const string splitFailedTitle = "Error while splitting";
 
+        /// <summary>
+        /// Gets the split keyword for split images which have the file name format of
+        /// (uniqueName).(keyword)(number).png
+        /// </summary>
         public static string SplitKeyword
         {
             get { return "split"; }
@@ -61,6 +63,10 @@ namespace MDump
             Done
         }
 
+        /// <summary>
+        /// Used to pass additional information to the callback.
+        /// Means different things depending on the current SplitStage
+        /// </summary>
         public class SplitCallbackData
         {
             public string StringValue { get; private set; }
@@ -92,6 +98,9 @@ namespace MDump
         /// <param name="data">Has different menaing for each stage</param>
         public delegate void SplitCallback(SplitStage stage, SplitCallbackData data);
 
+        /// <summary>
+        /// Used to pass the arguments of SplitImages to the thread it creates
+        /// </summary>
         private class SplitThreadArgs
         {
             public List<Bitmap> Bitmaps { get; private set; }
@@ -109,6 +118,14 @@ namespace MDump
             }
         }
 
+        /// <summary>
+        /// Split and save images in another thread,
+        /// passing a wait dialog updates on its current state via callbacks
+        /// </summary>
+        /// <param name="bitmaps">Bitmaps to split and save. Their tag contains afile name or path.</param>
+        /// <param name="opts">Options to use for splitting the images</param>
+        /// <param name="splitPath">Directory to split merge images to</param>
+        /// <param name="callback">Callback for wait form to show user what is going on</param>
         public static void SplitImages(List<Bitmap> bitmaps, MDumpOptions opts, string splitPath,
             SplitCallback callback)
         {
@@ -117,10 +134,15 @@ namespace MDump
             thread.Start(ta);
         }
 
+        /// <summary>
+        /// Split thread procedure
+        /// </summary>
+        /// <param name="args">A SplitThreadArgs object containing the args from SplitImages call</param>
         private static void SplitThreadProc(object args)
         {
             SplitThreadArgs sa = args as SplitThreadArgs;
 
+            //Cache our args since we'll be using them constantly
             SplitCallback callback = sa.Callback;
             MDumpOptions opts = sa.Options;
             string splitPath = sa.SplitPath;
@@ -131,26 +153,23 @@ namespace MDump
 
             try
             {
+                //Split each image
                 int imagesMerged = 0;
                 foreach (Bitmap image in sa.Bitmaps)
                 {
                     string filename = image.Tag as string;
-                    IntPtr unmanagedData = IntPtr.Zero;
-                    int dataLen;
-                    if (PNGOps.LoadMergedImageData(filename, out unmanagedData, out dataLen) != ECode.EC_SUCCESS)
-                    {
-                        throw new SplitException(dataExtractionErrorMsg);
-                    }
-                    byte[] data = new byte[dataLen];
-                    Marshal.Copy(unmanagedData, data, 0, dataLen);
-                    PNGOps.FreeUnmanagedData(unmanagedData);
+
+                    //Read the MDump data from the image.
+                    byte[] data = PNGOps.LoadMergedImageData(filename);
+
+                    //Decode MDump data into a string using the text encoding it was saved with
                     string decodedData = ImageMerger.MDDataEncoding.GetString(data);
                     string[] lines = decodedData.Split('\n');
                     //The first line is the number of images in this merge
                     callback(SplitStage.SplittingNewMerge,
                         new SplitCallbackData(Path.GetFileName(filename), Convert.ToInt32(lines[0])));
 
-                    //Parse the rest of the lines
+                    //Parse the rest of the lines, each of which represents an image in the merged image
                     for (int c = 1; c < lines.Length; ++c)
                     {
                         string[] tokens = lines[c].Split(';');
@@ -186,7 +205,7 @@ namespace MDump
                 }
                 MessageBox.Show(successMsg + splitDir, successTitle);
             }
-            catch (SplitException ex)
+            catch (PNGOpsException ex)
             {
                 MessageBox.Show(ex.Message, splitFailedTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 CleanupOnSplitFail(splitsSaved);
@@ -204,6 +223,11 @@ namespace MDump
             }
         }
 
+        /// <summary>
+        /// Used to delete split files created already if we fail.
+        /// This way we don't have a half-baked split.
+        /// </summary>
+        /// <param name="splitsSaved">Split images already saved</param>
         private static void CleanupOnSplitFail(List<string> splitsSaved)
         {
             foreach (string split in splitsSaved)

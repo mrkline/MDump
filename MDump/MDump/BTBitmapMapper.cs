@@ -11,16 +11,28 @@ namespace MDump
     /// </summary>
     class BTBitmapMapper
     {
+        /// <summary>
+        /// Message to be thrown if a node has a null rectangle
+        /// </summary>
         private const string noNullRectExMsg = "A BTBitmapMapper tree node cannot have a null rectangle";
-        private const string rectCannotFitImageExMsg = "A BTBitmapMapper tree node cannot have a null rectangle";
+        /// <summary>
+        /// Message to be thrown if 
+        /// </summary>
+        private const string maxSizeTooSmallMsg = "The provided maximum size cannot hold all the given images.";
 
         /// <summary>
         /// Used as binary tree node data while building the image map
         /// </summary>
         class NodeData
         {
+            /// <summary>
+            /// The bitmap image that goes in the given rectangle
+            /// </summary>
             public Bitmap Bmp { get; set; }
             private Rectangle _rect;
+            /// <summary>
+            /// Rectangle of space that this node occupies in the image
+            /// </summary>
             public Rectangle Rect
             {
                 get { return _rect; }
@@ -58,7 +70,8 @@ namespace MDump
         }
 
         /// <summary>
-        /// Finds 
+        /// Finds the node to insert an image of a given size in to, giving preference to nodes
+        /// closer to the top of the image.
         /// </summary>
         /// <param name="root">The root node of the binary tree</param>
         /// <param name="requiredSize">The size of the next image that needs to be fit in the tree</param>
@@ -134,7 +147,7 @@ namespace MDump
             }
             if (totalArea > maxSize.Width * maxSize.Height)
             {
-                throw new ArgumentException(rectCannotFitImageExMsg);
+                throw new ArgumentException(maxSizeTooSmallMsg);
             }
 
             //To be used later to clip final bitmap if it takes up less space than the given max
@@ -186,7 +199,10 @@ namespace MDump
             //Assemble our image and generate our data
             Bitmap merged = new Bitmap(actualSize.Width, actualSize.Height, pixelFormat);
 
+            //Used to stream our MDData to a byte buffer
             MemoryStream mdStream = new MemoryStream();
+
+            //Calculate MDData and stream it to the above byte buffer
 
             int numImages = 0;
             foreach(NodeData data in root)
@@ -223,14 +239,14 @@ namespace MDump
                 }
             }
 
-            Byte[] buff = mdStream.GetBuffer();
-            Byte[] retBuff = null;
+            byte[] buff = mdStream.GetBuffer();
+            byte[] retBuff = null;
             //Trim the buffer
             for (int c = buff.Length - 1; c > 0; --c)
             {
                 if (buff[c] != 0)
                 {
-                    retBuff = new Byte[c];
+                    retBuff = new byte[c];
                     Array.Copy(buff, retBuff, c);
                     break;
                 }

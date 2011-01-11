@@ -7,9 +7,19 @@ using System.Collections.Generic;
 /// <typeparam name="T">The type of data that the tree node will hold.</typeparam>
 class BinaryTreeNode<T> : IEnumerable<T>
 {
+    /// <summary>
+    /// Gets or sets data held by the node
+    /// </summary>
     public T Data { get; set; }
+    /// <summary>
+    /// Gets or sets the left child of the node
+    /// </summary>
     public BinaryTreeNode<T> Left { get; set; }
+    /// <summary>
+    /// Gets or sets the right child of the node
+    /// </summary>
     public BinaryTreeNode<T> Right { get; set; }
+
     public BinaryTreeNode() : this(default(T), null, null) { }
     public BinaryTreeNode(T data) : this(data, null, null) { }
     public BinaryTreeNode(T data, BinaryTreeNode<T> l, BinaryTreeNode<T> r)

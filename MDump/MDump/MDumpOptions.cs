@@ -46,43 +46,6 @@ namespace MDump
         private const string kDiscardFn = "\a";
 
         /// <summary>
-        /// The base directory that all images being merged share.
-        /// Used later for calculating relative paths to write into the merged image
-        /// </summary>
-        [XmlIgnore]
-        public string BaseDirectory { get; set; }
-
-        public void SetBaseDirectory(IEnumerable<Bitmap> bitmaps)
-        {
-            BaseDirectory = null;
-            foreach (Bitmap bmp in bitmaps)
-            {
-                string curr = Path.GetDirectoryName((string)bmp.Tag);
-
-                //Initialize the base directory to the first item
-                if (BaseDirectory == null)
-                {
-                    BaseDirectory = Path.GetDirectoryName((string)bmp.Tag);
-                    continue;
-                }
-
-                int shortest = curr.Length < BaseDirectory.Length ? curr.Length : BaseDirectory.Length;
-                for (int c = 0; c < shortest; ++c)
-                {
-                    if (BaseDirectory[c] != curr[c])
-                    {
-                        BaseDirectory = ((string)bmp.Tag).Substring(0, c);
-                        break;
-                    }
-                }
-            }
-        }
-        public void ClearBaseDirectory()
-        {
-            BaseDirectory = string.Empty;
-        }
-
-        /// <summary>
         /// Gets or sets the path options for saving file paths in to the merged image
         /// </summary>
         public PathOptions MergePathOpts { get; set; }
@@ -117,16 +80,20 @@ namespace MDump
                     return kDiscardFn;
 
                 case PathOptions.PreserveName:
-                        return Path.GetFileNameWithoutExtension(path);
+                    //Strip off any directory info
+                    int idx = path.IndexOf(Path.DirectorySeparatorChar);
+                    if (idx != -1)
+                    {
+                        return path.Substring(idx);
+                    }
+                    else
+                    {
+                        return path;
+                    }
 
                 case PathOptions.PreservePath:
-                    //Drop extension
-                    string ret = path.Remove(0, BaseDirectory.Length);
-                    if (Path.HasExtension(ret))
-                    {
-                        ret = ret.Substring(0, ret.IndexOf('.'));
-                    }
-                    return ret;
+                    //Return everything
+                    return path;
 
                 default:
                     throw new ArgumentException(invalidPathOptionsExMsg);
@@ -170,7 +137,6 @@ namespace MDump
         {
             MergePathOpts = PathOptions.PreservePath; //Save file path while merging
             SplitPathOpts = PathOptions.PreserveName; //Respect file name when splitting
-            BaseDirectory = string.Empty;
             MaxMergeSize = 2048 * 1024; //Default max merge size of 2 megabytes
             CompressionLevel = 6;
             AddTitleBar = true;
@@ -190,7 +156,6 @@ namespace MDump
         {        
             MergePathOpts = mergePathOpts;
             SplitPathOpts = splitPathOpts;
-            BaseDirectory = string.Empty;
             MaxMergeSize = maxMergeSz;
             CompressionLevel = compLevel;
             AddTitleBar = titleBar;

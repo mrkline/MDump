@@ -93,19 +93,15 @@ namespace MDump
                             bmp = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height),
                                 System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                         }
-                        MergedCode mergedImg = ImageMerger.IsMergedImage(filepath);
-                        if (mergedImg == MergedCode.MC_ERROR)
-                        {
-                            throw new IOException();
-                        }
-                        else if (mergedImg == MergedCode.MC_MERGED && CurrentMode == Mode.Merge
-                            || mergedImg == MergedCode.MC_NOT_MERGED && CurrentMode == Mode.Split)
+                        bool mergedImg = PNGOps.IsMDumpMergedImage(filepath);
+                        if (mergedImg && CurrentMode == Mode.Merge
+                            || !mergedImg && CurrentMode == Mode.Split)
                         {
                             throw new InvalidOperationException();
                         }
                         else if (CurrentMode == Mode.NotSet)
                         {
-                            CurrentMode = mergedImg == MergedCode.MC_MERGED ? Mode.Split : Mode.Merge;
+                            CurrentMode = mergedImg ? Mode.Split : Mode.Merge;
                         }
 
                         bmp.Tag = filepath; //Save the filename for later comparison
@@ -399,64 +395,7 @@ namespace MDump
                 dlgMerge.FileName = fn.Substring(0, extIdx);
             }
         }
-
-        //private void CheckForSplitMatch(object sender, CancelEventArgs e)
-        //{
-        //    //Get all files in the directory that start with the name provided
-        //    string[] dirFiles = Directory.GetFiles(Path.GetDirectoryName(dlgSplitPath.FileName));
-
-        //    //Keep track of merge files (we'll be deleting these if the user wants to overwrite)
-        //    List<string> splitFiles = new List<string>();
-
-        //    //Get requested filename
-        //    string fn = dlgSplitPath.FileName;
-        //    int fnIdx = fn.LastIndexOf(System.IO.Path.DirectorySeparatorChar) + 1;
-        //    int extIdx = fn.IndexOf('.');
-        //    int fnLen = extIdx - fnIdx;
-        //    string name = fn.Substring(fnIdx, fnLen);
-
-
-        //    //Gather all merge files
-        //    foreach (string file in dirFiles)
-        //    {
-        //        //The name format of merges is <name>.split<num>.png
-        //        string test = Path.GetFileName(file);
-        //        string[] tokens = Path.GetFileName(file).Split('.');
-        //        if (tokens.Length == 4
-        //            && tokens[0].Equals(name, StringComparison.InvariantCultureIgnoreCase)
-        //            && tokens[1].StartsWith(ImageSplitter.SplitKeyword)
-        //            && IsInt(tokens[1].Substring(ImageSplitter.SplitKeyword.Length))
-        //            && tokens[2].Equals("png", StringComparison.InvariantCultureIgnoreCase))
-        //        {
-        //            splitFiles.Add(file);
-        //        }
-        //    }
-
-        //    if (splitFiles.Count > 0)
-        //    {
-        //        if (MessageBox.Show("Split files with the name " + name + " already exist in this folder."
-        //            + " Overwrite?", "Confirm Overwrite", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
-        //            MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes)
-        //        {
-        //            e.Cancel = false;
-        //            foreach (string file in splitFiles)
-        //            {
-        //                File.Delete(file);
-        //            }
-        //            dlgSplitPath.FileName = fn.Substring(0, extIdx);
-        //        }
-        //        else
-        //        {
-        //            e.Cancel = true;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        e.Cancel = false;
-        //        dlgSplitPath.FileName = fn.Substring(0, extIdx);
-        //    }
-        //}
-
+  
         private static bool IsInt(string str)
         {
             try

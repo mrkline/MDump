@@ -43,6 +43,8 @@
             this.btnUp = new System.Windows.Forms.Button();
             this.dlgOpenImg = new System.Windows.Forms.OpenFileDialog();
             this.dlgMerge = new System.Windows.Forms.SaveFileDialog();
+            this.txtPath = new System.Windows.Forms.TextBox();
+            this.lblRoot = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lvImages
@@ -53,9 +55,9 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.lvImages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.clmImages});
-            this.lvImages.Location = new System.Drawing.Point(12, 12);
+            this.lvImages.Location = new System.Drawing.Point(12, 42);
             this.lvImages.Name = "lvImages";
-            this.lvImages.Size = new System.Drawing.Size(460, 266);
+            this.lvImages.Size = new System.Drawing.Size(460, 236);
             this.lvImages.TabIndex = 0;
             this.lvImages.UseCompatibleStateImageBehavior = false;
             this.lvImages.View = System.Windows.Forms.View.Details;
@@ -183,11 +185,31 @@
             this.dlgMerge.SupportMultiDottedExtensions = true;
             this.dlgMerge.FileOk += new System.ComponentModel.CancelEventHandler(this.dlgMerge_FileOk);
             // 
+            // txtPath
+            // 
+            this.txtPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtPath.Location = new System.Drawing.Point(53, 16);
+            this.txtPath.Name = "txtPath";
+            this.txtPath.Size = new System.Drawing.Size(419, 20);
+            this.txtPath.TabIndex = 10;
+            // 
+            // lblRoot
+            // 
+            this.lblRoot.AutoSize = true;
+            this.lblRoot.Location = new System.Drawing.Point(12, 19);
+            this.lblRoot.Name = "lblRoot";
+            this.lblRoot.Size = new System.Drawing.Size(35, 13);
+            this.lblRoot.TabIndex = 11;
+            this.lblRoot.Text = "/root/";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(484, 362);
+            this.Controls.Add(this.lblRoot);
+            this.Controls.Add(this.txtPath);
             this.Controls.Add(this.btnHowWork);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.btnInfo);
@@ -203,6 +225,7 @@
             this.Text = "MDump";
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -221,6 +244,8 @@
         private System.Windows.Forms.OpenFileDialog dlgOpenImg;
         private System.Windows.Forms.SaveFileDialog dlgMerge;
         private System.Windows.Forms.Button btnHowWork;
+        private System.Windows.Forms.TextBox txtPath;
+        private System.Windows.Forms.Label lblRoot;
 
     }
 }
