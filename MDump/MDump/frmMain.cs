@@ -211,22 +211,6 @@ namespace MDump
             }
         }
 
-        private void lvImages_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
-        {
-            if (lvImages.SelectedItems.Count > 0)
-            {
-                int firstIndex = lvImages.SelectedItems[0].Index;
-                int lastIndex = lvImages.SelectedItems[lvImages.SelectedItems.Count - 1].Index;
-                btnUp.Enabled = firstIndex != 0;
-                btnDown.Enabled = lastIndex != lvImages.Items.Count - 1;
-                btnDelete.Enabled = true;
-            }
-            else
-            {
-                btnUp.Enabled = btnDown.Enabled = btnDelete.Enabled = false;
-            }
-        }
-
         private void btnDelete_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem lvi in lvImages.SelectedItems)

@@ -163,6 +163,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Awesome.ico" />
+    <None Include="Resources\ImageIcon.png" />
+    <None Include="Resources\UpFolder.png" />
+    <None Include="Resources\Folder.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

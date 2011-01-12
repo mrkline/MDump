@@ -60,9 +60,16 @@ namespace MDump.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap DownArrowIcon {
+        internal static System.Drawing.Bitmap Folder {
             get {
-                object obj = ResourceManager.GetObject("DownArrowIcon", resourceCulture);
+                object obj = ResourceManager.GetObject("Folder", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ImageIcon {
+            get {
+                object obj = ResourceManager.GetObject("ImageIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -109,9 +116,9 @@ namespace MDump.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap UpArrowIcon {
+        internal static System.Drawing.Bitmap UpFolder {
             get {
-                object obj = ResourceManager.GetObject("UpArrowIcon", resourceCulture);
+                object obj = ResourceManager.GetObject("UpFolder", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
