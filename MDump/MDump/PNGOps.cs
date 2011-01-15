@@ -16,6 +16,7 @@ namespace MDump
     /// </summary>
     class PNGOps
     {
+        #region Return Code Enums
         /// <summary>
         /// Error codes for PNGOps functions
         /// </summary>
@@ -86,6 +87,7 @@ namespace MDump
             /// </summary>
             MC_HAMMER
         };
+        #endregion
 
         private const string _dllName = "PNGOps.dll";
 

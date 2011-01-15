@@ -18,7 +18,17 @@ namespace MDump
             Split
         }
 
-        private MDumpOptions opts;
+        private ImageDirectoryManager dirMan;
+
+        private MDumpOptions _opts;
+        private MDumpOptions Opts
+        {
+            get { return _opts; }
+            set
+            {
+                _opts = value;
+            }
+        }
         private frmSplitDest dlgSplitDest;
 
         Mode __currentMode;
@@ -34,6 +44,8 @@ namespace MDump
                 switch (value)
                 {
                     case Mode.NotSet:
+                        //Disable merge directory fun
+                        SetDirectoryUIEnabled(false);
                         lvImages.Columns[0].Text = "Images to split/merge";
                         btnAction.Enabled = false;
                         btnAction.Text = "Split/Merge Images";
@@ -127,9 +139,19 @@ namespace MDump
             }
         }
 
+        private void SetDirectoryUIEnabled(bool enabled)
+        {
+            btnUpFolder.Enabled = btnAddFolder.Enabled = lblRoot.Enabled = txtPath.Enabled = enabled;
+            if (enabled == false)
+            {
+                dirMan.MoveAllToRoot();
+            }
+        }
+
         public frmMain()
         {
             InitializeComponent();
+            dirMan = new ImageDirectoryManager();
             CurrentMode = Mode.NotSet;
             //Try to add any images dragged onto program:
             string[] clArgs = Environment.GetCommandLineArgs();
@@ -155,20 +177,20 @@ namespace MDump
             {
                 try
                 {
-                    opts = MDumpOptions.FromFile(MDumpOptions.fileName);
+                    Opts = MDumpOptions.FromFile(MDumpOptions.fileName);
                 }
                 catch (Exception)
                 {
                     MessageBox.Show("An error occurred while trying to load settings."
                         + " Reverting to default settings.");
-                    opts = new MDumpOptions();
+                    Opts = new MDumpOptions();
                 }
             }
             else
             {
-                opts = new MDumpOptions();
+                Opts = new MDumpOptions();
             }
-            dlgSplitDest = new frmSplitDest(opts);
+            dlgSplitDest = new frmSplitDest(Opts);
         }
 
         private void lvImages_Resize(object sender, EventArgs e)
@@ -271,19 +293,19 @@ namespace MDump
 
         private void btnOptions_Click(object sender, EventArgs e)
         {
-            frmOptions optsDlg = new frmOptions(opts);
+            frmOptions optsDlg = new frmOptions(Opts);
             if (optsDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 MDumpOptions newOpts = optsDlg.GetOptions();
                 if (newOpts.IsDefaultOptions())
                 {
-                    opts = newOpts;
+                    Opts = newOpts;
                     File.Delete(MDumpOptions.fileName);
                 }
-                else if (!newOpts.Equals(opts))
+                else if (!newOpts.Equals(Opts))
                 {
-                    opts = newOpts;
-                    opts.SaveToFile(MDumpOptions.fileName);
+                    Opts = newOpts;
+                    Opts.SaveToFile(MDumpOptions.fileName);
                 }
             }
         }
@@ -322,7 +344,7 @@ namespace MDump
             {
                 bmpList.Add((Bitmap)lvi.Tag);
             }
-            new frmWait(CurrentMode, bmpList, opts, path).ShowDialog();
+            new frmWait(CurrentMode, bmpList, Opts, path).ShowDialog();
         }
 
         private void dlgMerge_FileOk(object sender, CancelEventArgs e)

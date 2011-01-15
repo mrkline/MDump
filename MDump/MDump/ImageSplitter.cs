@@ -15,6 +15,7 @@ namespace MDump
     /// </summary>
     class ImageSplitter
     {
+        #region Constants
         private const string successMsg = "Images were all successfully split in to ";
         private const string dataExtractionErrorMsg = "An error occurred while retrieving the MDump data."
             + "from the merged image";
@@ -30,6 +31,7 @@ namespace MDump
         {
             get { return "split"; }
         }
+        #endregion
 
         /// <summary>
         /// Callback stages for splitting

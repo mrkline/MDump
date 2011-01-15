@@ -37,14 +37,14 @@
             this.ttpMain = new System.Windows.Forms.ToolTip(this.components);
             this.btnAddImage = new System.Windows.Forms.Button();
             this.btnHowWork = new System.Windows.Forms.Button();
+            this.btnInfo = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
             this.dlgOpenImg = new System.Windows.Forms.OpenFileDialog();
             this.dlgMerge = new System.Windows.Forms.SaveFileDialog();
             this.txtPath = new System.Windows.Forms.TextBox();
             this.lblRoot = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnUpFolder = new System.Windows.Forms.Button();
             this.btnAddFolder = new System.Windows.Forms.Button();
-            this.btnInfo = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lvImages
@@ -58,6 +58,7 @@
             this.lvImages.Location = new System.Drawing.Point(12, 42);
             this.lvImages.Name = "lvImages";
             this.lvImages.Size = new System.Drawing.Size(460, 236);
+            this.lvImages.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lvImages.TabIndex = 0;
             this.lvImages.UseCompatibleStateImageBehavior = false;
             this.lvImages.View = System.Windows.Forms.View.Details;
@@ -119,6 +120,31 @@
             this.btnHowWork.UseVisualStyleBackColor = true;
             this.btnHowWork.Click += new System.EventHandler(this.btnHowWork_Click);
             // 
+            // btnInfo
+            // 
+            this.btnInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnInfo.Image = global::MDump.Properties.Resources.InfoIcon;
+            this.btnInfo.Location = new System.Drawing.Point(442, 284);
+            this.btnInfo.Name = "btnInfo";
+            this.btnInfo.Size = new System.Drawing.Size(30, 30);
+            this.btnInfo.TabIndex = 7;
+            this.ttpMain.SetToolTip(this.btnInfo, "Info about MDump");
+            this.btnInfo.UseVisualStyleBackColor = true;
+            this.btnInfo.Click += new System.EventHandler(this.btnInfo_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDelete.Enabled = false;
+            this.btnDelete.Image = global::MDump.Properties.Resources.XIcon;
+            this.btnDelete.Location = new System.Drawing.Point(174, 284);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(30, 30);
+            this.btnDelete.TabIndex = 4;
+            this.ttpMain.SetToolTip(this.btnDelete, "Remove the selected image from the list");
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
             // dlgOpenImg
             // 
             this.dlgOpenImg.Filter = "Images|*gif;*jpg;*jpeg;*wmf;*bmp;*png";
@@ -150,15 +176,15 @@
             this.lblRoot.TabIndex = 11;
             this.lblRoot.Text = "/root/";
             // 
-            // button1
+            // btnUpFolder
             // 
-            this.button1.Enabled = false;
-            this.button1.Image = global::MDump.Properties.Resources.UpFolder;
-            this.button1.Location = new System.Drawing.Point(426, 14);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(46, 24);
-            this.button1.TabIndex = 12;
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnUpFolder.Enabled = false;
+            this.btnUpFolder.Image = global::MDump.Properties.Resources.UpFolder;
+            this.btnUpFolder.Location = new System.Drawing.Point(426, 14);
+            this.btnUpFolder.Name = "btnUpFolder";
+            this.btnUpFolder.Size = new System.Drawing.Size(46, 24);
+            this.btnUpFolder.TabIndex = 12;
+            this.btnUpFolder.UseVisualStyleBackColor = true;
             // 
             // btnAddFolder
             // 
@@ -169,38 +195,13 @@
             this.btnAddFolder.Text = "Add Folder";
             this.btnAddFolder.UseVisualStyleBackColor = true;
             // 
-            // btnInfo
-            // 
-            this.btnInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnInfo.Image = global::MDump.Properties.Resources.InfoIcon;
-            this.btnInfo.Location = new System.Drawing.Point(442, 284);
-            this.btnInfo.Name = "btnInfo";
-            this.btnInfo.Size = new System.Drawing.Size(30, 30);
-            this.btnInfo.TabIndex = 7;
-            this.ttpMain.SetToolTip(this.btnInfo, "Info about MDump");
-            this.btnInfo.UseVisualStyleBackColor = true;
-            this.btnInfo.Click += new System.EventHandler(this.btnInfo_Click);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnDelete.Enabled = false;
-            this.btnDelete.Image = global::MDump.Properties.Resources.XIcon;
-            this.btnDelete.Location = new System.Drawing.Point(174, 284);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(30, 30);
-            this.btnDelete.TabIndex = 4;
-            this.ttpMain.SetToolTip(this.btnDelete, "Remove the selected image from the list");
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(484, 362);
             this.Controls.Add(this.btnAddFolder);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnUpFolder);
             this.Controls.Add(this.lblRoot);
             this.Controls.Add(this.txtPath);
             this.Controls.Add(this.btnHowWork);
@@ -235,7 +236,7 @@
         private System.Windows.Forms.Button btnHowWork;
         private System.Windows.Forms.TextBox txtPath;
         private System.Windows.Forms.Label lblRoot;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnUpFolder;
         private System.Windows.Forms.Button btnAddFolder;
 
     }

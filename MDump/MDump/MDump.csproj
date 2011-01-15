@@ -84,6 +84,7 @@
     <Compile Include="frmWait.Designer.cs">
       <DependentUpon>frmWait.cs</DependentUpon>
     </Compile>
+    <Compile Include="ImageDirectoryManager.cs" />
     <Compile Include="ImageMerger.cs" />
     <Compile Include="ImageSplitter.cs" />
     <Compile Include="MDumpOptions.cs" />

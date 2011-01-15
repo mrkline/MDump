@@ -29,6 +29,7 @@ namespace MDump
                 : base(msg, inner) { }
         }
 
+        #region Constants
         private const string successMsg = "Images were all successfully merged in to ";
         private const string mergeFailedMsg = "An error occurred while merging imgaes";
         private const string mergedFailedTitle = "Error while merging";
@@ -62,7 +63,9 @@ namespace MDump
         {
             get { return Encoding.UTF8; }
         }
+        #endregion
 
+        #region Enums
         /// <summary>
         /// Callback stages for merging
         /// </summary>
@@ -108,6 +111,7 @@ namespace MDump
             /// </summary>
             TooLarge
         }
+        #endregion
 
         /// <summary>
         /// A callback to inform the GUI thread what the merge thread is doing
