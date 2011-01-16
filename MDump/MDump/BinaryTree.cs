@@ -5,7 +5,7 @@ using System.Collections.Generic;
 /// A basic template for a binary tree node
 /// </summary>
 /// <typeparam name="T">The type of data that the tree node will hold.</typeparam>
-class BinaryTreeNode<T> : IEnumerable<T>
+class BinaryTreeNode<T> : IEnumerable
 {
     /// <summary>
     /// Gets or sets data held by the node
@@ -33,7 +33,7 @@ class BinaryTreeNode<T> : IEnumerable<T>
     /// <summary>
     /// Iterates through the current node and all its children
     /// </summary>
-    public IEnumerator<T> GetEnumerator()
+    public IEnumerator GetEnumerator()
     {
         if (Left != null)
         {
