@@ -15,6 +15,7 @@ namespace MDump
     class ImageDirectoryManager
     {
         private const string rootName = "root";
+        private const string cannotEscapeRoot = "There is no directory higher than the root directory";
 
         #region Directory Class
         /// <summary>
@@ -24,13 +25,13 @@ namespace MDump
         private class ImageDirectory : IEnumerable
         {
             #region String Constants
-            private const string duplicateImgMsg = "This image is already contained in the directory";
-            private const string duplicateDirMsg = "This directory already has a child with the name ";
-            private const string noSuchItemMsg = "The provided item is not in this directory's list";
+            public const string duplicateImgMsg = "This directory already has an image with the name ";
+            public const string duplicateDirMsg = "This directory already has a subdirectory with the name ";
+            public const string noSuchItemMsg = "The provided item is not in this directory's list";
             #endregion
 
-            public List<Bitmap> Images { get; private set; }
-            public List<ImageDirectory> Children { get; private set; }
+            private List<Bitmap> images;
+            private List<ImageDirectory> children;
 
             public string Name { get; set; }
             
@@ -38,8 +39,8 @@ namespace MDump
 
             public ImageDirectory(string name, ImageDirectory parent)
             {
-                Images = new List<Bitmap>();
-                Children = new List<ImageDirectory>();
+                images = new List<Bitmap>();
+                children = new List<ImageDirectory>();
                 Name = name;
                 Parent = parent;
             }
@@ -49,11 +50,22 @@ namespace MDump
             /// <summary>
             /// Adds an already created and tagged image to this directory.
             /// </summary>
-            /// <param name="bmp">Image to add, tagged with its file name</param>
+            /// <param name="img">Image to add, tagged with its file name</param>
             /// <returns>The GUI representation of this image</returns>
-            public void AddTaggedImage(Bitmap bmp)
+            public ListViewItem AddTaggedImage(Bitmap img)
             {
-                
+                foreach (Bitmap bmp in images)
+                {
+                    if (((string)bmp.Tag).Equals((string)img.Tag, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        //Duplicate image found.  Kill it with fire
+                        throw new ArgumentException(duplicateImgMsg + img.Tag);
+                    }
+                }
+                images.Add(img);
+                ListViewItem ret = new ListViewItem();
+                ret.Tag = img;
+                return ret;
             }
             
             /// <summary>
@@ -63,11 +75,11 @@ namespace MDump
             public void RemoveImage(ListViewItem imgItem)
             {
                 Bitmap img = imgItem.Tag as Bitmap;
-                if (img == null || !Images.Contains(img))
+                if (img == null || !images.Contains(img))
                 {
                     throw new ArgumentException(noSuchItemMsg);
                 }
-                Images.Remove(img);
+                images.Remove(img);
             }
 
             /// <summary>
@@ -78,11 +90,11 @@ namespace MDump
             public ListViewItem AddDirectory(string name)
             {
                 ImageDirectory toAdd = new ImageDirectory(name, this);
-                if(Children.Contains(toAdd))
+                if(children.Contains(toAdd))
                 {
                     throw new ArgumentException(duplicateDirMsg + name);
                 }
-                Children.Add(toAdd);
+                children.Add(toAdd);
                 ListViewItem ret = new ListViewItem(name);
                 ret.Tag = toAdd;
                 return ret;
@@ -95,11 +107,38 @@ namespace MDump
             public void RemoveDirectory(ListViewItem dirItem)
             {
                 ImageDirectory dir = dirItem.Tag as ImageDirectory;
-                if (dir == null || !Children.Contains(dir))
+                if (dir == null || !children.Contains(dir))
                 {
                     throw new ArgumentException(noSuchItemMsg);
                 }
-                Children.Remove(dir);
+                children.Remove(dir);
+            }
+
+            /// <summary>
+            /// Checks if this directory has a given directory as a child
+            /// </summary>
+            /// <param name="dir">child directory</param>
+            /// <returns>true if this directory is the parent of dir</returns>
+            public bool HasDirectory(ImageDirectory dir)
+            {
+                return children.Contains(dir);
+            }
+
+            /// <summary>
+            /// Get a child directory, given its name
+            /// </summary>
+            /// <param name="dirName">Name of child directory</param>
+            /// <returns>The child directory with the given name</returns>
+            public ImageDirectory GetDirectory(string dirName)
+            {
+                foreach (ImageDirectory child in children)
+                {
+                    if (child.Name.Equals(dirName, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return child;
+                    }
+                }
+                throw new ArgumentException(noSuchItemMsg);
             }
 
             /// <summary>
@@ -112,7 +151,7 @@ namespace MDump
                 List<ListViewItem> ret = new List<ListViewItem>();
 
                 //Add child directories
-                foreach (ImageDirectory child in Children)
+                foreach (ImageDirectory child in children)
                 {
                     ListViewItem toAdd = new ListViewItem();
                     toAdd.Tag = child;
@@ -120,7 +159,7 @@ namespace MDump
                 }
 
                 //Add images
-                foreach (Bitmap bmp in Images)
+                foreach (Bitmap bmp in images)
                 {
                     ListViewItem toAdd = new ListViewItem();
                     toAdd.Tag = bmp;
@@ -135,14 +174,14 @@ namespace MDump
             /// </summary>
             public void MoveChildDirImagesHere()
             {
-                foreach (ImageDirectory child in Children)
+                foreach (ImageDirectory child in children)
                 {
                     foreach (Bitmap bmp in child)
                     {
-                        Images.Add(bmp);
+                        images.Add(bmp);
                     }
                 }
-                Children.Clear();
+                children.Clear();
             }
 
             #region Predicates
@@ -209,11 +248,11 @@ namespace MDump
             public IEnumerator GetEnumerator()
             {
                 //First return our items, then any child items
-                foreach (Bitmap bmp in Images)
+                foreach (Bitmap bmp in images)
                 {
                     yield return bmp;
                 }
-                foreach (ImageDirectory child in Children)
+                foreach (ImageDirectory child in children)
                 {
                     foreach (Bitmap bmp in child)
                     {
@@ -242,7 +281,50 @@ namespace MDump
             activeDirectory = root;
         }
 
-        //TODO: Pick up with active directory management
+        /// <summary>
+        /// Sets the active directory to its parent, if possible
+        /// </summary>
+        public void MoveUpDirectory()
+        {
+            if(activeDirectory.Parent == null)
+            {
+                throw new InvalidOperationException(cannotEscapeRoot);
+            }
+            activeDirectory = activeDirectory.Parent;
+        }
+
+        /// <summary>
+        /// Sets the active directory to a given child
+        /// </summary>
+        /// <param name="dirItem">the GUI representation of the child directory</param>
+        public void MoveToChildDirecory(ListViewItem dirItem)
+        {
+            ImageDirectory dir = dirItem.Tag as ImageDirectory;
+            if (!activeDirectory.HasDirectory(dir))
+            {
+                throw new ArgumentException(ImageDirectory.noSuchItemMsg);
+            }
+            activeDirectory = dir;
+        }
+
+        /// <summary>
+        /// Sets the active directory using a given path
+        /// </summary>
+        /// <param name="path"></param>
+        public void SetActiveDirectory(string path)
+        {
+            //Get rid of any formatting concerns
+            path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            string[] dirs = path.Split(new char[] { Path.DirectorySeparatorChar },
+                StringSplitOptions.RemoveEmptyEntries);
+            activeDirectory = root;
+
+            for (int c = 0; c < dirs.Length; ++c)
+            {
+                //Will throw an ArgumentException if the activedirectory does not have the desired child
+                activeDirectory = activeDirectory.GetDirectory(dirs[c]);
+            }
+        }
 
         /// <summary>
         /// Calls AddTaggedImage on the active directory

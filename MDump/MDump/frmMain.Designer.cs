@@ -174,7 +174,7 @@
             this.lblRoot.Name = "lblRoot";
             this.lblRoot.Size = new System.Drawing.Size(35, 13);
             this.lblRoot.TabIndex = 11;
-            this.lblRoot.Text = "/root/";
+            this.lblRoot.Text = "\\root\\";
             // 
             // btnUpFolder
             // 
