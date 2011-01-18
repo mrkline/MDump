@@ -23,41 +23,23 @@ namespace MDump
         /// </summary>
         private class ImageDirectory : IEnumerable
         {
+            #region String Constants
             private const string duplicateImgMsg = "This image is already contained in the directory";
             private const string duplicateDirMsg = "This directory already has a child with the name ";
             private const string noSuchItemMsg = "The provided item is not in this directory's list";
+            #endregion
 
-            private List<Bitmap> images;
-            private List<ImageDirectory> children;
-            private List<ListViewItem> listViewItems;
+            public List<Bitmap> Images { get; private set; }
+            public List<ImageDirectory> Children { get; private set; }
 
             public string Name { get; set; }
             
             public ImageDirectory Parent { get; private set; }
 
-            //Lists are not made directly public as listViewItems depends on the contents of
-            //images and children
-
-            public ReadOnlyCollection<Bitmap> Images
-            {
-                get { return images.AsReadOnly(); }
-            }
-
-            public ReadOnlyCollection<ImageDirectory> Children
-            {
-                get { return children.AsReadOnly(); }
-            }
-
-            public ReadOnlyCollection<ListViewItem> LVIRepresentation
-            {
-                get { return listViewItems.AsReadOnly(); }
-            }
-
             public ImageDirectory(string name, ImageDirectory parent)
             {
-                images = new List<Bitmap>();
-                children = new List<ImageDirectory>();
-                listViewItems = new List<ListViewItem>();
+                Images = new List<Bitmap>();
+                Children = new List<ImageDirectory>();
                 Name = name;
                 Parent = parent;
             }
@@ -65,14 +47,14 @@ namespace MDump
             public ImageDirectory(string name) : this(name, null) { }
 
             /// <summary>
-            /// Adds an image to this directory
+            /// Adds an image to this directory.
             /// </summary>
             /// <param name="imgPath">Path of image to add</param>
             /// <returns>The GUI representation of this image</returns>
             public ListViewItem AddImage(string imgPath)
             {
                 string name = Path.GetFileName(imgPath);
-                foreach(Bitmap image in images)
+                foreach(Bitmap image in Images)
                 {
                     if(((string)image.Tag).Equals(name, StringComparison.CurrentCultureIgnoreCase))
                     {
@@ -81,10 +63,9 @@ namespace MDump
                 }
                 Bitmap bmp = new Bitmap(imgPath);
                 bmp.Tag = name;
-                images.Add(bmp);
+                Images.Add(bmp);
                 ListViewItem ret = new ListViewItem(name);
                 ret.Tag = bmp;
-                listViewItems.Add(ret);
                 return ret;
             }
             
@@ -94,12 +75,12 @@ namespace MDump
             /// <param name="imgItem">GUI representation of the image to be removed</param>
             public void RemoveImage(ListViewItem imgItem)
             {
-                if (!listViewItems.Contains(imgItem))
+                Bitmap img = imgItem.Tag as Bitmap;
+                if (img == null || !Images.Contains(img))
                 {
                     throw new ArgumentException(noSuchItemMsg);
                 }
-                images.Remove((Bitmap)imgItem.Tag);
-                listViewItems.Remove(imgItem);
+                Images.Remove(img);
             }
 
             /// <summary>
@@ -110,14 +91,13 @@ namespace MDump
             public ListViewItem AddDirectory(string name)
             {
                 ImageDirectory toAdd = new ImageDirectory(name, this);
-                if(children.Contains(toAdd))
+                if(Children.Contains(toAdd))
                 {
                     throw new ArgumentException(duplicateDirMsg + name);
                 }
-                children.Add(toAdd);
+                Children.Add(toAdd);
                 ListViewItem ret = new ListViewItem(name);
                 ret.Tag = toAdd;
-                listViewItems.Add(ret);
                 return ret;
             }
 
@@ -127,31 +107,55 @@ namespace MDump
             /// <param name="dirItem">GUI representation of the child directory to be removed</param>
             public void RemoveDirectory(ListViewItem dirItem)
             {
-                if (!listViewItems.Contains(dirItem))
+                ImageDirectory dir = dirItem.Tag as ImageDirectory;
+                if (dir == null || !Children.Contains(dir))
                 {
                     throw new ArgumentException(noSuchItemMsg);
                 }
-                children.Remove((ImageDirectory)dirItem.Tag);
-                listViewItems.Remove(dirItem);
+                Children.Remove(dir);
             }
 
             /// <summary>
-            /// Removes all child directories (and their graphical representations) from this directory
+            /// Builds a list of ListViewItems based on images and child directories
+            /// contained within this directory.
+            /// </summary>
+            /// <returns>A list of ListViewItems representing the contents of this directory</returns>
+            public List<ListViewItem> CreateListViewRepresentation()
+            {
+                List<ListViewItem> ret = new List<ListViewItem>();
+
+                //Add child directories
+                foreach (ImageDirectory child in Children)
+                {
+                    ListViewItem toAdd = new ListViewItem();
+                    toAdd.Tag = child;
+                    ret.Add(toAdd);
+                }
+
+                //Add images
+                foreach (Bitmap bmp in Images)
+                {
+                    ListViewItem toAdd = new ListViewItem();
+                    toAdd.Tag = bmp;
+                    ret.Add(toAdd);
+                }
+
+                return ret;
+            }
+
+            /// <summary>
+            /// Removes all child directories from this directory, moving their images to this one.
             /// </summary>
             public void MoveChildDirImagesHere()
             {
-                foreach (ImageDirectory child in children)
+                foreach (ImageDirectory child in Children)
                 {
                     foreach (Bitmap bmp in child)
                     {
-                        images.Add(bmp);
-                        ListViewItem lvi = new ListViewItem(Path.GetFileName((string)bmp.Tag));
-                        lvi.Tag = bmp;
-                        listViewItems.Add(lvi);
+                        Images.Add(bmp);
                     }
                 }
-                children.Clear();
-                listViewItems.RemoveAll(RepresentsChildDir);
+                Children.Clear();
             }
 
             #region Predicates
@@ -160,7 +164,7 @@ namespace MDump
             /// </summary>
             /// <param name="item">ListViewItem to check</param>
             /// <returns>true if item represents an image in this directory</returns>
-            private static bool RepresentsImage(ListView item)
+            public static bool RepresentsImage(ListView item)
             {
                 return item.Tag as string != null;
             }
@@ -170,7 +174,7 @@ namespace MDump
             /// </summary>
             /// <param name="item">ListViewItem to check</param>
             /// <returns>true if item represents a child directory</returns>
-            private static bool RepresentsChildDir(ListViewItem item)
+            public static bool RepresentsChildDir(ListViewItem item)
             {
                 return item.Tag as ImageDirectory != null;
             }
@@ -218,11 +222,11 @@ namespace MDump
             public IEnumerator GetEnumerator()
             {
                 //First return our items, then any child items
-                foreach (Bitmap bmp in images)
+                foreach (Bitmap bmp in Images)
                 {
                     yield return bmp;
                 }
-                foreach (ImageDirectory child in children)
+                foreach (ImageDirectory child in Children)
                 {
                     foreach (Bitmap bmp in child)
                     {
