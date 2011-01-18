@@ -47,26 +47,13 @@ namespace MDump
             public ImageDirectory(string name) : this(name, null) { }
 
             /// <summary>
-            /// Adds an image to this directory.
+            /// Adds an already created and tagged image to this directory.
             /// </summary>
-            /// <param name="imgPath">Path of image to add</param>
+            /// <param name="bmp">Image to add, tagged with its file name</param>
             /// <returns>The GUI representation of this image</returns>
-            public ListViewItem AddImage(string imgPath)
+            public void AddTaggedImage(Bitmap bmp)
             {
-                string name = Path.GetFileName(imgPath);
-                foreach(Bitmap image in Images)
-                {
-                    if(((string)image.Tag).Equals(name, StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        throw new ArgumentException(duplicateImgMsg);
-                    }
-                }
-                Bitmap bmp = new Bitmap(imgPath);
-                bmp.Tag = name;
-                Images.Add(bmp);
-                ListViewItem ret = new ListViewItem(name);
-                ret.Tag = bmp;
-                return ret;
+                
             }
             
             /// <summary>
@@ -244,6 +231,7 @@ namespace MDump
 #endregion
 
         private ImageDirectory root;
+        private ImageDirectory activeDirectory;
 
         /// <summary>
         /// Constructor
@@ -251,12 +239,52 @@ namespace MDump
         public ImageDirectoryManager()
         {
             root = new ImageDirectory(rootName);
+            activeDirectory = root;
+        }
+
+        //TODO: Pick up with active directory management
+
+        /// <summary>
+        /// Calls AddTaggedImage on the active directory
+        /// </summary>
+        /// <seealso cref="ImageDirectory.AddTaggedImage"/>
+        public void AddImage(Bitmap bmp)
+        {
+            activeDirectory.AddTaggedImage(bmp);
+        }
+
+        /// <summary>
+        /// Calls RemoveImage on the active directory
+        /// </summary>
+        /// <seealso cref="ImageDirectory.AddImage"/>
+        public void DeleteImage(ListViewItem imgItem)
+        {
+            activeDirectory.RemoveImage(imgItem);
+        }
+
+        /// <summary>
+        /// Calls AddDirectory on the active directory
+        /// </summary>
+        /// <seealso cref="ImageDirectory.AddDirectory"/>
+        public void AddChildDirectory(string dirName)
+        {
+            activeDirectory.AddDirectory(dirName);
+        }
+
+        /// <summary>
+        /// Calls RemoveDirectory on the active directory
+        /// </summary>
+        /// <seealso cref="ImageDirectory.RemoveDirectory"/>
+        public void RemoveChildDirectory(ListViewItem dirItem)
+        {
+            activeDirectory.RemoveDirectory(dirItem);
         }
 
         /// <summary>
         /// Moves all images to the root directory and kills subdirectories.
         /// Used for when the user switches options to not saving directory info.
         /// </summary>
+        /// <seealso cref=">ImageDirectory.MoveChildDirImagesHere"/>
         public void MoveAllToRoot()
         {
             root.MoveChildDirImagesHere();   
