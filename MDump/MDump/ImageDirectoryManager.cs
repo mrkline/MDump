@@ -67,20 +67,6 @@ namespace MDump
                 ret.Tag = img;
                 return ret;
             }
-            
-            /// <summary>
-            /// Removes an image from this directory through its GUI representation.
-            /// </summary>
-            /// <param name="imgItem">GUI representation of the image to be removed</param>
-            public void RemoveImage(ListViewItem imgItem)
-            {
-                Bitmap img = imgItem.Tag as Bitmap;
-                if (img == null || !images.Contains(img))
-                {
-                    throw new ArgumentException(noSuchItemMsg);
-                }
-                images.Remove(img);
-            }
 
             /// <summary>
             /// Adds a child directory to this directory
@@ -101,17 +87,27 @@ namespace MDump
             }
 
             /// <summary>
-            /// Removes a child directory from this directory through its GUI representation
+            /// Removes an image or a child directory from the current directory
             /// </summary>
-            /// <param name="dirItem">GUI representation of the child directory to be removed</param>
-            public void RemoveDirectory(ListViewItem dirItem)
+            /// <param name="item">The GUI representation of the item to remove</param>
+            public void RemoveItem(ListViewItem item)
             {
-                ImageDirectory dir = dirItem.Tag as ImageDirectory;
-                if (dir == null || !children.Contains(dir))
+                Bitmap bmp = item.Tag as Bitmap;
+                if (bmp == null)
                 {
-                    throw new ArgumentException(noSuchItemMsg);
+                    ImageDirectory dir = item.Tag as ImageDirectory;
+                    if (dir == null)
+                    {
+                        //Give up all hope, throw exception.
+                    }
+                    else
+                    {
+                    }
                 }
-                children.Remove(dir);
+                else
+                {
+                    //Test string tags for equality
+                }
             }
 
             /// <summary>
@@ -282,6 +278,23 @@ namespace MDump
         }
 
         /// <summary>
+        /// Sets the active directory to the root directory
+        /// </summary>
+        public void SetActiveToRoot()
+        {
+            activeDirectory = root;
+        }
+
+        /// <summary>
+        /// Returns true if the active directory has a parent
+        /// </summary>
+        /// <returns>true if the active directory has a parent</returns>
+        public bool ActiveHasParent()
+        {
+            return activeDirectory.Parent != null;
+        }
+
+        /// <summary>
         /// Sets the active directory to its parent, if possible
         /// </summary>
         public void MoveUpDirectory()
@@ -330,36 +343,50 @@ namespace MDump
         /// Calls AddTaggedImage on the active directory
         /// </summary>
         /// <seealso cref="ImageDirectory.AddTaggedImage"/>
-        public void AddImage(Bitmap bmp)
+        public ListViewItem AddImage(Bitmap bmp)
         {
-            activeDirectory.AddTaggedImage(bmp);
+            return activeDirectory.AddTaggedImage(bmp);
         }
 
         /// <summary>
-        /// Calls RemoveImage on the active directory
+        /// Calls RemoveItem on the active directory
         /// </summary>
-        /// <seealso cref="ImageDirectory.AddImage"/>
-        public void DeleteImage(ListViewItem imgItem)
+        /// <seealso cref="ImageDirectory.RemoveItem"/>
+        public void RemoveItem(ListViewItem imgItem)
         {
-            activeDirectory.RemoveImage(imgItem);
+            activeDirectory.RemoveItem(imgItem);
         }
 
         /// <summary>
         /// Calls AddDirectory on the active directory
         /// </summary>
         /// <seealso cref="ImageDirectory.AddDirectory"/>
-        public void AddChildDirectory(string dirName)
+        public ListViewItem AddChildDirectory(string dirName)
         {
-            activeDirectory.AddDirectory(dirName);
+            return activeDirectory.AddDirectory(dirName);
         }
 
         /// <summary>
-        /// Calls RemoveDirectory on the active directory
+        /// Calls CreateListViewRepresentation on the active directory
         /// </summary>
-        /// <seealso cref="ImageDirectory.RemoveDirectory"/>
-        public void RemoveChildDirectory(ListViewItem dirItem)
+        /// <seealso cref="ImageDirectory.CreateListViewRepresentation"/>
+        public List<ListViewItem> CreateListViewItems()
         {
-            activeDirectory.RemoveDirectory(dirItem);
+            return activeDirectory.CreateListViewRepresentation();
+        }
+
+        /// <summary>
+        /// Gets all bitmaps in the directory structure, starting at the root directory.
+        /// </summary>
+        /// <returns></returns>
+        public List<Bitmap> GetAllImages()
+        {
+            List<Bitmap> ret = new List<Bitmap>();
+            foreach (Bitmap bmp in root)
+            {
+                ret.Add(bmp);
+            }
+            return ret;
         }
 
         /// <summary>

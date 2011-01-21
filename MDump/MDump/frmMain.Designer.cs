@@ -65,7 +65,6 @@
             this.lvImages.DragDrop += new System.Windows.Forms.DragEventHandler(this.lvImages_DragDrop);
             this.lvImages.DragEnter += new System.Windows.Forms.DragEventHandler(this.lvImages_DragEnter);
             this.lvImages.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lvImages_KeyUp);
-            this.lvImages.Resize += new System.EventHandler(this.lvImages_Resize);
             // 
             // clmImages
             // 
@@ -166,6 +165,7 @@
             this.txtPath.Name = "txtPath";
             this.txtPath.Size = new System.Drawing.Size(367, 20);
             this.txtPath.TabIndex = 10;
+            this.txtPath.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtPath_KeyUp);
             // 
             // lblRoot
             // 
@@ -185,6 +185,7 @@
             this.btnUpFolder.Size = new System.Drawing.Size(46, 24);
             this.btnUpFolder.TabIndex = 12;
             this.btnUpFolder.UseVisualStyleBackColor = true;
+            this.btnUpFolder.Click += new System.EventHandler(this.btnUpFolder_Click);
             // 
             // btnAddFolder
             // 

@@ -11,6 +11,38 @@ namespace MDump
 {
     public partial class frmMain : Form
     {
+        #region String Constants
+        private const string notSetActionText = "Split/Merge Images";
+        private const string notSetActionTooltip = "This button will split or merge images"
+                + " based on what is added to the above list.  Add merged images to split them"
+                + " or individual images to merge them.";
+        private const string mergeActionText = "Merge Images";
+        private const string mergeActionTooltip = "Merge the images in the list above in to"
+                            + " a smaller set of images to be uploaded to an image board.";
+        private const string splitActionText = "Split images";
+        private const string splitActionTooltip = "Split the merged images in the list above"
+                            + " back into the original images.";
+        private const string incorrectModeMsg = "MDump cannot split merged images at the same time it"
+                        + " merges individual images.  Please add either inidividual images to merge"
+                        + " or MDump merged images to split back up, but not both at once.";
+        private const string incorrectModeTitle = "Cannot split and merge at the same time";
+        private const string duplicateInDirTitle = "Duplicate in folder";
+        private const string errorLoadingImageMsg = " could not be loaded.  It will not be added to the list.";
+        private const string errorLoadingImageTitle = "Problem loading image";
+        private const string dllNotFoundMsg = PNGOps.DllName + " could not be found."
+                    + " Make sure it is in the same folder as this program.";
+        private const string dllNotFoundTitle = "Couldn't find DLL";
+
+        private const string noSuchPathMsg = "The path entered does not exist.";
+        private const string noSuchPathTitle = "No such path";
+        #endregion
+
+        private readonly string[] supportedImageFormats = { "bmp", "gif", "exif", "jpg",
+                                                              "jpeg", "png", "tif", "tiff" };
+
+        /// <summary>
+        /// Used to track the current mode of the app (not set, merging images, splitting images)
+        /// </summary>
         public enum Mode
         {
             NotSet,
@@ -20,18 +52,17 @@ namespace MDump
 
         private ImageDirectoryManager dirMan;
 
-        private MDumpOptions _opts;
-        private MDumpOptions Opts
-        {
-            get { return _opts; }
-            set
-            {
-                _opts = value;
-            }
-        }
+        /// <summary>
+        /// Gets or sets the current options object
+        /// </summary>
+        private MDumpOptions Opts { get; set; }
         private frmSplitDest dlgSplitDest;
 
         Mode __currentMode;
+        /// <summary>
+        /// Gets or sets the current mode (not set, merging images, splitting images).
+        /// On set, update the UI to reflect the change.
+        /// </summary>
         private Mode CurrentMode
         {
             get
@@ -45,109 +76,140 @@ namespace MDump
                 {
                     case Mode.NotSet:
                         //Disable merge directory fun
-                        SetDirectoryUIEnabled(false);
-                        lvImages.Columns[0].Text = "Images to split/merge";
+                        DirectoryUIEnabled = false;
                         btnAction.Enabled = false;
-                        btnAction.Text = "Split/Merge Images";
-                        ttpMain.SetToolTip(btnAction, "This button will split or merge images"
-                            + " based on what is added to the above list.  Add merged images to split them"
-                            + " or individual images to merge them.");
+                        btnAction.Text = notSetActionText;
+                        ttpMain.SetToolTip(btnAction, notSetActionTooltip);
                         break;
 
                     case Mode.Merge:
-                        lvImages.Columns[0].Text = "Images to merge";
+                        DirectoryUIEnabled = Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
                         btnAction.Enabled = true;
-                        btnAction.Text = "Merge Images";
-                        ttpMain.SetToolTip(btnAction, "Merge the images in the list above into"
-                            + " a smaller set of images to be uploaded to an image board.");
+                        btnAction.Text = mergeActionText;
+                        ttpMain.SetToolTip(btnAction, mergeActionTooltip);
                         break;
 
                     case Mode.Split:
-                        lvImages.Columns[0].Text = "Images to split";
+                        DirectoryUIEnabled = false;
                         btnAction.Enabled = true;
-                        btnAction.Text = "Split images";
-                        ttpMain.SetToolTip(btnAction, "Split the merged images in the list above"
-                            + " back into the original images.");
+                        btnAction.Text = splitActionText;
+                        ttpMain.SetToolTip(btnAction, splitActionTooltip);
                         break;
                 }
             }
         }
 
+        bool _dirUIEnabled;
+        /// <summary>
+        /// Gets or sets the enable status of the directory browsing UI
+        /// On set, enables or disables the directory browsing UI.
+        /// </summary>
+        private bool DirectoryUIEnabled
+        {
+            get { return _dirUIEnabled; }
+            set
+            {
+               btnAddFolder.Enabled = lblRoot.Enabled
+                   = txtPath.Enabled = _dirUIEnabled = value;
+                if (_dirUIEnabled == false)
+                {
+                    dirMan.MoveAllToRoot();
+                }
+                else
+                {
+                    //This may not enable if we're in the root
+                    btnUpFolder.Enabled = dirMan.ActiveHasParent();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clears the list view and repopulates it with the current directory's items.
+        /// </summary>
+        private void RepopulateListView()
+        {
+            lvImages.Items.Clear();
+            foreach (ListViewItem item in dirMan.CreateListViewItems())
+            {
+                lvImages.Items.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// Add Images to the current directory
+        /// </summary>
+        /// <param name="paths">paths of each image</param>
         private void AddImages(IEnumerable<string> paths) 
         {
             foreach (string filepath in paths)
             {
+                //Ignore this file if it's not even a supported format
+                string currExt = Path.GetExtension(filepath);
+                bool matched = false;
+                foreach (string extension in supportedImageFormats)
+                {
+                    if (currExt.Equals(extension, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched)
+                {
+                    continue;
+                }
+
                 //Get the filename sans the path
                 string name = System.IO.Path.GetFileName(filepath);
 
-                //Make sure it's not already in our list (filename of the image is stored in its tag)
-                bool unique = true;
-                foreach (ListViewItem lvi in lvImages.Items)
+                //Try to create an image out of the file
+                try
                 {
-                    if (((string)((Bitmap)lvi.Tag).Tag) == filepath)
+                    Bitmap bmp = new Bitmap(filepath);
+                    //Make sure we're in 32-bpp argb format
+                    if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
                     {
-                        MessageBox.Show(name + " is already added to this list.",
-                            "Image already added", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        unique = false;
+                        bmp = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height),
+                            System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    }
+                    //Check if the image is a merged image, and if we're in the right mode
+                    //to handle it.
+                    bool mergedImg = PNGOps.IsMDumpMergedImage(filepath);
+                    if (mergedImg && CurrentMode == Mode.Merge
+                        || !mergedImg && CurrentMode == Mode.Split)
+                    {
+                        //We're not in the mode to handle the image being added
+                        MessageBox.Show(incorrectModeMsg, incorrectModeTitle,
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                         break;
                     }
+                    else if (CurrentMode == Mode.NotSet)
+                    {
+                        CurrentMode = mergedImg ? Mode.Split : Mode.Merge;
+                    }
+
+                    bmp.Tag = name; //Save the filename for later comparison
+                    lvImages.Items.Add(dirMan.AddImage(bmp));
                 }
-
-                if (unique)
+                catch (ArgumentException ex)
                 {
-                    //Try to create an image out of the file
-                    try
-                    {
-                        Bitmap bmp = new Bitmap(filepath);
-                        //Make sure we're in 32-bpp argb format
-                        if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
-                        {
-                            bmp = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height),
-                                System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                        }
-                        bool mergedImg = PNGOps.IsMDumpMergedImage(filepath);
-                        if (mergedImg && CurrentMode == Mode.Merge
-                            || !mergedImg && CurrentMode == Mode.Split)
-                        {
-                            throw new InvalidOperationException();
-                        }
-                        else if (CurrentMode == Mode.NotSet)
-                        {
-                            CurrentMode = mergedImg ? Mode.Split : Mode.Merge;
-                        }
-
-                        bmp.Tag = filepath; //Save the filename for later comparison
-                        ListViewItem lvi = new ListViewItem(name);
-                        lvi.Tag = bmp; //Tag the image onto the list view item
-                        lvImages.Items.Add(lvi);
-                    }
-                    catch (InvalidOperationException)
-                    {
-
-                        MessageBox.Show("MDump cannot split merged images at the same time it"
-                            + " merges individual images.  Please add either inidividual images to merge"
-                            + " or MDump merged images to split back up, but not both at once.",
-                            "Cannot split and merge at the same time", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        break;
-                    }
-                    catch
-                    {
-                        MessageBox.Show(name + " could not be loaded.  It will not be added to the list.",
-                            "Problem loading image", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    //This gets thrown by dirMan.AddImage when a duplicate exists in the given folder
+                    //We'll want to use the message contained in it.
+                    MessageBox.Show(ex.Message, duplicateInDirTitle,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch
+                {
+                    //File has an image extension but couldn't be loaded
+                    MessageBox.Show(name + errorLoadingImageMsg, errorLoadingImageTitle,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
-        private void SetDirectoryUIEnabled(bool enabled)
-        {
-            btnUpFolder.Enabled = btnAddFolder.Enabled = lblRoot.Enabled = txtPath.Enabled = enabled;
-            if (enabled == false)
-            {
-                dirMan.MoveAllToRoot();
-            }
-        }
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public frmMain()
         {
             InitializeComponent();
@@ -159,18 +221,7 @@ namespace MDump
             {
                 string[] toAdd = new string[clArgs.Length - 1];
                 clArgs.CopyTo(toAdd, 1);
-                try
-                {
-                    AddImages(clArgs);
-                }
-                catch (InvalidOperationException)
-                {
-                    MessageBox.Show("MDump cannot merge and split images at the same time.\n"
-                        + "Select some images to merge or some merged images to split.\n"
-                        + "Please try again", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Close();
-                }
+                AddImages(clArgs);
             }
             //Load up any settings (if they exist)
             if (File.Exists(MDumpOptions.fileName))
@@ -193,18 +244,15 @@ namespace MDump
             dlgSplitDest = new frmSplitDest(Opts);
         }
 
-        private void lvImages_Resize(object sender, EventArgs e)
-        {
-            lvImages.Columns[0].Width = lvImages.Width - 10;
-        }
-
         private void lvImages_DragDrop(object sender, DragEventArgs e)
         {
+            //TODO: Update to directory system
             AddImages((string[])e.Data.GetData(DataFormats.FileDrop));
         }
 
         private void lvImages_DragEnter(object sender, DragEventArgs e)
         {
+            //TODO: Update to directory system
             if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
             {
                 e.Effect = DragDropEffects.All;
@@ -235,6 +283,7 @@ namespace MDump
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
+            //TODO: Update to directory system
             foreach (ListViewItem lvi in lvImages.SelectedItems)
             {
                 lvImages.Items.Remove(lvi);
@@ -245,32 +294,9 @@ namespace MDump
             }
         }
 
-        private void btnUp_Click(object sender, EventArgs e)
-        {
-            int idx = lvImages.SelectedItems[0].Index - 1;
-            foreach (ListViewItem lvi in lvImages.SelectedItems)
-            {
-                lvi.Remove();
-                lvImages.Items.Insert(idx, lvi);
-                lvi.Selected = true;
-            }
-            lvImages.Focus();
-        }
-
-        private void btnDown_Click(object sender, EventArgs e)
-        {
-            int idx = lvImages.SelectedItems[lvImages.SelectedItems.Count - 1].Index + 1;
-            foreach (ListViewItem lvi in lvImages.SelectedItems)
-            {
-                lvi.Remove();
-                lvImages.Items.Insert(idx, lvi);
-                lvi.Selected = true;
-            }
-            lvImages.Focus();
-        }
-
         private void lvImages_KeyUp(object sender, KeyEventArgs e)
         {
+            //TODO: Update to directory system
             if (e.KeyCode == Keys.Delete && lvImages.SelectedItems.Count > 0)
             {
                 foreach(ListViewItem lvi in lvImages.SelectedItems)
@@ -312,7 +338,7 @@ namespace MDump
 
         private void btnAction_Click(object sender, EventArgs e)
         {
-            string path = string.Empty;
+            string path = null;
 
             if (CurrentMode == Mode.Merge)
             {
@@ -337,14 +363,7 @@ namespace MDump
                     return;
                 }
             }
-
-            //Compile a list of bitmaps to pass to our mergers or splitters
-            List<Bitmap> bmpList = new List<Bitmap>();
-            foreach(ListViewItem lvi in lvImages.Items)
-            {
-                bmpList.Add((Bitmap)lvi.Tag);
-            }
-            new frmWait(CurrentMode, bmpList, Opts, path).ShowDialog();
+            new frmWait(CurrentMode, dirMan.GetAllImages(), Opts, path).ShowDialog();
         }
 
         private void dlgMerge_FileOk(object sender, CancelEventArgs e)
@@ -424,11 +443,36 @@ namespace MDump
         {
             if (!PNGOps.DllIsPresent)
             {
-                MessageBox.Show(PNGOps.DllName + " could not be found."
-                    + " Make sure it is in the same folder as this program.",
-                    "Couldn't find DLL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(dllNotFoundMsg,
+                   dllNotFoundTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Close();
             }
+        }
+
+        private void txtPath_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                try
+                {
+                    dirMan.SetActiveDirectory(txtPath.Text);
+                }
+                catch (ArgumentException)
+                {
+                    //A directory couldn't be resolved from the given path
+                    dirMan.SetActiveToRoot();
+                    RepopulateListView();
+                    MessageBox.Show(noSuchPathMsg, noSuchPathTitle, MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void btnUpFolder_Click(object sender, EventArgs e)
+        {
+            dirMan.MoveUpDirectory();
+            btnUpFolder.Enabled = dirMan.ActiveHasParent();
+            RepopulateListView();
         }
     }
 }

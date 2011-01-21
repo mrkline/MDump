@@ -89,29 +89,21 @@ namespace MDump
         };
         #endregion
 
-        private const string _dllName = "PNGOps.dll";
-
-        /// <summary>
-        /// Gets the name of the Dll
-        /// </summary>
-        public static string DllName 
-        {
-            get { return _dllName; }
-        }
+        public const string DllName = "PNGOps.dll";
 
         /// <summary>
         /// Gets true if the Dll can be found
         /// </summary>
         public static bool DllIsPresent
         {
-            get { return System.IO.File.Exists(_dllName); }
+            get { return System.IO.File.Exists(DllName); }
         }
 
         /// <summary>
         /// A simple wrapper around free() to release unmanaged memory once we've copied data out of it
         /// </summary>
         /// <param name="ptr">Pointer to the unmanaged memory</param>
-        [DllImport(_dllName)]
+        [DllImport(DllName)]
         private static extern void FreeUnmanagedData(IntPtr ptr);
 
         /// <summary>
@@ -120,7 +112,7 @@ namespace MDump
         /// </summary>
         /// <param name="filepath">File to test</param>
         /// <returns>MC_MERGED if the file is an MDump PNG merged image</returns>
-        [DllImport(_dllName)]
+        [DllImport(DllName)]
         private static extern MergedCode IsMergedImage(string filepath);
 
         /// <summary>
@@ -153,7 +145,7 @@ namespace MDump
         /// <param name="mdDataOut">Is set to a pointer to the MDump data in unmanaged memory</param>
         /// <param name="mdDataLenOut">Is set to the length of the MDump data</param>
         /// <returns></returns>
-        [DllImport(_dllName)]
+        [DllImport(DllName)]
         private static extern ECode LoadMergedImageData(string filename, 
             out IntPtr mdDataOut, out int mdDataLenOut);
 
@@ -191,7 +183,7 @@ namespace MDump
         /// <param name="memPngOut">Returns assigned to the PNG file in unmanaged memory</param>
         /// <param name="memPngLenOut">Returns with the length of the PNG file in unmanaged memory</param>
         /// <returns>EC_SUCCESS on success</returns>
-        [DllImport(_dllName)]
+        [DllImport(DllName)]
         private static extern ECode SavePNGToMemory(IntPtr bitmap, int width, int height,
             bool flipRGB, byte[] mdData, int mdDataLen, int compLevel,
             out IntPtr memPngOut, out int memPngLenOut);
