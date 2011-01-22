@@ -11,6 +11,7 @@ namespace MDump
 {
     public partial class frmSplitDest : Form
     {
+        #region String Constants
         private const string ignoreInfoLabel = "Select a name to save all split images as:";
         private const string useInfoLabel = "Select a name to use for any merges that didn't save file info:";
         private const string invalidDirStatus = "This is not an existing folder";
@@ -18,14 +19,8 @@ namespace MDump
         private const string overwriteFilenameStatus = "Split files with this name already exist in this folder.\nThey will be overwritten.";
         private const string hasExtensionFilenameStatus = "Do not add an extension to the file name.\nIt will be done automatically";
         private const string invalidFilenameStatus = "This is not a valid file name.";
+        #endregion
 
-
-        private readonly Color validColor = Color.Green;
-        private readonly Color warningColor = Color.Goldenrod;
-        private readonly Color invalidColor = Color.Red;
-        private readonly Color validBGColor = Color.LightGreen;
-        private readonly Color warningBGColor = Color.Yellow;
-        private readonly Color invalidBGColor = Color.PaleVioletRed;
         private readonly Color defaultTextBackColor;
         private readonly MDumpOptions opts;
 
@@ -33,7 +28,7 @@ namespace MDump
         {
             opts = options;
             InitializeComponent();
-            lblDirStatus.ForeColor = invalidColor;
+            lblDirStatus.ForeColor = Globals.InvalidColor;
             defaultTextBackColor = txtFilename.BackColor;
         }
 
@@ -102,19 +97,19 @@ namespace MDump
             {
                 lblDirStatus.Text = invalidDirStatus;
                 lblDirStatus.Visible = true;
-                txtDir.BackColor = invalidBGColor;
+                txtDir.BackColor = Globals.InvalidColor;
             }
             //Relative paths are not allowed
             else if (txtDir.Text.Contains(".."))
             {
                 lblDirStatus.Text = noRelativeDirsStatus;
                 lblDirStatus.Visible = true;
-                txtDir.BackColor = invalidBGColor;
+                txtDir.BackColor = Globals.InvalidBGColor;
             }
             else
             {
                 lblDirStatus.Visible = false;
-                txtDir.BackColor = validBGColor;
+                txtDir.BackColor = Globals.ValidBGColor;
             }
             UpdateFilenameAndOKStatus();
         }
@@ -136,26 +131,26 @@ namespace MDump
             //File name has invalid characters
             else if (txtFilename.Text.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
             {
-                lblFilenameStatus.ForeColor = invalidColor;
+                lblFilenameStatus.ForeColor = Globals.InvalidColor;
                 lblFilenameStatus.Text = invalidFilenameStatus;
                 lblFilenameStatus.Visible = true;
-                txtFilename.BackColor = invalidBGColor;
+                txtFilename.BackColor = Globals.InvalidBGColor;
                 btnOK.Enabled = false;
             }
             //Filename has extension (which we don't want them to do)
             else if (txtFilename.Text.IndexOf('.') != -1)
             {
-                lblFilenameStatus.ForeColor = invalidColor;
+                lblFilenameStatus.ForeColor = Globals.InvalidColor;
                 lblFilenameStatus.Text = hasExtensionFilenameStatus;
                 lblFilenameStatus.Visible = true;
-                txtFilename.BackColor = invalidBGColor;
+                txtFilename.BackColor = Globals.InvalidBGColor;
                 btnOK.Enabled = false;
             }
             //File is valid and directory is nonexistant.  This is a valid case.
             else if (txtDir.Text.Length == 0)
             {
                 lblFilenameStatus.Visible = false;
-                txtFilename.BackColor = validBGColor;
+                txtFilename.BackColor = Globals.ValidBGColor;
                 btnOK.Enabled = true;
             }
             //Check if directory is valid and check if an overwrite would be needed
@@ -187,17 +182,17 @@ namespace MDump
                 //We'd overwrite files
                 if (overwriteRequired)
                 {
-                    lblFilenameStatus.ForeColor = warningColor;
+                    lblFilenameStatus.ForeColor = Globals.WarningColor;
                     lblFilenameStatus.Text = overwriteFilenameStatus;
                     lblFilenameStatus.Visible = true;
-                    txtFilename.BackColor = warningBGColor;
+                    txtFilename.BackColor = Globals.WarningBGColor;
                     btnOK.Enabled = true;
                 }
                 //Filename is good to go
                 else
                 {
                     lblFilenameStatus.Visible = false;
-                    txtFilename.BackColor = validBGColor;
+                    txtFilename.BackColor = Globals.ValidBGColor;
                     btnOK.Enabled = true;
                 }
             }
@@ -205,7 +200,7 @@ namespace MDump
             else
             {
                 lblFilenameStatus.Visible = false;
-                txtFilename.BackColor = validBGColor;
+                txtFilename.BackColor = Globals.ValidBGColor;
                 btnOK.Enabled = false;
             }
         }

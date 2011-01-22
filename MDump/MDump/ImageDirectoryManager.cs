@@ -28,7 +28,12 @@ namespace MDump
             public const string duplicateImgMsg = "This directory already has an image with the name ";
             public const string duplicateDirMsg = "This directory already has a subdirectory with the name ";
             public const string noSuchItemMsg = "The provided item is not in this directory's list";
+            public const string notImgOrDirMsg = "The provided ListViewItem is not tagged to an image or an "
+                + "image directory";
             #endregion
+
+            private const int imageIconIndex = 0;
+            private const int folderIconIndex = 1;
 
             private List<Bitmap> images;
             private List<ImageDirectory> children;
@@ -62,9 +67,9 @@ namespace MDump
                         throw new ArgumentException(duplicateImgMsg + img.Tag);
                     }
                 }
-                images.Add(img);
-                ListViewItem ret = new ListViewItem();
+                ListViewItem ret = new ListViewItem((string)img.Tag, imageIconIndex);
                 ret.Tag = img;
+                images.Add(img);
                 return ret;
             }
 
@@ -80,9 +85,9 @@ namespace MDump
                 {
                     throw new ArgumentException(duplicateDirMsg + name);
                 }
-                children.Add(toAdd);
-                ListViewItem ret = new ListViewItem(name);
+                ListViewItem ret = new ListViewItem(name, folderIconIndex);
                 ret.Tag = toAdd;
+                children.Add(toAdd);
                 return ret;
             }
 
@@ -98,15 +103,29 @@ namespace MDump
                     ImageDirectory dir = item.Tag as ImageDirectory;
                     if (dir == null)
                     {
-                        //Give up all hope, throw exception.
+                        throw new ArgumentException(notImgOrDirMsg);
                     }
                     else
                     {
+                        if (!children.Remove(dir))
+                        {
+                            throw new ArgumentException(noSuchItemMsg);
+                        }
                     }
                 }
                 else
                 {
-                    //Test string tags for equality
+                    foreach (Bitmap img in images)
+                    {
+                        //We should just be able to do a reference test since the tag should be
+                        //pointing at the bitmap in our list
+                        if (bmp == img)
+                        {
+                            images.Remove(img);
+                        }
+                    }
+                    //If we didn't find it, we didn't have it to begin with
+                    throw new ArgumentException(noSuchItemMsg);
                 }
             }
 
@@ -145,7 +164,7 @@ namespace MDump
             public List<ListViewItem> CreateListViewRepresentation()
             {
                 List<ListViewItem> ret = new List<ListViewItem>();
-
+                //TODO: Add text and icon to LVIs
                 //Add child directories
                 foreach (ImageDirectory child in children)
                 {
@@ -349,21 +368,21 @@ namespace MDump
         }
 
         /// <summary>
-        /// Calls RemoveItem on the active directory
-        /// </summary>
-        /// <seealso cref="ImageDirectory.RemoveItem"/>
-        public void RemoveItem(ListViewItem imgItem)
-        {
-            activeDirectory.RemoveItem(imgItem);
-        }
-
-        /// <summary>
         /// Calls AddDirectory on the active directory
         /// </summary>
         /// <seealso cref="ImageDirectory.AddDirectory"/>
         public ListViewItem AddChildDirectory(string dirName)
         {
             return activeDirectory.AddDirectory(dirName);
+        }
+
+        /// <summary>
+        /// Calls RemoveItem on the active directory
+        /// </summary>
+        /// <seealso cref="ImageDirectory.RemoveItem"/>
+        public void RemoveItem(ListViewItem imgItem)
+        {
+            activeDirectory.RemoveItem(imgItem);
         }
 
         /// <summary>
@@ -379,14 +398,29 @@ namespace MDump
         /// Gets all bitmaps in the directory structure, starting at the root directory.
         /// </summary>
         /// <returns></returns>
-        public List<Bitmap> GetAllImages()
+        public List<Bitmap> ImageList
         {
-            List<Bitmap> ret = new List<Bitmap>();
-            foreach (Bitmap bmp in root)
+            get
             {
-                ret.Add(bmp);
+                List<Bitmap> ret = new List<Bitmap>();
+                foreach (Bitmap bmp in root)
+                {
+                    ret.Add(bmp);
+                }
+                return ret;
             }
-            return ret;
+        }
+
+        /// <summary>
+        /// Gets true if the directory structure, starting at the root directory,
+        /// contains no images
+        /// </summary>
+        public bool IsEmpty
+        {
+            get
+            {
+                return ImageList.Count == 0;
+            }
         }
 
         /// <summary>

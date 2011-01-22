@@ -213,7 +213,7 @@ namespace MDump
                 }
             }
 
-            System.Text.Encoding dataEncoding = ImageMerger.MDDataEncoding;
+            System.Text.Encoding dataEncoding = Globals.MDDataEncoding;
             using (Graphics g = Graphics.FromImage(merged))
             {
                 using (BinaryWriter bw = new BinaryWriter(mdStream, System.Text.Encoding.UTF8))

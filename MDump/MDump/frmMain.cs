@@ -144,7 +144,7 @@ namespace MDump
             foreach (string filepath in paths)
             {
                 //Ignore this file if it's not even a supported format
-                string currExt = Path.GetExtension(filepath);
+                string currExt = filepath.Substring(filepath.LastIndexOf('.') + 1);
                 bool matched = false;
                 foreach (string extension in supportedImageFormats)
                 {
@@ -213,6 +213,8 @@ namespace MDump
         public frmMain()
         {
             InitializeComponent();
+            imlLVIcons.Images.Add(Properties.Resources.ImageIcon);
+            imlLVIcons.Images.Add(Properties.Resources.Folder);
             dirMan = new ImageDirectoryManager();
             CurrentMode = Mode.NotSet;
             //Try to add any images dragged onto program:
@@ -283,12 +285,12 @@ namespace MDump
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            //TODO: Update to directory system
             foreach (ListViewItem lvi in lvImages.SelectedItems)
             {
-                lvImages.Items.Remove(lvi);
+                dirMan.RemoveItem(lvi);
+                lvi.Remove();
             }
-            if (lvImages.Items.Count == 0)
+            if (dirMan.IsEmpty)
             {
                 CurrentMode = Mode.NotSet;
             }
@@ -296,14 +298,14 @@ namespace MDump
 
         private void lvImages_KeyUp(object sender, KeyEventArgs e)
         {
-            //TODO: Update to directory system
             if (e.KeyCode == Keys.Delete && lvImages.SelectedItems.Count > 0)
             {
                 foreach(ListViewItem lvi in lvImages.SelectedItems)
                 {
+                    dirMan.RemoveItem(lvi);
                     lvi.Remove();
                 }
-                if (lvImages.Items.Count == 0)
+                if (dirMan.IsEmpty)
                 {
                     CurrentMode = Mode.NotSet;
                 }
@@ -325,13 +327,16 @@ namespace MDump
                 MDumpOptions newOpts = optsDlg.GetOptions();
                 if (newOpts.IsDefaultOptions())
                 {
-                    Opts = newOpts;
                     File.Delete(MDumpOptions.fileName);
                 }
                 else if (!newOpts.Equals(Opts))
                 {
-                    Opts = newOpts;
                     Opts.SaveToFile(MDumpOptions.fileName);
+                }
+                Opts = newOpts;
+                if (CurrentMode == Mode.Merge)
+                {
+                    DirectoryUIEnabled = Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
                 }
             }
         }
@@ -363,7 +368,7 @@ namespace MDump
                     return;
                 }
             }
-            new frmWait(CurrentMode, dirMan.GetAllImages(), Opts, path).ShowDialog();
+            new frmWait(CurrentMode, dirMan.ImageList, Opts, path).ShowDialog();
         }
 
         private void dlgMerge_FileOk(object sender, CancelEventArgs e)
@@ -461,9 +466,13 @@ namespace MDump
                 {
                     //A directory couldn't be resolved from the given path
                     dirMan.SetActiveToRoot();
-                    RepopulateListView();
                     MessageBox.Show(noSuchPathMsg, noSuchPathTitle, MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    RepopulateListView();
+                    btnUpFolder.Enabled = dirMan.ActiveHasParent();
                 }
             }
         }
@@ -473,6 +482,24 @@ namespace MDump
             dirMan.MoveUpDirectory();
             btnUpFolder.Enabled = dirMan.ActiveHasParent();
             RepopulateListView();
+        }
+
+        private void btnAddFolder_Click(object sender, EventArgs e)
+        {
+            frmFolderName dlg = new frmFolderName();
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                lvImages.Items.Add(dirMan.AddChildDirectory(dlg.FolderName));
+            }
+        }
+
+        private void txtPath_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //Stop the bleeding chime on hitting enter
+            if (e.KeyChar == '\r')
+            {
+                e.Handled = true;
+            }
         }
     }
 }

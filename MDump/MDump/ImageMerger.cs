@@ -29,13 +29,15 @@ namespace MDump
                 : base(msg, inner) { }
         }
 
-        #region Constants
+        #region String Constants
         private const string successMsg = "Images were all successfully merged in to ";
         private const string mergeFailedMsg = "An error occurred while merging imgaes";
         private const string mergedFailedTitle = "Error while merging";
         private const string successTitle = "Success";
         private const string unexpecError = "An unexpected error occurred while merging.\n";
+        #endregion
 
+        #region Numeric Constants
         /// <summary>
         /// Amount of horizontal padding to use for title bar
         /// </summary>
@@ -55,14 +57,6 @@ namespace MDump
         /// TODO: Make dyanamic based on compression level?
         /// </summary>
         private const float kCompressedBytesPerPix = 1.0f;
-
-        /// <summary>
-        /// Gets the text encoding used for storing the MDump data in the PNG
-        /// </summary>
-        public static Encoding MDDataEncoding
-        {
-            get { return Encoding.UTF8; }
-        }
         #endregion
 
         #region Enums

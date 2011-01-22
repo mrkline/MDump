@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.lvImages = new System.Windows.Forms.ListView();
             this.clmImages = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.imlLVIcons = new System.Windows.Forms.ImageList(this.components);
             this.btnOptions = new System.Windows.Forms.Button();
             this.btnAction = new System.Windows.Forms.Button();
             this.ttpMain = new System.Windows.Forms.ToolTip(this.components);
@@ -58,10 +59,11 @@
             this.lvImages.Location = new System.Drawing.Point(12, 42);
             this.lvImages.Name = "lvImages";
             this.lvImages.Size = new System.Drawing.Size(460, 236);
+            this.lvImages.SmallImageList = this.imlLVIcons;
             this.lvImages.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lvImages.TabIndex = 0;
             this.lvImages.UseCompatibleStateImageBehavior = false;
-            this.lvImages.View = System.Windows.Forms.View.Details;
+            this.lvImages.View = System.Windows.Forms.View.List;
             this.lvImages.DragDrop += new System.Windows.Forms.DragEventHandler(this.lvImages_DragDrop);
             this.lvImages.DragEnter += new System.Windows.Forms.DragEventHandler(this.lvImages_DragEnter);
             this.lvImages.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lvImages_KeyUp);
@@ -70,6 +72,12 @@
             // 
             this.clmImages.Text = "SetAtRuntime";
             this.clmImages.Width = 250;
+            // 
+            // imlLVIcons
+            // 
+            this.imlLVIcons.ColorDepth = System.Windows.Forms.ColorDepth.Depth24Bit;
+            this.imlLVIcons.ImageSize = new System.Drawing.Size(16, 16);
+            this.imlLVIcons.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // btnOptions
             // 
@@ -159,12 +167,14 @@
             // 
             // txtPath
             // 
+            this.txtPath.AcceptsReturn = true;
             this.txtPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPath.Location = new System.Drawing.Point(53, 16);
             this.txtPath.Name = "txtPath";
             this.txtPath.Size = new System.Drawing.Size(367, 20);
             this.txtPath.TabIndex = 10;
+            this.txtPath.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPath_KeyPress);
             this.txtPath.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtPath_KeyUp);
             // 
             // lblRoot
@@ -195,6 +205,7 @@
             this.btnAddFolder.TabIndex = 13;
             this.btnAddFolder.Text = "Add Folder";
             this.btnAddFolder.UseVisualStyleBackColor = true;
+            this.btnAddFolder.Click += new System.EventHandler(this.btnAddFolder_Click);
             // 
             // frmMain
             // 
@@ -239,6 +250,7 @@
         private System.Windows.Forms.Label lblRoot;
         private System.Windows.Forms.Button btnUpFolder;
         private System.Windows.Forms.Button btnAddFolder;
+        internal System.Windows.Forms.ImageList imlLVIcons;
 
     }
 }
