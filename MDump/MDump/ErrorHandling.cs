@@ -53,15 +53,18 @@ namespace MDump
                 using (StreamWriter sw = new StreamWriter(ErrorFilename, true, Encoding.UTF8))
                 {
                     Version ver = Assembly.GetExecutingAssembly().GetName().Version;
+                    sw.WriteLine("*****Begin Error Report*****");
                     sw.WriteLine("Error on " + DateTime.Now.ToShortDateString());
                     sw.WriteLine("MDump version " + ver.Major.ToString() + '.'
                         + ver.Minor.ToString() + " Build " + ver.Build.ToString());
                     sw.WriteLine();
-                    sw.WriteLine("Exception message is as follows:");
+                    sw.WriteLine("Exception is of type: " + ex.GetType() + '.');
+                    sw.WriteLine("Exception message is:");
                     sw.WriteLine(ex.Message);
                     sw.WriteLine();
                     sw.WriteLine("Stack trace:");
                     sw.WriteLine(ex.StackTrace);
+                    sw.WriteLine("*****End Error Report*****");
                     sw.WriteLine();
                 }
             }

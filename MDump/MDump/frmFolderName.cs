@@ -17,19 +17,12 @@ namespace MDump
         public string FolderName { get { return txtName.Text; } }
 
         private readonly Color defaultTextBackColor;
-        char[] invalidChars;
 
         public frmFolderName()
         {
             InitializeComponent();
             defaultTextBackColor = txtName.BackColor;
             lblStatus.ForeColor = Globals.InvalidColor;
-            List<char> invalidCharList = new List<char>();
-            invalidCharList.Add(Path.PathSeparator);
-            invalidCharList.Add(Path.DirectorySeparatorChar);
-            invalidCharList.Add(Path.AltDirectorySeparatorChar);
-            invalidCharList.AddRange(Path.GetInvalidPathChars());
-            invalidChars = invalidCharList.ToArray();
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
@@ -40,7 +33,7 @@ namespace MDump
                 txtName.BackColor = defaultTextBackColor;
                 btnOk.Enabled = false;
             }
-            else if (txtName.Text.IndexOfAny(invalidChars) != -1)
+            else if (!Globals.IsValidDirName(txtName.Text))
             {
                 lblStatus.Visible = true;
                 txtName.BackColor = Globals.InvalidBGColor;

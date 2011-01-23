@@ -91,6 +91,42 @@ namespace MDump
                 return ret;
             }
 
+            public void RenameItem(ListViewItem item, string newName)
+            {
+                Bitmap bmp = item.Tag as Bitmap;
+                if (bmp == null)
+                {
+                    ImageDirectory dir = item.Tag as ImageDirectory;
+                    if (dir == null)
+                    {
+                        throw new ArgumentException(notImgOrDirMsg);
+                    }
+                    else
+                    {
+                        if (!children.Contains(dir))
+                        {
+                            throw new ArgumentException(noSuchItemMsg);
+                        }
+                        //TODO: Pick up here with checking for a valid name and doing the rename
+                    }
+                }
+                else
+                {
+                    foreach (Bitmap img in images)
+                    {
+                        //We should just be able to do a reference test since the tag should be
+                        //pointing at the bitmap in our list
+                        if (bmp == img)
+                        {
+                            images.Remove(img);
+                            return;
+                        }
+                    }
+                    //If we didn't find it, we didn't have it to begin with
+                    throw new ArgumentException(noSuchItemMsg);
+                }
+            }
+
             /// <summary>
             /// Removes an image or a child directory from the current directory
             /// </summary>
@@ -122,6 +158,7 @@ namespace MDump
                         if (bmp == img)
                         {
                             images.Remove(img);
+                            return;
                         }
                     }
                     //If we didn't find it, we didn't have it to begin with
@@ -161,27 +198,30 @@ namespace MDump
             /// contained within this directory.
             /// </summary>
             /// <returns>A list of ListViewItems representing the contents of this directory</returns>
-            public List<ListViewItem> CreateListViewRepresentation()
+            public List<ListViewItem> LVIRepresentation
             {
-                List<ListViewItem> ret = new List<ListViewItem>();
-                //TODO: Add text and icon to LVIs
-                //Add child directories
-                foreach (ImageDirectory child in children)
+                get
                 {
-                    ListViewItem toAdd = new ListViewItem();
-                    toAdd.Tag = child;
-                    ret.Add(toAdd);
-                }
+                    List<ListViewItem> ret = new List<ListViewItem>();
+                    //TODO: Add text and icon to LVIs
+                    //Add child directories
+                    foreach (ImageDirectory child in children)
+                    {
+                        ListViewItem toAdd = new ListViewItem(child.Name, folderIconIndex);
+                        toAdd.Tag = child;
+                        ret.Add(toAdd);
+                    }
 
-                //Add images
-                foreach (Bitmap bmp in images)
-                {
-                    ListViewItem toAdd = new ListViewItem();
-                    toAdd.Tag = bmp;
-                    ret.Add(toAdd);
-                }
+                    //Add images
+                    foreach (Bitmap bmp in images)
+                    {
+                        ListViewItem toAdd = new ListViewItem((string)bmp.Tag, imageIconIndex);
+                        toAdd.Tag = bmp;
+                        ret.Add(toAdd);
+                    }
 
-                return ret;
+                    return ret;
+                }
             }
 
             /// <summary>
@@ -326,6 +366,16 @@ namespace MDump
         }
 
         /// <summary>
+        /// Returns true if 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public bool ItemRepresentsDirectory(ListViewItem item)
+        {
+            return item.Tag as ImageDirectory != null;
+        }
+
+        /// <summary>
         /// Sets the active directory to a given child
         /// </summary>
         /// <param name="dirItem">the GUI representation of the child directory</param>
@@ -386,12 +436,37 @@ namespace MDump
         }
 
         /// <summary>
-        /// Calls CreateListViewRepresentation on the active directory
+        /// Gets the ListViewItem Representation of the active directory
         /// </summary>
-        /// <seealso cref="ImageDirectory.CreateListViewRepresentation"/>
-        public List<ListViewItem> CreateListViewItems()
+        /// <seealso cref="ImageDirectory.LVIRepresentation"/>
+        public List<ListViewItem> LVIRepresentation
         {
-            return activeDirectory.CreateListViewRepresentation();
+            get
+            {
+                return activeDirectory.LVIRepresentation;
+            }
+        }
+
+        /// <summary>
+        /// Gets the path of the active directory, sans root\
+        /// </summary>
+        public string CurrentPath
+        {
+            get
+            {
+                string ret = string.Empty;
+                for (ImageDirectory curr = activeDirectory;
+                    curr != root; curr = curr.Parent)
+                {
+                    ret = ret.Insert(0, curr.Name + Path.DirectorySeparatorChar);
+                }
+                //Knock off the trailing \ character
+                if (ret.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                {
+                    ret = ret.Substring(0, ret.Length - 1);
+                }
+                return ret;
+            }
         }
 
         /// <summary>

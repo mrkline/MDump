@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using System.IO;
 
 namespace MDump
 {
@@ -17,5 +18,21 @@ namespace MDump
         public static Color ValidBGColor { get { return Color.LightGreen; } }
         public static Color WarningBGColor { get { return Color.Yellow; } }
         public static Color InvalidBGColor { get { return Color.PaleVioletRed; } }
+        public static bool IsValidDirName(string name)
+        {
+            return name.IndexOfAny(invalidDirNameChars) == -1;
+        }
+
+        private static char[] invalidDirNameChars;
+
+        static Globals()
+        {
+            List<char> invDirNameCharList = new List<char>();
+            invDirNameCharList.Add(Path.PathSeparator);
+            invDirNameCharList.Add(Path.DirectorySeparatorChar);
+            invDirNameCharList.Add(Path.AltDirectorySeparatorChar);
+            invDirNameCharList.AddRange(Path.GetInvalidPathChars());
+            invalidDirNameChars = invDirNameCharList.ToArray();
+        }
     }
 }

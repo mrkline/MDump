@@ -64,6 +64,7 @@
             this.lvImages.TabIndex = 0;
             this.lvImages.UseCompatibleStateImageBehavior = false;
             this.lvImages.View = System.Windows.Forms.View.List;
+            this.lvImages.ItemActivate += new System.EventHandler(this.lvImages_ItemActivate);
             this.lvImages.DragDrop += new System.Windows.Forms.DragEventHandler(this.lvImages_DragDrop);
             this.lvImages.DragEnter += new System.Windows.Forms.DragEventHandler(this.lvImages_DragEnter);
             this.lvImages.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lvImages_KeyUp);
@@ -111,7 +112,7 @@
             this.btnAddImage.Size = new System.Drawing.Size(75, 30);
             this.btnAddImage.TabIndex = 8;
             this.btnAddImage.Text = "Add Images";
-            this.ttpMain.SetToolTip(this.btnAddImage, "Add an Image to the list");
+            this.ttpMain.SetToolTip(this.btnAddImage, "Add an image to the list");
             this.btnAddImage.UseVisualStyleBackColor = true;
             this.btnAddImage.Click += new System.EventHandler(this.btnAdd_Click);
             // 
@@ -148,7 +149,7 @@
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(30, 30);
             this.btnDelete.TabIndex = 4;
-            this.ttpMain.SetToolTip(this.btnDelete, "Remove the selected image from the list");
+            this.ttpMain.SetToolTip(this.btnDelete, "Remove the selected image(s) from the list");
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
@@ -194,6 +195,7 @@
             this.btnUpFolder.Name = "btnUpFolder";
             this.btnUpFolder.Size = new System.Drawing.Size(46, 24);
             this.btnUpFolder.TabIndex = 12;
+            this.ttpMain.SetToolTip(this.btnUpFolder, "Move up one folder");
             this.btnUpFolder.UseVisualStyleBackColor = true;
             this.btnUpFolder.Click += new System.EventHandler(this.btnUpFolder_Click);
             // 
@@ -204,6 +206,7 @@
             this.btnAddFolder.Size = new System.Drawing.Size(75, 30);
             this.btnAddFolder.TabIndex = 13;
             this.btnAddFolder.Text = "Add Folder";
+            this.ttpMain.SetToolTip(this.btnAddFolder, "Add a folder to put additional images in to");
             this.btnAddFolder.UseVisualStyleBackColor = true;
             this.btnAddFolder.Click += new System.EventHandler(this.btnAddFolder_Click);
             // 

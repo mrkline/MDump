@@ -32,7 +32,8 @@ namespace MDump
         private const string dllNotFoundMsg = PNGOps.DllName + " could not be found."
                     + " Make sure it is in the same folder as this program.";
         private const string dllNotFoundTitle = "Couldn't find DLL";
-
+        private const string duplicateDirMsg = "A folder with the same name already exists";
+        private const string duplicateDirTitle = "Duplicate Folder";
         private const string noSuchPathMsg = "The path entered does not exist.";
         private const string noSuchPathTitle = "No such path";
         #endregion
@@ -126,13 +127,15 @@ namespace MDump
         /// <summary>
         /// Clears the list view and repopulates it with the current directory's items.
         /// </summary>
-        private void RepopulateListView()
+        private void RefreshDirUI()
         {
             lvImages.Items.Clear();
-            foreach (ListViewItem item in dirMan.CreateListViewItems())
+            foreach (ListViewItem item in dirMan.LVIRepresentation)
             {
                 lvImages.Items.Add(item);
             }
+            txtPath.Text = dirMan.CurrentPath;
+            btnUpFolder.Enabled = dirMan.ActiveHasParent();
         }
 
         /// <summary>
@@ -453,6 +456,29 @@ namespace MDump
                 Close();
             }
         }
+        private void btnUpFolder_Click(object sender, EventArgs e)
+        {
+            dirMan.MoveUpDirectory();
+            RefreshDirUI();
+        }
+
+        private void btnAddFolder_Click(object sender, EventArgs e)
+        {
+            frmFolderName dlg = new frmFolderName();
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                try
+                {
+                    lvImages.Items.Add(dirMan.AddChildDirectory(dlg.FolderName));
+                }
+                catch (ArgumentException)
+                {
+                    //A duplicate directory exists
+                    MessageBox.Show(duplicateDirMsg, duplicateDirTitle,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
 
         private void txtPath_KeyUp(object sender, KeyEventArgs e)
         {
@@ -471,25 +497,8 @@ namespace MDump
                 }
                 finally
                 {
-                    RepopulateListView();
-                    btnUpFolder.Enabled = dirMan.ActiveHasParent();
+                    RefreshDirUI();
                 }
-            }
-        }
-
-        private void btnUpFolder_Click(object sender, EventArgs e)
-        {
-            dirMan.MoveUpDirectory();
-            btnUpFolder.Enabled = dirMan.ActiveHasParent();
-            RepopulateListView();
-        }
-
-        private void btnAddFolder_Click(object sender, EventArgs e)
-        {
-            frmFolderName dlg = new frmFolderName();
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                lvImages.Items.Add(dirMan.AddChildDirectory(dlg.FolderName));
             }
         }
 
@@ -499,6 +508,15 @@ namespace MDump
             if (e.KeyChar == '\r')
             {
                 e.Handled = true;
+            }
+        }
+
+        private void lvImages_ItemActivate(object sender, EventArgs e)
+        {
+            if (dirMan.ItemRepresentsDirectory(lvImages.SelectedItems[0]))
+            {
+                dirMan.MoveToChildDirecory(lvImages.SelectedItems[0]);
+                RefreshDirUI();
             }
         }
     }
