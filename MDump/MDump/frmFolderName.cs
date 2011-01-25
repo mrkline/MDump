@@ -22,7 +22,7 @@ namespace MDump
         {
             InitializeComponent();
             defaultTextBackColor = txtName.BackColor;
-            lblStatus.ForeColor = Globals.InvalidColor;
+            lblStatus.ForeColor = Colors.InvalidColor;
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
@@ -33,16 +33,16 @@ namespace MDump
                 txtName.BackColor = defaultTextBackColor;
                 btnOk.Enabled = false;
             }
-            else if (!Globals.IsValidDirName(txtName.Text))
+            else if (!PathManager.IsValidDirName(txtName.Text))
             {
                 lblStatus.Visible = true;
-                txtName.BackColor = Globals.InvalidBGColor;
+                txtName.BackColor = Colors.InvalidBGColor;
                 btnOk.Enabled = false;
             }
             else
             {
                 lblStatus.Visible = false;
-                txtName.BackColor = Globals.ValidBGColor;
+                txtName.BackColor = Colors.ValidBGColor;
                 btnOk.Enabled = true;
             }
         }

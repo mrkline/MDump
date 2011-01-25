@@ -162,9 +162,6 @@ namespace MDump
                     continue;
                 }
 
-                //Get the filename sans the path
-                string name = System.IO.Path.GetFileName(filepath);
-
                 //Try to create an image out of the file
                 try
                 {
@@ -191,7 +188,7 @@ namespace MDump
                         CurrentMode = mergedImg ? Mode.Split : Mode.Merge;
                     }
 
-                    bmp.Tag = name; //Save the filename for later comparison
+                    bmp.Tag = PathManager.PathToBitmapTag(filepath);
                     lvImages.Items.Add(dirMan.AddImage(bmp));
                 }
                 catch (ArgumentException ex)
@@ -204,7 +201,8 @@ namespace MDump
                 catch
                 {
                     //File has an image extension but couldn't be loaded
-                    MessageBox.Show(name + errorLoadingImageMsg, errorLoadingImageTitle,
+                    MessageBox.Show(Path.GetFileName(filepath) + errorLoadingImageMsg,
+                        errorLoadingImageTitle,
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -301,24 +299,42 @@ namespace MDump
 
         private void lvImages_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete && lvImages.SelectedItems.Count > 0)
+            switch (e.KeyCode)
             {
-                foreach(ListViewItem lvi in lvImages.SelectedItems)
-                {
-                    dirMan.RemoveItem(lvi);
-                    lvi.Remove();
-                }
-                if (dirMan.IsEmpty)
-                {
-                    CurrentMode = Mode.NotSet;
-                }
-            }
-            else if (e.KeyCode == Keys.A && e.Control)
-            {
-                foreach (ListViewItem lvi in lvImages.Items)
-                {
-                    lvi.Selected = true;
-                }
+                case Keys.Delete:
+                    //Delete selected items
+                    if (lvImages.SelectedItems.Count > 0)
+                    {
+                        foreach(ListViewItem lvi in lvImages.SelectedItems)
+                        {
+                            dirMan.RemoveItem(lvi);
+                            lvi.Remove();
+                        }
+                        if (dirMan.IsEmpty)
+                        {
+                            CurrentMode = Mode.NotSet;
+                        }
+                    }
+                    break;
+
+                case Keys.A:
+                    //Select all
+                    if (e.Control)
+                    {
+                        foreach (ListViewItem lvi in lvImages.Items)
+                        {
+                            lvi.Selected = true;
+                        }
+                    }
+                    break;
+
+                case Keys.F2:
+                    //Rename selected item
+                    if (lvImages.SelectedItems.Count == 1)
+                    {
+                        lvImages.SelectedItems[0].BeginEdit();
+                    }
+                    break;
             }
         }
 
@@ -410,7 +426,6 @@ namespace MDump
                     + " Overwrite?", "Confirm Overwrite", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                     MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes)
                 {
-                    e.Cancel = false;
                     foreach (string file in mergeFiles)
                     {
                         File.Delete(file);
@@ -424,7 +439,6 @@ namespace MDump
             }
             else
             {
-                e.Cancel = false;
                 dlgMerge.FileName = fn.Substring(0, extIdx);
             }
         }
@@ -517,6 +531,38 @@ namespace MDump
             {
                 dirMan.MoveToChildDirecory(lvImages.SelectedItems[0]);
                 RefreshDirUI();
+            }
+        }
+
+        private void lvImages_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            ListViewItem item = lvImages.Items[e.Item];
+            string newName = e.Label;
+            if (dirMan.ItemRepresentsDirectory(item))
+            {
+                if (PathManager.IsValidDirName(newName))
+                {
+                    dirMan.RenameItem(item, newName);
+                }
+                else
+                {
+                    e.CancelEdit = true;
+                    MessageBox.Show(newName + PathManager.InvalidDirNameMsg, PathManager.InvalidDirNameTitle,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                if (PathManager.IsValidBitmapTag(newName))
+                {
+                    dirMan.RenameItem(item, newName);
+                }
+                else
+                {
+                    e.CancelEdit = true;
+                    MessageBox.Show(newName + PathManager.InvalidBmpTagMsg, PathManager.InvalidBmpTagTitle,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
     }

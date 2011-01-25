@@ -17,7 +17,7 @@ namespace MDump
         private const string rootName = "root";
         private const string cannotEscapeRoot = "There is no directory higher than the root directory";
 
-        #region Directory Class
+        #region ImageDirectory Class
         /// <summary>
         /// A tree-like class that stores its parent directory, other directories, and images,
         /// as well as a GUI representation of itself using ListViewItems.
@@ -27,9 +27,9 @@ namespace MDump
             #region String Constants
             public const string duplicateImgMsg = "This directory already has an image with the name ";
             public const string duplicateDirMsg = "This directory already has a subdirectory with the name ";
-            public const string noSuchItemMsg = "The provided item is not in this directory's list";
+            public const string noSuchItemMsg = "The provided item is not in this directory's list.";
             public const string notImgOrDirMsg = "The provided ListViewItem is not tagged to an image or an "
-                + "image directory";
+                + "image directory.";
             #endregion
 
             private const int imageIconIndex = 0;
@@ -91,6 +91,11 @@ namespace MDump
                 return ret;
             }
 
+            /// <summary>
+            /// Renames an item in this directory
+            /// </summary>
+            /// <param name="item">The GUI representation of the item to rename</param>
+            /// <param name="newName">The new name for the given item</param>
             public void RenameItem(ListViewItem item, string newName)
             {
                 Bitmap bmp = item.Tag as Bitmap;
@@ -103,22 +108,30 @@ namespace MDump
                     }
                     else
                     {
+                        if (!PathManager.IsValidDirName(newName))
+                        {
+                            throw new ArgumentException(newName + PathManager.InvalidDirNameMsg);
+                        }
                         if (!children.Contains(dir))
                         {
                             throw new ArgumentException(noSuchItemMsg);
                         }
-                        //TODO: Pick up here with checking for a valid name and doing the rename
+                        dir.Name = newName;
                     }
                 }
                 else
                 {
+                    if (!PathManager.IsValidBitmapTag(newName))
+                    {
+                        throw new ArgumentException(newName + PathManager.InvalidBmpTagMsg);
+                    }
                     foreach (Bitmap img in images)
                     {
                         //We should just be able to do a reference test since the tag should be
                         //pointing at the bitmap in our list
                         if (bmp == img)
                         {
-                            images.Remove(img);
+                            img.Tag = newName;
                             return;
                         }
                     }
@@ -203,7 +216,6 @@ namespace MDump
                 get
                 {
                     List<ListViewItem> ret = new List<ListViewItem>();
-                    //TODO: Add text and icon to LVIs
                     //Add child directories
                     foreach (ImageDirectory child in children)
                     {
@@ -424,6 +436,15 @@ namespace MDump
         public ListViewItem AddChildDirectory(string dirName)
         {
             return activeDirectory.AddDirectory(dirName);
+        }
+
+        /// <summary>
+        /// Calls RenameItem on the active directory
+        /// </summary>
+        /// <seealso cref="ImageDirectory.RenameItem"/>
+        public void RenameItem(ListViewItem item, string newName)
+        {
+            activeDirectory.RenameItem(item, newName);
         }
 
         /// <summary>

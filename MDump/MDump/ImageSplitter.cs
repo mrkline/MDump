@@ -165,7 +165,7 @@ namespace MDump
                     byte[] data = PNGOps.LoadMergedImageData(filename);
 
                     //Decode MDump data into a string using the text encoding it was saved with
-                    string decodedData = Globals.MDDataEncoding.GetString(data);
+                    string decodedData = Colors.MDDataEncoding.GetString(data);
                     string[] lines = decodedData.Split('\n');
                     //The first line is the number of images in this merge
                     callback(SplitStage.SplittingNewMerge,

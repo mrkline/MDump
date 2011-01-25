@@ -90,11 +90,12 @@
     <Compile Include="frmWait.Designer.cs">
       <DependentUpon>frmWait.cs</DependentUpon>
     </Compile>
-    <Compile Include="Globals.cs" />
+    <Compile Include="Colors.cs" />
     <Compile Include="ImageDirectoryManager.cs" />
     <Compile Include="ImageMerger.cs" />
     <Compile Include="ImageSplitter.cs" />
     <Compile Include="MDumpOptions.cs" />
+    <Compile Include="PathManager.cs" />
     <Compile Include="PNGOps.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

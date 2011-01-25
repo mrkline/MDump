@@ -28,7 +28,7 @@ namespace MDump
         {
             opts = options;
             InitializeComponent();
-            lblDirStatus.ForeColor = Globals.InvalidColor;
+            lblDirStatus.ForeColor = Colors.InvalidColor;
             defaultTextBackColor = txtFilename.BackColor;
         }
 
@@ -97,19 +97,19 @@ namespace MDump
             {
                 lblDirStatus.Text = invalidDirStatus;
                 lblDirStatus.Visible = true;
-                txtDir.BackColor = Globals.InvalidColor;
+                txtDir.BackColor = Colors.InvalidColor;
             }
             //Relative paths are not allowed
             else if (txtDir.Text.Contains(".."))
             {
                 lblDirStatus.Text = noRelativeDirsStatus;
                 lblDirStatus.Visible = true;
-                txtDir.BackColor = Globals.InvalidBGColor;
+                txtDir.BackColor = Colors.InvalidBGColor;
             }
             else
             {
                 lblDirStatus.Visible = false;
-                txtDir.BackColor = Globals.ValidBGColor;
+                txtDir.BackColor = Colors.ValidBGColor;
             }
             UpdateFilenameAndOKStatus();
         }
@@ -131,26 +131,26 @@ namespace MDump
             //File name has invalid characters
             else if (txtFilename.Text.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
             {
-                lblFilenameStatus.ForeColor = Globals.InvalidColor;
+                lblFilenameStatus.ForeColor = Colors.InvalidColor;
                 lblFilenameStatus.Text = invalidFilenameStatus;
                 lblFilenameStatus.Visible = true;
-                txtFilename.BackColor = Globals.InvalidBGColor;
+                txtFilename.BackColor = Colors.InvalidBGColor;
                 btnOK.Enabled = false;
             }
             //Filename has extension (which we don't want them to do)
             else if (txtFilename.Text.IndexOf('.') != -1)
             {
-                lblFilenameStatus.ForeColor = Globals.InvalidColor;
+                lblFilenameStatus.ForeColor = Colors.InvalidColor;
                 lblFilenameStatus.Text = hasExtensionFilenameStatus;
                 lblFilenameStatus.Visible = true;
-                txtFilename.BackColor = Globals.InvalidBGColor;
+                txtFilename.BackColor = Colors.InvalidBGColor;
                 btnOK.Enabled = false;
             }
             //File is valid and directory is nonexistant.  This is a valid case.
             else if (txtDir.Text.Length == 0)
             {
                 lblFilenameStatus.Visible = false;
-                txtFilename.BackColor = Globals.ValidBGColor;
+                txtFilename.BackColor = Colors.ValidBGColor;
                 btnOK.Enabled = true;
             }
             //Check if directory is valid and check if an overwrite would be needed
@@ -182,17 +182,17 @@ namespace MDump
                 //We'd overwrite files
                 if (overwriteRequired)
                 {
-                    lblFilenameStatus.ForeColor = Globals.WarningColor;
+                    lblFilenameStatus.ForeColor = Colors.WarningColor;
                     lblFilenameStatus.Text = overwriteFilenameStatus;
                     lblFilenameStatus.Visible = true;
-                    txtFilename.BackColor = Globals.WarningBGColor;
+                    txtFilename.BackColor = Colors.WarningBGColor;
                     btnOK.Enabled = true;
                 }
                 //Filename is good to go
                 else
                 {
                     lblFilenameStatus.Visible = false;
-                    txtFilename.BackColor = Globals.ValidBGColor;
+                    txtFilename.BackColor = Colors.ValidBGColor;
                     btnOK.Enabled = true;
                 }
             }
@@ -200,7 +200,7 @@ namespace MDump
             else
             {
                 lblFilenameStatus.Visible = false;
-                txtFilename.BackColor = Globals.ValidBGColor;
+                txtFilename.BackColor = Colors.ValidBGColor;
                 btnOK.Enabled = false;
             }
         }
