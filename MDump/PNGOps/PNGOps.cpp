@@ -11,7 +11,7 @@ static const int kBytesPerPix = 4;
 
 extern "C"
 {
-	__declspec(dllexport) MergedCode __cdecl IsMergedImage(char* filename)
+	__declspec(dllexport) MergedCode EXP_CALL_CONV IsMergedImage(char* filename)
 	{
 		FILE* fp = fopen(filename, "rb");
 		if(fp == nullptr)
@@ -86,7 +86,7 @@ extern "C"
 	}
 
 
-	__declspec(dllexport) ECode __cdecl LoadMergedImageData(char* filename,
+	__declspec(dllexport) ECode EXP_CALL_CONV LoadMergedImageData(char* filename,
 		char** mdDataOut, int* mdDataLenOut)
 	{
 		//Set initial value of out arguments to null or 0, so if the function errors out, they have
@@ -165,7 +165,7 @@ extern "C"
 		return EC_SUCCESS;
 	}
 
-	__declspec(dllexport) ECode __cdecl SavePNGToMemory(png_bytep bitmap, int width, int height,
+	__declspec(dllexport) ECode EXP_CALL_CONV SavePNGToMemory(png_bytep bitmap, int width, int height,
 		bool flipRGB, char* mdData, int mdDataLen, int compLevel,  png_bytepp memPngOut, int* memPngLenOut)
 	{
 		//Set initial value of out arguments to null or 0, so if the function errors out, they have

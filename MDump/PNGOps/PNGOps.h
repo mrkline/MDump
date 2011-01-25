@@ -1,5 +1,8 @@
 #pragma once
 
+//Calling convention used for exported functions
+#define EXP_CALL_CONV __cdecl
+
 enum ECode
 {
     EC_SUCCESS,
@@ -25,16 +28,16 @@ enum MergedCode
 
 extern "C"
 {
-	__declspec(dllexport) void FreeUnmanagedData(void* ptr) { free(ptr); }
+	__declspec(dllexport) void EXP_CALL_CONV FreeUnmanagedData(void* ptr) { free(ptr); }
 
 
-	__declspec(dllexport) MergedCode __cdecl IsMergedImage(char* filename);
+	__declspec(dllexport) MergedCode EXP_CALL_CONV IsMergedImage(char* filename);
 
-	__declspec(dllexport) ECode __cdecl LoadMergedImageData(char* filename,
+	__declspec(dllexport) ECode EXP_CALL_CONV LoadMergedImageData(char* filename,
 		char** mdDataOut, int* mdDataLenOut);
 
 	//PNG is assumed to be in 32-bpp RBGA format
-	__declspec(dllexport) ECode __cdecl SavePNGToMemory(png_bytep bitmap, int width, int height,
+	__declspec(dllexport) ECode EXP_CALL_CONV SavePNGToMemory(png_bytep bitmap, int width, int height,
 		bool flipRGB, char* mdData, int mdDataLen, int compLevel, png_bytepp memPngOut, int* memPngLenOut);
 }
 
