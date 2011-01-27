@@ -31,7 +31,8 @@ namespace MDump
         /// <param name="numImages">Number of images in the merged image this data represents</param>
         public void WriteNumImages(int numImages)
         {
-            bw.Write(Encoding.GetBytes(numImages.ToString() + separator));
+            bw.Write(Encoding.GetBytes(numImagesIndicator + subSeparator
+                + numImages.ToString() + separator));
         }
 
         /// <summary>

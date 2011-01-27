@@ -34,6 +34,11 @@ namespace MDump
         #endregion
 
         /// <summary>
+        /// Used by the split callbacks to keep track of the split directory
+        /// </summary>
+        private static string splitDir;
+
+        /// <summary>
         /// Callback stages for splitting
         /// </summary>
         public enum SplitStage
@@ -147,8 +152,7 @@ namespace MDump
             //Cache our args since we'll be using them constantly
             SplitCallback callback = sa.Callback;
             MDumpOptions opts = sa.Options;
-            string splitPath = sa.SplitPath;
-            string splitDir = Path.GetDirectoryName(splitPath) + Path.DirectorySeparatorChar;
+            splitDir = sa.SplitPath;
             List<string> splitsSaved = new List<string>();
 
             callback(SplitStage.Starting, new SplitCallbackData(sa.Bitmaps.Count));
@@ -156,20 +160,14 @@ namespace MDump
             try
             {
                 //Split each image
-                //int imagesMerged = 0;
+                int imagesMerged = 0;
                 foreach (Bitmap image in sa.Bitmaps)
                 {
-                    //string filename = image.Tag as string;
-
-                    ////Read the MDump data from the image.
-                    //byte[] data = PNGOps.LoadMergedImageData(filename);
-
-                    ////Decode MDump data into a string using the text encoding it was saved with
-                    //string decodedData = Colors.MDDataEncoding.GetString(data);
-                    //string[] lines = decodedData.Split('\n');
-                    ////The first line is the number of images in this merge
-                    //callback(SplitStage.SplittingNewMerge,
-                    //    new SplitCallbackData(Path.GetFileName(filename), Convert.ToInt32(lines[0])));
+                    //Decode MDump data into a string using the text encoding it was saved with
+                    string[] dataTokens = MDDataReader.DecodeAndSplitData((image.Tag as SplitImageTag).MDData);
+                    //The first line is the number of images in this merge
+                    callback(SplitStage.SplittingNewMerge,
+                        new SplitCallbackData(Path.GetFileName(filename), Convert.ToInt32(lines[0])));
 
                     ////Parse the rest of the lines, each of which represents an image in the merged image
                     //for (int c = 1; c < lines.Length; ++c)
@@ -223,6 +221,23 @@ namespace MDump
             {
                 callback(SplitStage.Done, null);
             }
+        }
+
+        /// <summary>
+        /// Callback used by <see cref="MDDataReader"/>.
+        /// </summary>
+        private static void AddDirectoryCallback(string dir)
+        {
+            Directory.SetCurrentDirectory(splitDir);
+            Directory.CreateDirectory(dir);
+            Directory.SetCurrentDirectory(dir);
+        }
+
+        /// <summary>
+        /// Callback used by <see cref="MDDataReader"/>.
+        /// </summary>
+        private static void SaveImageCallback(string name, System.Drawing.Bitmap img)
+        {
         }
 
         /// <summary>

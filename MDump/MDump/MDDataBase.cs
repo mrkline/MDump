@@ -9,13 +9,25 @@ namespace MDump
     /// </summary>
     abstract class MDDataBase
     {
-        //Separates pieces of data in the MDump data buffer
+        /// <summary>
+        /// Separates pieces of data in the MDump data buffer
+        /// </summary>
         protected const char separator = '\n';
-        //Acts as a sub-separator in the MDump data buffer
+        /// <summary>
+        /// Acts as a sub-separator in the MDump data buffer
+        /// </summary>
         protected const char subSeparator = ';';
-        //Indicates that the following data is data on how to split an image from this merged image
+        /// <summary>
+        /// Indicates that the following line contains how many images are contained in this merged image
+        /// </summary>
+        protected const char numImagesIndicator = 'n';
+        /// <summary>
+        /// Indicates that the following line contains data on how to split an image from this merged image
+        /// </summary>
         protected const char imageIndicator = 'i';
-        //Indicates that the following data is a directory where the following split images should be put 
+        /// <summary>
+        /// Indicates that the following line contains a directory where the following split images should be placed
+        /// </summary>
         protected const char directoryIndicator = 'd';
 
         public static Encoding Encoding
