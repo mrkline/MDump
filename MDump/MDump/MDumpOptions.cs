@@ -41,11 +41,6 @@ namespace MDump
         public const string fileName = "MDumpOptions.xml";
 
         /// <summary>
-        /// Used as a placeholder for discarded filenames
-        /// </summary>
-        private const string kDiscardFn = "\a";
-
-        /// <summary>
         /// Gets or sets the path options for saving file paths in to the merged image
         /// </summary>
         public PathOptions MergePathOpts { get; set; }
@@ -65,70 +60,6 @@ namespace MDump
         /// Gets or sets whether or not merges will add title bars to merged images
         /// </summary>
         public bool AddTitleBar { get; set; }
-
-        /// <summary>
-        /// Formats a path based on the provided options
-        /// </summary>
-        /// <param name="path">path to format</param>
-        /// <param name="opts">options to format path by</param>
-        /// <returns>formatted path, or null if the options discard the path</returns>
-        private string FormatPathFromOpts(string path, PathOptions opts)
-        {
-            switch (opts)
-            {
-                case PathOptions.Discard:
-                    return kDiscardFn;
-
-                case PathOptions.PreserveName:
-                    //Strip off any directory info
-                    int idx = path.IndexOf(Path.DirectorySeparatorChar);
-                    if (idx != -1)
-                    {
-                        return path.Substring(idx);
-                    }
-                    else
-                    {
-                        return path;
-                    }
-
-                case PathOptions.PreservePath:
-                    //Return everything
-                    return path;
-
-                default:
-                    throw new ArgumentException(invalidPathOptionsExMsg);
-            }
-        }
-
-        /// <summary>
-        /// Formats a given path based on the current state of MergePathOpts
-        /// </summary>
-        /// <param name="path">path to format</param>
-        /// <returns>formatted path</returns>
-        public string FormatPathForMerge(string path)
-        {
-            return FormatPathFromOpts(path, MergePathOpts);    
-        }
-
-        /// <summary>
-        /// Formats a given path based on the current state of SplitPathOpts
-        /// </summary>
-        /// <param name="path">path to format</param>
-        /// <returns>formatted path</returns>
-        public string FormatPathForSplit(string path)
-        {
-            return FormatPathFromOpts(path, SplitPathOpts);
-        }
-
-        /// <summary>
-        /// Returns whether or not the given filename should be discarded.
-        /// </summary>
-        /// <param name="filename">filename to check</param>
-        /// <returns>true if the filename should be discarded (if it equals kDiscardFn)</returns>
-        public bool DiscardFilename(string filename)
-        {
-            return filename == kDiscardFn;
-        }
 
         /// <summary>
         /// Default constructor.  Initializes options to defaults.

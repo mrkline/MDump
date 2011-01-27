@@ -10,10 +10,6 @@ namespace MDump
     /// </summary>
     static class Colors
     {
-        public static Encoding MDDataEncoding
-        {
-            get { return Encoding.UTF8; }
-        }
         public static Color ValidColor { get { return Color.Green; } }
         public static Color WarningColor { get { return Color.Goldenrod; } }
         public static Color InvalidColor { get { return Color.Red; } }

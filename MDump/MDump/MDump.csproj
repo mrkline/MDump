@@ -94,6 +94,8 @@
     <Compile Include="ImageDirectoryManager.cs" />
     <Compile Include="ImageMerger.cs" />
     <Compile Include="ImageSplitter.cs" />
+    <Compile Include="MDDataBase.cs" />
+    <Compile Include="MDDataWriter.cs" />
     <Compile Include="MDumpOptions.cs" />
     <Compile Include="PathManager.cs" />
     <Compile Include="PNGOps.cs" />

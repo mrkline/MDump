@@ -573,7 +573,7 @@ namespace MDump
                 string currPath = curr.Path;
                 foreach (Bitmap bmp in curr.Images)
                 {
-                    bmp.Tag = PathManager.PathifyBitmapTag(bmp.Tag as string, currPath);
+                    bmp.Tag = PathManager.PathifyBitmapTag((string)bmp.Tag, currPath);
                 }
 
                 foreach (ImageDirectory child in curr.Children)
@@ -595,7 +595,7 @@ namespace MDump
                 ImageDirectory curr = q.Dequeue();
                 foreach (Bitmap bmp in curr.Images)
                 {
-                    bmp.Tag = PathManager.DepathifyBitmapTag(bmp.Tag as string);
+                    bmp.Tag = PathManager.DepathifyBitmapTag((string)bmp.Tag);
                 }
 
                 foreach (ImageDirectory child in curr.Children)
@@ -603,16 +603,6 @@ namespace MDump
                     q.Enqueue(child);
                 }
             }
-        }
-
-        /// <summary>
-        /// Gets the ImageDirectory path from a pathified tag (used for merging)
-        /// </summary>
-        /// <param name="tag">Bitmap tag to extract ID path from</param>
-        /// <returns>ImageDirectory path of the image</returns>
-        public static string PathFromPathifiedTag(string tag)
-        {
-            return tag.Substring(0, tag.LastIndexOf(Path.DirectorySeparatorChar));
         }
 
         /// <summary>

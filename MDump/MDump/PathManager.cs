@@ -7,7 +7,8 @@ namespace MDump
 {
     /// <summary>
     /// Converts image paths to their corresponding bitmap tag strings to be saved and vice-versa.
-    /// Also manages path validation
+    /// Also manages path validation. The idea behind this class is to isolate this functionality
+    /// so that future changes are simple (as they weren't the first time it changed).
     /// </summary>
     static class PathManager
     {
@@ -36,6 +37,12 @@ namespace MDump
         public static string InvalidDirNameTitle { get { return "Invalid folder name"; } }
         public static string InvalidBmpTagMsg { get { return " is not a valid image name."; } }
         public static string InvalidBmpTagTitle { get { return "Invalid image name"; } }
+        
+        
+        /// <summary>
+        /// Gets a placeholder for discarded filenames
+        /// </summary>
+        public static string DiscardFilename { get { return "\a"; } }
 
 
         /// <summary>
@@ -77,6 +84,16 @@ namespace MDump
         public static string PathifyBitmapTag(string oldTag, string idPath)
         {
             return idPath + Path.DirectorySeparatorChar + oldTag;
+        }
+
+        /// <summary>
+        /// Gets the ImageDirectory path from a pathified tag (used for merging)
+        /// </summary>
+        /// <param name="tag">Bitmap tag to extract ID path from</param>
+        /// <returns>ImageDirectory path of the image</returns>
+        public static string DirFomPathifiedTag(string tag)
+        {
+            return tag.Substring(0, tag.LastIndexOf(Path.DirectorySeparatorChar));
         }
 
         /// <summary>
