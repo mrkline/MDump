@@ -67,5 +67,26 @@ namespace MDump
         {
             return Path.GetFileNameWithoutExtension(path);
         }
+
+        /// <summary>
+        /// Add ImageDirectory paths to image tags prior to merge.
+        /// </summary>
+        /// <param name="oldTag">Current tag value</param>
+        /// <param name="idPath">ImageDirectory path to add</param>
+        /// <returns>New tag with ImageDirectory Path information</returns>
+        public static string PathifyBitmapTag(string oldTag, string idPath)
+        {
+            return idPath + Path.DirectorySeparatorChar + oldTag;
+        }
+
+        /// <summary>
+        /// Removes ImageDirectory path data from tag after merge is complete
+        /// </summary>
+        /// <param name="oldTag">Current tag value</param>
+        /// <returns>New tag without ImageDirectory path information</returns>
+        public static string DepathifyBitmapTag(string oldTag)
+        {
+            return oldTag.Substring(oldTag.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+        }
     }
 }

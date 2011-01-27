@@ -22,7 +22,7 @@ namespace MDump
         /// A tree-like class that stores its parent directory, other directories, and images,
         /// as well as a GUI representation of itself using ListViewItems.
         /// </summary>
-        private class ImageDirectory : IEnumerable
+        private class ImageDirectory
         {
             #region String Constants
             public const string duplicateImgMsg = "This directory already has an image with the name ";
@@ -38,10 +38,116 @@ namespace MDump
             private List<Bitmap> images;
             private List<ImageDirectory> children;
 
+            /// <summary>
+            /// Gets a read-only version of the image list
+            /// </summary>
+            public ReadOnlyCollection<Bitmap> Images
+            {
+                get
+                {
+                    return images.AsReadOnly();
+                }
+            }
+
+            /// <summary>
+            /// Gets read-only version of children list
+            /// </summary>
+            public ReadOnlyCollection<ImageDirectory> Children
+            {
+                get
+                {
+                    return children.AsReadOnly();
+                }
+            }
+
+            /// <summary>
+            /// Gets the name of the directory
+            /// </summary>
             public string Name { get; set; }
-            
+
+            /// <summary>
+            /// Gets the Parent directory of this directory
+            /// </summary>
             public ImageDirectory Parent { get; private set; }
 
+            /// <summary>
+            /// Gets a list of all images in the directory and its children
+            /// </summary>
+            public List<Bitmap> ImagesRecursive
+            {
+                get
+                {
+                    List<Bitmap> ret = new List<Bitmap>();
+                    Queue<ImageDirectory> q = new Queue<ImageDirectory>();
+                    q.Enqueue(this);
+                    while (q.Count > 0)
+                    {
+                        ImageDirectory curr = q.Dequeue();
+                        ret.AddRange(curr.images);
+                        foreach (ImageDirectory child in curr.children)
+                        {
+                            q.Enqueue(child);
+                        }
+                    }
+                    return ret;
+                }
+            }
+
+            /// <summary>
+            /// Builds a list of ListViewItems based on images and child directories
+            /// contained within this directory.
+            /// </summary>
+            /// <returns>A list of ListViewItems representing the contents of this directory</returns>
+            public List<ListViewItem> LVIRepresentation
+            {
+                get
+                {
+                    List<ListViewItem> ret = new List<ListViewItem>();
+                    //Add child directories
+                    foreach (ImageDirectory child in children)
+                    {
+                        ListViewItem toAdd = new ListViewItem(child.Name, folderIconIndex);
+                        toAdd.Tag = child;
+                        ret.Add(toAdd);
+                    }
+
+                    //Add images
+                    foreach (Bitmap bmp in images)
+                    {
+                        ListViewItem toAdd = new ListViewItem((string)bmp.Tag, imageIconIndex);
+                        toAdd.Tag = bmp;
+                        ret.Add(toAdd);
+                    }
+
+                    return ret;
+                }
+            }
+
+            //Gets the path of current directory, without "root\"
+            public string Path
+            {
+                get
+                {
+                    string ret = string.Empty;
+                    for (ImageDirectory curr = this;
+                        curr.Name != rootName; curr = curr.Parent)
+                    {
+                        ret = ret.Insert(0, curr.Name + System.IO.Path.DirectorySeparatorChar);
+                    }
+                    //Knock off the trailing \ character
+                    if (ret.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+                    {
+                        ret = ret.Substring(0, ret.Length - 1);
+                    }
+                    return ret;
+                }
+            }
+
+            /// <summary>
+            /// Constructor that takes a name and a parent
+            /// </summary>
+            /// <param name="name">name of this directory</param>
+            /// <param name="parent">parent of this directory</param>
             public ImageDirectory(string name, ImageDirectory parent)
             {
                 images = new List<Bitmap>();
@@ -50,6 +156,10 @@ namespace MDump
                 Parent = parent;
             }
 
+            /// <summary>
+            /// Constructor that takes a name
+            /// </summary>
+            /// <param name="name">name of the directory</param>
             public ImageDirectory(string name) : this(name, null) { }
 
             /// <summary>
@@ -81,7 +191,7 @@ namespace MDump
             public ListViewItem AddDirectory(string name)
             {
                 ImageDirectory toAdd = new ImageDirectory(name, this);
-                if(children.Contains(toAdd))
+                if (children.Contains(toAdd))
                 {
                     throw new ArgumentException(duplicateDirMsg + name);
                 }
@@ -184,7 +294,7 @@ namespace MDump
             /// </summary>
             /// <param name="dir">child directory</param>
             /// <returns>true if this directory is the parent of dir</returns>
-            public bool HasDirectory(ImageDirectory dir)
+            public bool HasChild(ImageDirectory dir)
             {
                 return children.Contains(dir);
             }
@@ -194,7 +304,7 @@ namespace MDump
             /// </summary>
             /// <param name="dirName">Name of child directory</param>
             /// <returns>The child directory with the given name</returns>
-            public ImageDirectory GetDirectory(string dirName)
+            public ImageDirectory GetChild(string dirName)
             {
                 foreach (ImageDirectory child in children)
                 {
@@ -207,43 +317,13 @@ namespace MDump
             }
 
             /// <summary>
-            /// Builds a list of ListViewItems based on images and child directories
-            /// contained within this directory.
-            /// </summary>
-            /// <returns>A list of ListViewItems representing the contents of this directory</returns>
-            public List<ListViewItem> LVIRepresentation
-            {
-                get
-                {
-                    List<ListViewItem> ret = new List<ListViewItem>();
-                    //Add child directories
-                    foreach (ImageDirectory child in children)
-                    {
-                        ListViewItem toAdd = new ListViewItem(child.Name, folderIconIndex);
-                        toAdd.Tag = child;
-                        ret.Add(toAdd);
-                    }
-
-                    //Add images
-                    foreach (Bitmap bmp in images)
-                    {
-                        ListViewItem toAdd = new ListViewItem((string)bmp.Tag, imageIconIndex);
-                        toAdd.Tag = bmp;
-                        ret.Add(toAdd);
-                    }
-
-                    return ret;
-                }
-            }
-
-            /// <summary>
             /// Removes all child directories from this directory, moving their images to this one.
             /// </summary>
             public void MoveChildDirImagesHere()
             {
                 foreach (ImageDirectory child in children)
                 {
-                    foreach (Bitmap bmp in child)
+                    foreach (Bitmap bmp in child.Images)
                     {
                         images.Add(bmp);
                     }
@@ -287,7 +367,7 @@ namespace MDump
                 if (!(obj is ImageDirectory))
                     throw new InvalidCastException("The 'obj' argument is not a Directory object.");
                 else
-                    return Equals(obj as ImageDirectory);   
+                    return Equals(obj as ImageDirectory);
             }
 
             /// <summary>
@@ -310,34 +390,58 @@ namespace MDump
                 return Name.ToLowerInvariant().GetHashCode();
             }
             #endregion
-
-            #region IEnumerator
-            public IEnumerator GetEnumerator()
-            {
-                //First return our items, then any child items
-                foreach (Bitmap bmp in images)
-                {
-                    yield return bmp;
-                }
-                foreach (ImageDirectory child in children)
-                {
-                    foreach (Bitmap bmp in child)
-                    {
-                        yield return bmp;
-                    }
-                }
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return this.GetEnumerator();
-            }
-            #endregion
         }
 #endregion
 
         private ImageDirectory root;
         private ImageDirectory activeDirectory;
+
+        /// <summary>
+        /// Gets the ListViewItem Representation of the active directory
+        /// </summary>
+        /// <seealso cref="ImageDirectory.LVIRepresentation"/>
+        public List<ListViewItem> LVIRepresentation
+        {
+            get
+            {
+                return activeDirectory.LVIRepresentation;
+            }
+        }
+
+        /// <summary>
+        /// Gets the path of the active directory, sans root\
+        /// </summary>
+        public string CurrentPath
+        {
+            get
+            {
+                return activeDirectory.Path;
+            }
+        }
+
+        /// <summary>
+        /// Gets all bitmaps in the directory structure, starting at the root directory.
+        /// </summary>
+        /// <returns></returns>
+        public List<Bitmap> ImageList
+        {
+            get
+            {
+                return root.ImagesRecursive;
+            }
+        }
+
+        /// <summary>
+        /// Gets true if the directory structure, starting at the root directory,
+        /// contains no images
+        /// </summary>
+        public bool IsEmpty
+        {
+            get
+            {
+                return ImageList.Count == 0;
+            }
+        }
 
         /// <summary>
         /// Constructor
@@ -378,10 +482,10 @@ namespace MDump
         }
 
         /// <summary>
-        /// Returns true if 
+        /// Returns true if the provided ListViewItem represents an image directory
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
+        /// <param name="item">ListViewItem to test</param>
+        /// <returns>true if the provided ListViewItem represents an image directory</returns>
         public bool ItemRepresentsDirectory(ListViewItem item)
         {
             return item.Tag as ImageDirectory != null;
@@ -394,7 +498,7 @@ namespace MDump
         public void MoveToChildDirecory(ListViewItem dirItem)
         {
             ImageDirectory dir = dirItem.Tag as ImageDirectory;
-            if (!activeDirectory.HasDirectory(dir))
+            if (!activeDirectory.HasChild(dir))
             {
                 throw new ArgumentException(ImageDirectory.noSuchItemMsg);
             }
@@ -416,7 +520,7 @@ namespace MDump
             for (int c = 0; c < dirs.Length; ++c)
             {
                 //Will throw an ArgumentException if the activedirectory does not have the desired child
-                activeDirectory = activeDirectory.GetDirectory(dirs[c]);
+                activeDirectory = activeDirectory.GetChild(dirs[c]);
             }
         }
 
@@ -457,66 +561,58 @@ namespace MDump
         }
 
         /// <summary>
-        /// Gets the ListViewItem Representation of the active directory
+        /// Add directory paths to image tags prior to merge.
         /// </summary>
-        /// <seealso cref="ImageDirectory.LVIRepresentation"/>
-        public List<ListViewItem> LVIRepresentation
+        public void PathifyImageTags()
         {
-            get
+            Queue<ImageDirectory> q = new Queue<ImageDirectory>();
+            q.Enqueue(root);
+            while (q.Count > 0)
             {
-                return activeDirectory.LVIRepresentation;
+                ImageDirectory curr = q.Dequeue();
+                string currPath = curr.Path;
+                foreach (Bitmap bmp in curr.Images)
+                {
+                    bmp.Tag = PathManager.PathifyBitmapTag(bmp.Tag as string, currPath);
+                }
+
+                foreach (ImageDirectory child in curr.Children)
+                {
+                    q.Enqueue(child);
+                }
             }
         }
 
         /// <summary>
-        /// Gets the path of the active directory, sans root\
+        /// Strips paths from image tags after the merge is complete
         /// </summary>
-        public string CurrentPath
+        public void DepathifyImageTags()
         {
-            get
+            Queue<ImageDirectory> q = new Queue<ImageDirectory>();
+            q.Enqueue(root);
+            while (q.Count > 0)
             {
-                string ret = string.Empty;
-                for (ImageDirectory curr = activeDirectory;
-                    curr != root; curr = curr.Parent)
+                ImageDirectory curr = q.Dequeue();
+                foreach (Bitmap bmp in curr.Images)
                 {
-                    ret = ret.Insert(0, curr.Name + Path.DirectorySeparatorChar);
+                    bmp.Tag = PathManager.DepathifyBitmapTag(bmp.Tag as string);
                 }
-                //Knock off the trailing \ character
-                if (ret.EndsWith(Path.DirectorySeparatorChar.ToString()))
+
+                foreach (ImageDirectory child in curr.Children)
                 {
-                    ret = ret.Substring(0, ret.Length - 1);
+                    q.Enqueue(child);
                 }
-                return ret;
             }
         }
 
         /// <summary>
-        /// Gets all bitmaps in the directory structure, starting at the root directory.
+        /// Gets the ImageDirectory path from a pathified tag (used for merging)
         /// </summary>
-        /// <returns></returns>
-        public List<Bitmap> ImageList
+        /// <param name="tag">Bitmap tag to extract ID path from</param>
+        /// <returns>ImageDirectory path of the image</returns>
+        public static string PathFromPathifiedTag(string tag)
         {
-            get
-            {
-                List<Bitmap> ret = new List<Bitmap>();
-                foreach (Bitmap bmp in root)
-                {
-                    ret.Add(bmp);
-                }
-                return ret;
-            }
-        }
-
-        /// <summary>
-        /// Gets true if the directory structure, starting at the root directory,
-        /// contains no images
-        /// </summary>
-        public bool IsEmpty
-        {
-            get
-            {
-                return ImageList.Count == 0;
-            }
+            return tag.Substring(0, tag.LastIndexOf(Path.DirectorySeparatorChar));
         }
 
         /// <summary>
