@@ -81,6 +81,7 @@ namespace MDump
                         btnAction.Enabled = false;
                         btnAction.Text = notSetActionText;
                         ttpMain.SetToolTip(btnAction, notSetActionTooltip);
+                        lvImages.LabelEdit = false;
                         break;
 
                     case Mode.Merge:
@@ -88,6 +89,7 @@ namespace MDump
                         btnAction.Enabled = true;
                         btnAction.Text = mergeActionText;
                         ttpMain.SetToolTip(btnAction, mergeActionTooltip);
+                        lvImages.LabelEdit = true;
                         break;
 
                     case Mode.Split:
@@ -95,6 +97,7 @@ namespace MDump
                         btnAction.Enabled = true;
                         btnAction.Text = splitActionText;
                         ttpMain.SetToolTip(btnAction, splitActionTooltip);
+                        lvImages.LabelEdit = false;
                         break;
                 }
             }
@@ -188,7 +191,17 @@ namespace MDump
                         CurrentMode = mergedImg ? Mode.Split : Mode.Merge;
                     }
 
-                    bmp.Tag = PathManager.PathToBitmapTag(filepath);
+                    if (CurrentMode == Mode.Merge)
+                    {
+
+                        bmp.Tag = new MergeImageTag(Path.GetFileNameWithoutExtension(filepath),
+                            dirMan.CurrentPath);
+                    }
+                    else
+                    {
+                        bmp.Tag = new SplitImageTag(Path.GetFileName(filepath),
+                            PNGOps.LoadMergedImageData(filepath));
+                    }
                     lvImages.Items.Add(dirMan.AddImage(bmp));
                 }
                 catch (ArgumentException ex)
@@ -553,7 +566,7 @@ namespace MDump
             }
             else
             {
-                if (PathManager.IsValidBitmapTag(newName))
+                if (PathManager.IsValidMergeName(newName))
                 {
                     dirMan.RenameItem(item, newName);
                 }

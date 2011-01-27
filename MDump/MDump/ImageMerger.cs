@@ -211,7 +211,7 @@ namespace MDump
                             //If not even a single image could fit in the merge, we have an issue
                             if (currMergeSet.Count == 1)
                             {
-                                throw new MergeException(GenerateTooSmallMessage((string)currMergeSet[0].Tag));
+                                throw new MergeException(GenerateTooSmallMessage((currMergeSet[0].Tag as ImageTagBase).Name));
                             }
 
                             //If the current merge size is over the limit but the last wasn't, use the last one

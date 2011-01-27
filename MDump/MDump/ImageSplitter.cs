@@ -156,54 +156,54 @@ namespace MDump
             try
             {
                 //Split each image
-                int imagesMerged = 0;
+                //int imagesMerged = 0;
                 foreach (Bitmap image in sa.Bitmaps)
                 {
-                    string filename = image.Tag as string;
+                    //string filename = image.Tag as string;
 
-                    //Read the MDump data from the image.
-                    byte[] data = PNGOps.LoadMergedImageData(filename);
+                    ////Read the MDump data from the image.
+                    //byte[] data = PNGOps.LoadMergedImageData(filename);
 
-                    //Decode MDump data into a string using the text encoding it was saved with
-                    string decodedData = Colors.MDDataEncoding.GetString(data);
-                    string[] lines = decodedData.Split('\n');
-                    //The first line is the number of images in this merge
-                    callback(SplitStage.SplittingNewMerge,
-                        new SplitCallbackData(Path.GetFileName(filename), Convert.ToInt32(lines[0])));
+                    ////Decode MDump data into a string using the text encoding it was saved with
+                    //string decodedData = Colors.MDDataEncoding.GetString(data);
+                    //string[] lines = decodedData.Split('\n');
+                    ////The first line is the number of images in this merge
+                    //callback(SplitStage.SplittingNewMerge,
+                    //    new SplitCallbackData(Path.GetFileName(filename), Convert.ToInt32(lines[0])));
 
-                    //Parse the rest of the lines, each of which represents an image in the merged image
-                    for (int c = 1; c < lines.Length; ++c)
-                    {
-                        string[] tokens = lines[c].Split(';');
-                        string savePath = opts.FormatPathForSplit(tokens[0]);
-                        //Filename was either not saved or is ignored as per options.
-                        if (opts.DiscardFilename(savePath))
-                        {
-                            //The name format of merges is <name>.split<num>.png
-                            savePath = splitPath + '.' + SplitKeyword + splitsSaved.Count + ".png";
-                        }
-                        else
-                        {
-                            savePath = splitDir + savePath + ".png";
-                        }
-                        callback(SplitStage.SplittingImage,
-                            new SplitCallbackData(Path.GetFileName(savePath), c - 1));
+                    ////Parse the rest of the lines, each of which represents an image in the merged image
+                    //for (int c = 1; c < lines.Length; ++c)
+                    //{
+                    //    string[] tokens = lines[c].Split(';');
+                    //    string savePath = opts.FormatPathForSplit(tokens[0]);
+                    //    //Filename was either not saved or is ignored as per options.
+                    //    if (opts.DiscardFilename(savePath))
+                    //    {
+                    //        //The name format of merges is <name>.split<num>.png
+                    //        savePath = splitPath + '.' + SplitKeyword + splitsSaved.Count + ".png";
+                    //    }
+                    //    else
+                    //    {
+                    //        savePath = splitDir + savePath + ".png";
+                    //    }
+                    //    callback(SplitStage.SplittingImage,
+                    //        new SplitCallbackData(Path.GetFileName(savePath), c - 1));
 
-                        int x = Convert.ToInt32(tokens[1]);
-                        int y = Convert.ToInt32(tokens[2]);
-                        int width = Convert.ToInt32(tokens[3]);
-                        int height = Convert.ToInt32(tokens[4]);
-                        Rectangle rect = new Rectangle(x, y, width, height);
-                        //Save the image
-                        Bitmap splitImage = new Bitmap(width, height);
-                        using (Graphics g = Graphics.FromImage(splitImage))
-                        {
-                            g.DrawImage(image, 0, 0, rect, GraphicsUnit.Pixel);
-                        }
-                        splitImage.Save(savePath, System.Drawing.Imaging.ImageFormat.Png);
-                        splitsSaved.Add(savePath);
-                    }
-                    callback(SplitStage.FinishedMerge, new SplitCallbackData(++imagesMerged));
+                    //    int x = Convert.ToInt32(tokens[1]);
+                    //    int y = Convert.ToInt32(tokens[2]);
+                    //    int width = Convert.ToInt32(tokens[3]);
+                    //    int height = Convert.ToInt32(tokens[4]);
+                    //    Rectangle rect = new Rectangle(x, y, width, height);
+                    //    //Save the image
+                    //    Bitmap splitImage = new Bitmap(width, height);
+                    //    using (Graphics g = Graphics.FromImage(splitImage))
+                    //    {
+                    //        g.DrawImage(image, 0, 0, rect, GraphicsUnit.Pixel);
+                    //    }
+                    //    splitImage.Save(savePath, System.Drawing.Imaging.ImageFormat.Png);
+                    //    splitsSaved.Add(savePath);
+                    //}
+                    //callback(SplitStage.FinishedMerge, new SplitCallbackData(++imagesMerged));
                 }
                 MessageBox.Show(successMsg + splitDir, successTitle);
             }

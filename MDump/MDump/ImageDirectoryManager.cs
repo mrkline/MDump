@@ -114,7 +114,7 @@ namespace MDump
                     //Add images
                     foreach (Bitmap bmp in images)
                     {
-                        ListViewItem toAdd = new ListViewItem((string)bmp.Tag, imageIconIndex);
+                        ListViewItem toAdd = new ListViewItem((bmp.Tag as ImageTagBase).Name, imageIconIndex);
                         toAdd.Tag = bmp;
                         ret.Add(toAdd);
                     }
@@ -171,13 +171,14 @@ namespace MDump
             {
                 foreach (Bitmap bmp in images)
                 {
-                    if (((string)bmp.Tag).Equals((string)img.Tag, StringComparison.InvariantCultureIgnoreCase))
+                    if ((bmp.Tag as ImageTagBase).Name.Equals(
+                       (img.Tag as ImageTagBase).Name, StringComparison.InvariantCultureIgnoreCase))
                     {
                         //Duplicate image found.  Kill it with fire
                         throw new ArgumentException(duplicateImgMsg + img.Tag);
                     }
                 }
-                ListViewItem ret = new ListViewItem((string)img.Tag, imageIconIndex);
+                ListViewItem ret = new ListViewItem((img.Tag as ImageTagBase).Name, imageIconIndex);
                 ret.Tag = img;
                 images.Add(img);
                 return ret;
@@ -231,7 +232,7 @@ namespace MDump
                 }
                 else
                 {
-                    if (!PathManager.IsValidBitmapTag(newName))
+                    if (!PathManager.IsValidMergeName(newName))
                     {
                         throw new ArgumentException(newName + PathManager.InvalidBmpTagMsg);
                     }
@@ -558,51 +559,6 @@ namespace MDump
         public void RemoveItem(ListViewItem imgItem)
         {
             activeDirectory.RemoveItem(imgItem);
-        }
-
-        /// <summary>
-        /// Add directory paths to image tags prior to merge.
-        /// </summary>
-        public void PathifyImageTags()
-        {
-            Queue<ImageDirectory> q = new Queue<ImageDirectory>();
-            q.Enqueue(root);
-            while (q.Count > 0)
-            {
-                ImageDirectory curr = q.Dequeue();
-                string currPath = curr.Path;
-                foreach (Bitmap bmp in curr.Images)
-                {
-                    bmp.Tag = PathManager.PathifyBitmapTag((string)bmp.Tag, currPath);
-                }
-
-                foreach (ImageDirectory child in curr.Children)
-                {
-                    q.Enqueue(child);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Strips paths from image tags after the merge is complete
-        /// </summary>
-        public void DepathifyImageTags()
-        {
-            Queue<ImageDirectory> q = new Queue<ImageDirectory>();
-            q.Enqueue(root);
-            while (q.Count > 0)
-            {
-                ImageDirectory curr = q.Dequeue();
-                foreach (Bitmap bmp in curr.Images)
-                {
-                    bmp.Tag = PathManager.DepathifyBitmapTag((string)bmp.Tag);
-                }
-
-                foreach (ImageDirectory child in curr.Children)
-                {
-                    q.Enqueue(child);
-                }
-            }
         }
 
         /// <summary>

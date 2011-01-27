@@ -56,7 +56,7 @@ namespace MDump
 
             public static int BitmapTagComparison(NodeData d1, NodeData d2)
             {
-                return ((string)d1.Bmp.Tag).CompareTo((string)d2.Bmp.Tag);
+                return ((MergeImageTag)d1.Bmp.Tag).MDumpDir.CompareTo(((MergeImageTag)d2.Bmp.Tag).MDumpDir);
             }
         }
 
@@ -240,13 +240,14 @@ namespace MDump
                                 {
                                     Bitmap b = data.Bmp;
                                     Rectangle r = data.Rect;
-                                    string currDir = PathManager.DirFomPathifiedTag((string)b.Tag);
+                                    MergeImageTag t = (MergeImageTag)b.Tag;
+                                    string currDir = t.MDumpDir;
                                     if (prevDir != currDir)
                                     {
                                         mddw.WriteDirectory(currDir);
                                         prevDir = currDir;
                                     }
-                                    mddw.WriteImageData(PathManager.DepathifyBitmapTag((string)b.Tag),
+                                    mddw.WriteImageData(t.Name,
                                         r.X, r.Y, b.Width, b.Height);
                                 }
                                 break;
@@ -260,7 +261,7 @@ namespace MDump
                                         Rectangle r = data.Rect;
 
                                         g.DrawImage(b, r.X, r.Y, b.Width, b.Height);
-                                        mddw.WriteImageData(PathManager.DepathifyBitmapTag((string)b.Tag),
+                                        mddw.WriteImageData(((MergeImageTag)b.Tag).Name,
                                             r.X, r.Y, b.Width, b.Height);
                                     }
                                 }
@@ -275,7 +276,7 @@ namespace MDump
                                         Rectangle r = data.Rect;
 
                                         g.DrawImage(b, r.X, r.Y, b.Width, b.Height);
-                                        mddw.WriteImageData(PathManager.DiscardFilename,
+                                        mddw.WriteImageData(PathManager.DiscardedFilename,
                                             r.X, r.Y, b.Width, b.Height);
                                     }
                                 }

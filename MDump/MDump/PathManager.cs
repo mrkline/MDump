@@ -13,7 +13,7 @@ namespace MDump
     static class PathManager
     {
         private static char[] invalidDirNameChars;
-        private static char[] invalidTagChars;
+        private static char[] invalidMergeNameChars;
 
         /// <summary>
         /// Constructor
@@ -27,10 +27,10 @@ namespace MDump
             invDirNameCharList.AddRange(Path.GetInvalidPathChars());
             invalidDirNameChars = invDirNameCharList.ToArray();
 
-            List<char> invTagCharList = new List<char>();
-            invTagCharList.Add('.');
-            invTagCharList.AddRange(Path.GetInvalidFileNameChars());
-            invalidTagChars = invTagCharList.ToArray();
+            List<char> invMergeNameList = new List<char>();
+            invMergeNameList.Add('.');
+            invMergeNameList.AddRange(Path.GetInvalidFileNameChars());
+            invalidMergeNameChars = invMergeNameList.ToArray();
         }
 
         public static string InvalidDirNameMsg { get { return " is not a valid folder name."; } }
@@ -42,7 +42,7 @@ namespace MDump
         /// <summary>
         /// Gets a placeholder for discarded filenames
         /// </summary>
-        public static string DiscardFilename { get { return "\a"; } }
+        public static string DiscardedFilename { get { return "\a"; } }
 
 
         /// <summary>
@@ -60,50 +60,9 @@ namespace MDump
         /// </summary>
         /// <param name="tag">bitmap tag/name to test</param>
         /// <returns>true if the provided bitmap tag/name is valid</returns>
-        public static bool IsValidBitmapTag(string tag)
+        public static bool IsValidMergeName(string tag)
         {
-            return tag.IndexOfAny(invalidTagChars) == -1;
-        }
-
-        /// <summary>
-        /// Converts a image path to a tag to attach to the generated bitmap
-        /// </summary>
-        /// <param name="path">file path of image</param>
-        /// <returns>The string tag to attach to the generated bitmap</returns>
-        public static string PathToBitmapTag(string path)
-        {
-            return Path.GetFileNameWithoutExtension(path);
-        }
-
-        /// <summary>
-        /// Add ImageDirectory paths to image tags prior to merge.
-        /// </summary>
-        /// <param name="oldTag">Current tag value</param>
-        /// <param name="idPath">ImageDirectory path to add</param>
-        /// <returns>New tag with ImageDirectory Path information</returns>
-        public static string PathifyBitmapTag(string oldTag, string idPath)
-        {
-            return idPath + Path.DirectorySeparatorChar + oldTag;
-        }
-
-        /// <summary>
-        /// Gets the ImageDirectory path from a pathified tag (used for merging)
-        /// </summary>
-        /// <param name="tag">Bitmap tag to extract ID path from</param>
-        /// <returns>ImageDirectory path of the image</returns>
-        public static string DirFomPathifiedTag(string tag)
-        {
-            return tag.Substring(0, tag.LastIndexOf(Path.DirectorySeparatorChar));
-        }
-
-        /// <summary>
-        /// Removes ImageDirectory path data from tag after merge is complete
-        /// </summary>
-        /// <param name="oldTag">Current tag value</param>
-        /// <returns>New tag without ImageDirectory path information</returns>
-        public static string DepathifyBitmapTag(string oldTag)
-        {
-            return oldTag.Substring(oldTag.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+            return tag.IndexOfAny(invalidMergeNameChars) == -1;
         }
     }
 }
