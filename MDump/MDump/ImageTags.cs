@@ -7,7 +7,7 @@ namespace MDump
     /// <summary>
     /// Class that stores information to tag along with loaded images.
     /// </summary>
-    abstract class ImageTagBase
+    class ImageTagBase
     {
         /// <summary>
         /// Gets the name of the image

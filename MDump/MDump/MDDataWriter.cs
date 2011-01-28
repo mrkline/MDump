@@ -55,7 +55,7 @@ namespace MDump
         /// <param name="height">The height of the image</param>
         public void WriteImageData(string name, int x, int y, int width, int height)
         {
-            string write = imageIndicator + name + subSeparator
+            string write = imageIndicator + subSeparator + name + subSeparator
                                     + x.ToString() + subSeparator + y.ToString() + subSeparator
                                     + width.ToString() + subSeparator + height.ToString() + separator;
             bw.Write(Encoding.GetBytes(write));

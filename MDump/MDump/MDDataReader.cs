@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing;
 
 namespace MDump
 {
@@ -10,10 +11,15 @@ namespace MDump
     /// </summary>
     class MDDataReader : MDDataBase
     {
+        private const string notNumImagesTokenMsg 
+            = "The provided token does not contain the number of images in this merge.";
+        private const string notImageTokenMsg = "The provided token does not contain image information.";
+        private const string notDirTokenMsg = "The provided token does not contain directory information.";
+
         /// <summary>
         /// Used as a return code to indicate what a given line contains
         /// </summary>
-        public enum LineType
+        public enum TokenType
         {
             NumImages,
             Directory,
@@ -21,29 +27,96 @@ namespace MDump
             Unknown
         }
 
+        /// <summary>
+        /// Decodes the MDump data buffer and splits it into information tokens
+        /// </summary>
+        /// <param name="data">The MDump data buffer recovered from a merged image</param>
+        /// <returns>Tokens containing information about the images to split and directories to place them in</returns>
         public static string[] DecodeAndSplitData(byte[] data)
         {
             return Encoding.GetString(data).Split(separator);
         }
 
-        public static LineType GetTokenType(string line)
+        /// <summary>
+        /// Gets the type of information a token returned from <see cref="DecodeAndSplitData"/> contains.
+        /// </summary>
+        /// <param name="token">Token returned from DecodeAndSplitData</param>
+        /// <returns>The type of information token contains</returns>
+        public static TokenType GetTokenType(string token)
         {
-            switch (line[0])
+            switch (token[0])
             {
                 case numImagesIndicator:
-                    return LineType.NumImages;
+                    return TokenType.NumImages;
                     
                 case directoryIndicator:
-                    return LineType.Directory;
+                    return TokenType.Directory;
 
                 case imageIndicator:
-                    return LineType.Image;
+                    return TokenType.Image;
 
                 default:
-                    return LineType.Unknown;
+                    return TokenType.Unknown;
             }
         }
 
+        /// <summary>
+        /// Gets the number of images in the merged image from the appropriate token
+        /// </summary>
+        /// <param name="token">Token containint the number of images in the merged image</param>
+        /// <returns>The number of images in the merged image</returns>
+        public static int GetNumImages(string token)
+        {
+            string[] tokens = token.Split(subSeparator);
+            if (tokens[0] != numImagesIndicator.ToString())
+            {
+                throw new ArgumentException(notNumImagesTokenMsg);
+            }
+            return Convert.ToInt32(tokens[1]);
+        }
 
+        /// <summary>
+        /// Gets the directory to add from an appropriate token
+        /// </summary>
+        /// <param name="token">Token containing a directory in which to place split images</param>
+        /// <returns>A directory in which to place split images described in following tokens</returns>
+        public static string GetDirectory(string token)
+        {
+            string[] tokens = token.Split(subSeparator);
+            if (tokens[0] != directoryIndicator.ToString())
+            {
+                throw new ArgumentException(notDirTokenMsg);
+            }
+            return tokens[1];
+        }
+
+        /// <summary>
+        /// Splits an image from the merged image, given an appropriate token
+        /// </summary>
+        /// <param name="token">Token containing split data</param>
+        /// <param name="mergedImage">The merged image to split from</param>
+        /// <returns>The split image with an ImageTagBase tag containing its name (including extension)</returns>
+        public static Bitmap GetSplitImage(string token, Bitmap mergedImage)
+        {
+            string[] tokens = token.Split(subSeparator);
+            if (tokens[0] != imageIndicator.ToString())
+            {
+                throw new ArgumentException(notImageTokenMsg);
+            }
+            ImageTagBase nameTag = new ImageTagBase();
+            nameTag.Name = tokens[1] + ".png";
+            int x = Convert.ToInt32(tokens[2]);
+            int y = Convert.ToInt32(tokens[3]);
+            int width = Convert.ToInt32(tokens[4]);
+            int height = Convert.ToInt32(tokens[5]);
+            Rectangle r = new Rectangle(x, y, width, height);
+            Bitmap ret = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(ret))
+            {
+                g.DrawImage(mergedImage, 0, 0, r, GraphicsUnit.Pixel);
+            }
+            ret.Tag = nameTag;
+            return ret;
+        }
     }
 }

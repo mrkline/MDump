@@ -166,8 +166,8 @@ namespace MDump
                     //Decode MDump data into a string using the text encoding it was saved with
                     string[] dataTokens = MDDataReader.DecodeAndSplitData((image.Tag as SplitImageTag).MDData);
                     //The first line is the number of images in this merge
-                    callback(SplitStage.SplittingNewMerge,
-                        new SplitCallbackData(Path.GetFileName(filename), Convert.ToInt32(lines[0])));
+                    //callback(SplitStage.SplittingNewMerge,
+                    //    new SplitCallbackData(Path.GetFileName(filename), Convert.ToInt32(lines[0])));
 
                     ////Parse the rest of the lines, each of which represents an image in the merged image
                     //for (int c = 1; c < lines.Length; ++c)
