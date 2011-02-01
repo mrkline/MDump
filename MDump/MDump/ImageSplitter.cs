@@ -22,6 +22,7 @@ namespace MDump
         private const string unexpecError = "An unexpected error occurred while splitting.\n";
         private const string successTitle = "Success";
         private const string splitFailedTitle = "Error while splitting";
+        private const string unexpectedToken = "An unexpected token was found in the MDump data";
 
         /// <summary>
         /// Gets the split keyword for split images which have the file name format of
@@ -32,11 +33,6 @@ namespace MDump
             get { return "split"; }
         }
         #endregion
-
-        /// <summary>
-        /// Used by the split callbacks to keep track of the split directory
-        /// </summary>
-        private static string splitDir;
 
         /// <summary>
         /// Callback stages for splitting
@@ -131,12 +127,12 @@ namespace MDump
         /// </summary>
         /// <param name="bitmaps">Bitmaps to split and save. Their tag contains afile name or path.</param>
         /// <param name="opts">Options to use for splitting the images</param>
-        /// <param name="splitPath">Directory to split merge images to</param>
+        /// <param name="SplitPath">Directory to split merge images to</param>
         /// <param name="callback">Callback for wait form to show user what is going on</param>
-        public static void SplitImages(List<Bitmap> bitmaps, MDumpOptions opts, string splitPath,
+        public static void SplitImages(List<Bitmap> bitmaps, MDumpOptions opts, string splitDir,
             SplitCallback callback)
         {
-            SplitThreadArgs ta = new SplitThreadArgs(bitmaps, opts, splitPath, callback);
+            SplitThreadArgs ta = new SplitThreadArgs(bitmaps, opts, splitDir, callback);
             Thread thread = new Thread(SplitThreadProc);
             thread.Start(ta);
         }
@@ -152,56 +148,67 @@ namespace MDump
             //Cache our args since we'll be using them constantly
             SplitCallback callback = sa.Callback;
             MDumpOptions opts = sa.Options;
-            splitDir = sa.SplitPath;
+            string splitPath = sa.SplitPath;
+            string splitDir = splitPath.Substring(0, splitPath.LastIndexOf(Path.DirectorySeparatorChar));
+            string splitName = splitPath.Substring(splitPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
             List<string> splitsSaved = new List<string>();
 
             callback(SplitStage.Starting, new SplitCallbackData(sa.Bitmaps.Count));
 
             try
             {
+                //Set the starting directory to the specified one
+                Directory.SetCurrentDirectory(splitDir);
+
                 //Split each image
-                int imagesMerged = 0;
+                int imagesSplit = 0;
                 foreach (Bitmap image in sa.Bitmaps)
                 {
                     //Decode MDump data into a string using the text encoding it was saved with
                     string[] dataTokens = MDDataReader.DecodeAndSplitData((image.Tag as SplitImageTag).MDData);
-                    //The first line is the number of images in this merge
-                    //callback(SplitStage.SplittingNewMerge,
-                    //    new SplitCallbackData(Path.GetFileName(filename), Convert.ToInt32(lines[0])));
+                    
+                    //The first token contains the number of images in this merge
+                    callback(SplitStage.SplittingNewMerge,
+                        new SplitCallbackData(((SplitImageTag)image.Tag).Name,
+                            MDDataReader.GetNumImages(dataTokens[0])));
 
-                    ////Parse the rest of the lines, each of which represents an image in the merged image
-                    //for (int c = 1; c < lines.Length; ++c)
-                    //{
-                    //    string[] tokens = lines[c].Split(';');
-                    //    string savePath = opts.FormatPathForSplit(tokens[0]);
-                    //    //Filename was either not saved or is ignored as per options.
-                    //    if (opts.DiscardFilename(savePath))
-                    //    {
-                    //        //The name format of merges is <name>.split<num>.png
-                    //        savePath = splitPath + '.' + SplitKeyword + splitsSaved.Count + ".png";
-                    //    }
-                    //    else
-                    //    {
-                    //        savePath = splitDir + savePath + ".png";
-                    //    }
-                    //    callback(SplitStage.SplittingImage,
-                    //        new SplitCallbackData(Path.GetFileName(savePath), c - 1));
+                    //Parse the rest of the tokens, each of which represents an image in the merged image
+                    for (int c = 1; c < dataTokens.Length; ++c)
+                    {
+                       switch(MDDataReader.GetTokenType(dataTokens[c]))
+                       {
+                           case MDDataReader.TokenType.Image:
+                               Bitmap split = MDDataReader.GetSplitImage(dataTokens[c], image);
+                               string saveName = ((ImageTagBase)split.Tag).Name;
 
-                    //    int x = Convert.ToInt32(tokens[1]);
-                    //    int y = Convert.ToInt32(tokens[2]);
-                    //    int width = Convert.ToInt32(tokens[3]);
-                    //    int height = Convert.ToInt32(tokens[4]);
-                    //    Rectangle rect = new Rectangle(x, y, width, height);
-                    //    //Save the image
-                    //    Bitmap splitImage = new Bitmap(width, height);
-                    //    using (Graphics g = Graphics.FromImage(splitImage))
-                    //    {
-                    //        g.DrawImage(image, 0, 0, rect, GraphicsUnit.Pixel);
-                    //    }
-                    //    splitImage.Save(savePath, System.Drawing.Imaging.ImageFormat.Png);
-                    //    splitsSaved.Add(savePath);
-                    //}
-                    //callback(SplitStage.FinishedMerge, new SplitCallbackData(++imagesMerged));
+                               //If we're going to discard the file name or it wasn't given, switch to
+                               //the name <name>.split<num>.png
+                               if (opts.SplitPathOpts == MDumpOptions.PathOptions.Discard
+                                   || saveName == PathManager.DiscardedFilename)
+                               {
+                                   saveName = splitName + '.' + SplitKeyword + splitsSaved.Count + ".png";
+                               }
+                               else
+                               {
+                                   saveName += ".png";
+                               }
+                               callback(SplitStage.SplittingImage,
+                                   new SplitCallbackData(saveName, c - 1));
+                               split.Save(saveName,
+                                   System.Drawing.Imaging.ImageFormat.Png);
+                               splitsSaved.Add(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + saveName);
+                               break;
+
+                           case MDDataReader.TokenType.Directory:
+                               Directory.SetCurrentDirectory(splitDir + MDDataReader.GetDirectory(dataTokens[c]));
+                               break;
+
+                           default:
+                               throw new ApplicationException(unexpectedToken);
+                       }
+                        
+                    }
+                    callback(SplitStage.FinishedMerge, new SplitCallbackData(++imagesSplit));
                 }
                 MessageBox.Show(successMsg + splitDir, successTitle);
             }
@@ -221,23 +228,6 @@ namespace MDump
             {
                 callback(SplitStage.Done, null);
             }
-        }
-
-        /// <summary>
-        /// Callback used by <see cref="MDDataReader"/>.
-        /// </summary>
-        private static void AddDirectoryCallback(string dir)
-        {
-            Directory.SetCurrentDirectory(splitDir);
-            Directory.CreateDirectory(dir);
-            Directory.SetCurrentDirectory(dir);
-        }
-
-        /// <summary>
-        /// Callback used by <see cref="MDDataReader"/>.
-        /// </summary>
-        private static void SaveImageCallback(string name, System.Drawing.Bitmap img)
-        {
         }
 
         /// <summary>

@@ -38,7 +38,7 @@ namespace MDump
             {
                 if (txtDir.Text.Length == 0)
                 {
-                    return Directory.GetCurrentDirectory();
+                    return Path.GetDirectoryName(Application.ExecutablePath);
                 }
                 else
                 {
@@ -166,7 +166,7 @@ namespace MDump
                 bool overwriteRequired = false;
                 foreach (string file in dirFiles)
                 {
-                    //The name format of merges is <name>.split<num>.png
+                    //The name format of splits is <name>.split<num>.png
                     string test = Path.GetFileName(file);
                     string[] tokens = Path.GetFileName(file).Split('.');
                     if (tokens.Length == 3

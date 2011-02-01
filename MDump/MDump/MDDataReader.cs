@@ -104,7 +104,7 @@ namespace MDump
                 throw new ArgumentException(notImageTokenMsg);
             }
             ImageTagBase nameTag = new ImageTagBase();
-            nameTag.Name = tokens[1] + ".png";
+            nameTag.Name = tokens[1];
             int x = Convert.ToInt32(tokens[2]);
             int y = Convert.ToInt32(tokens[3]);
             int width = Convert.ToInt32(tokens[4]);
