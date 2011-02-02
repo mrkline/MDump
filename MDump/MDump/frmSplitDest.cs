@@ -156,7 +156,7 @@ namespace MDump
             //Check if directory is valid and check if an overwrite would be needed
             else if (Directory.Exists(txtDir.Text) && !txtDir.Text.Contains(".."))
             {
-                //Get all files in the directory that start with the name provided
+                //Get all images in the directory that start with the name provided
                 string[] dirFiles = Directory.GetFiles(SplitDir);
 
                 //Get requested filename
@@ -179,7 +179,7 @@ namespace MDump
                         break;
                     }
                 }
-                //We'd overwrite files
+                //We'd overwrite images
                 if (overwriteRequired)
                 {
                     lblFilenameStatus.ForeColor = Colors.WarningColor;
@@ -207,8 +207,8 @@ namespace MDump
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            //Overwrite any needed files
-            //Get all files in the directory that start with the name provided
+            //Overwrite any needed images
+            //Get all images in the directory that start with the name provided
             string[] dirFiles = Directory.GetFiles(SplitDir);
 
             //Get requested filename

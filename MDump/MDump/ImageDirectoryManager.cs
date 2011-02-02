@@ -234,7 +234,7 @@ namespace MDump
                 {
                     if (!PathManager.IsValidMergeName(newName))
                     {
-                        throw new ArgumentException(newName + PathManager.InvalidBmpTagMsg);
+                        throw new ArgumentException(PathManager.InvalidBmpNameMsg);
                     }
                     foreach (Bitmap img in images)
                     {
@@ -277,7 +277,7 @@ namespace MDump
                 {
                     foreach (Bitmap img in images)
                     {
-                        //We should just be able to do a reference test since the tag should be
+                        //We should just be able to do a reference test since the name should be
                         //pointing at the bitmap in our list
                         if (bmp == img)
                         {
@@ -393,7 +393,7 @@ namespace MDump
             #endregion
         }
 #endregion
-
+        
         private ImageDirectory root;
         private ImageDirectory activeDirectory;
 

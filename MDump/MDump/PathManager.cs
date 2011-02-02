@@ -6,14 +6,16 @@ using System.IO;
 namespace MDump
 {
     /// <summary>
-    /// Converts image paths to their corresponding bitmap tag strings to be saved and vice-versa.
-    /// Also manages path validation. The idea behind this class is to isolate this functionality
+    /// Manages path validation. The idea behind this class is to isolate this functionality
     /// so that future changes are simple (as they weren't the first time it changed).
     /// </summary>
     static class PathManager
     {
         private static char[] invalidDirNameChars;
         private static char[] invalidMergeNameChars;
+
+        private static readonly string[] supportedImageExtensions = { "bmp", "gif", "exif", "jpg",
+                                                              "jpeg", "png", "tif", "tiff" };
 
         /// <summary>
         /// Constructor
@@ -27,15 +29,13 @@ namespace MDump
             invDirNameCharList.AddRange(Path.GetInvalidPathChars());
             invalidDirNameChars = invDirNameCharList.ToArray();
 
-            List<char> invMergeNameList = new List<char>();
-            invMergeNameList.Add('.');
-            invMergeNameList.AddRange(Path.GetInvalidFileNameChars());
-            invalidMergeNameChars = invMergeNameList.ToArray();
+            invalidMergeNameChars = Path.GetInvalidFileNameChars();
         }
 
         public static string InvalidDirNameMsg { get { return " is not a valid folder name."; } }
         public static string InvalidDirNameTitle { get { return "Invalid folder name"; } }
-        public static string InvalidBmpTagMsg { get { return " is not a valid image name."; } }
+        public static string InvalidBmpNameMsg
+            { get { return "Extensions will automatically be added to the images when they are split again"; } }
         public static string InvalidBmpTagTitle { get { return "Invalid image name"; } }
         
         
@@ -43,6 +43,24 @@ namespace MDump
         /// Gets a placeholder for discarded filenames
         /// </summary>
         public static string DiscardedFilename { get { return "\a"; } }
+
+        /// <summary>
+        /// Returns true if the provided file has one of the supported image extensions
+        /// </summary>
+        /// <param name="filepath">File to test</param>
+        /// <returns>true if the provided file has one of the supported image extensions</returns>
+        public static bool IsSupportedImage(string filepath)
+        {
+            string ext = filepath.Substring(filepath.LastIndexOf('.') + 1);
+            foreach (string extension in supportedImageExtensions)
+            {
+                if (ext.Equals(extension, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
 
         /// <summary>
@@ -56,13 +74,25 @@ namespace MDump
         }
 
         /// <summary>
-        /// Returns true if the provided bitmap tag/name is valid
+        /// Returns true if the provided bitmap name/name is valid
         /// </summary>
-        /// <param name="tag">bitmap tag/name to test</param>
-        /// <returns>true if the provided bitmap tag/name is valid</returns>
-        public static bool IsValidMergeName(string tag)
+        /// <param name="name">bitmap name to test</param>
+        /// <returns>true if the provided bitmap name/name is valid</returns>
+        public static bool IsValidMergeName(string name)
         {
-            return tag.IndexOfAny(invalidMergeNameChars) == -1;
+            if (name.IndexOfAny(invalidMergeNameChars) == -1)
+            {
+                //No image extensions allowed!
+                foreach (string ext in supportedImageExtensions)
+                {
+                    if (name.EndsWith('.' + ext))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
         }
     }
 }

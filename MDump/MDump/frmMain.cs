@@ -34,12 +34,12 @@ namespace MDump
         private const string dllNotFoundTitle = "Couldn't find DLL";
         private const string duplicateDirMsg = "A folder with the same name already exists";
         private const string duplicateDirTitle = "Duplicate Folder";
+        private const string switchToMergeMsg = "Adding a folder will put MDump in merge mode"            
+                    + " since splitting images doesn't use folder info. Continue?";
+        private const string switchToMergeTitle = "Switch to merge mode?";
         private const string noSuchPathMsg = "The path entered does not exist.";
         private const string noSuchPathTitle = "No such path";
         #endregion
-
-        private readonly string[] supportedImageFormats = { "bmp", "gif", "exif", "jpg",
-                                                              "jpeg", "png", "tif", "tiff" };
 
         /// <summary>
         /// Used to track the current mode of the app (not set, merging images, splitting images)
@@ -77,6 +77,7 @@ namespace MDump
                 {
                     case Mode.NotSet:
                         //Disable merge directory fun
+                        btnAddFolder.Enabled = Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
                         DirectoryUIEnabled = false;
                         btnAction.Enabled = false;
                         btnAction.Text = notSetActionText;
@@ -85,7 +86,8 @@ namespace MDump
                         break;
 
                     case Mode.Merge:
-                        DirectoryUIEnabled = Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
+                        btnAddFolder.Enabled = DirectoryUIEnabled 
+                            = Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
                         btnAction.Enabled = true;
                         btnAction.Text = mergeActionText;
                         ttpMain.SetToolTip(btnAction, mergeActionTooltip);
@@ -93,7 +95,7 @@ namespace MDump
                         break;
 
                     case Mode.Split:
-                        DirectoryUIEnabled = false;
+                        btnAddFolder.Enabled = DirectoryUIEnabled = false;
                         btnAction.Enabled = true;
                         btnAction.Text = splitActionText;
                         ttpMain.SetToolTip(btnAction, splitActionTooltip);
@@ -113,8 +115,7 @@ namespace MDump
             get { return _dirUIEnabled; }
             set
             {
-               btnAddFolder.Enabled = lblRoot.Enabled
-                   = txtPath.Enabled = _dirUIEnabled = value;
+                lblRoot.Enabled = txtPath.Enabled = _dirUIEnabled = value;
                 if (_dirUIEnabled == false)
                 {
                     dirMan.MoveAllToRoot();
@@ -149,22 +150,6 @@ namespace MDump
         {
             foreach (string filepath in paths)
             {
-                //Ignore this file if it's not even a supported format
-                string currExt = filepath.Substring(filepath.LastIndexOf('.') + 1);
-                bool matched = false;
-                foreach (string extension in supportedImageFormats)
-                {
-                    if (currExt.Equals(extension, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        matched = true;
-                        break;
-                    }
-                }
-                if (!matched)
-                {
-                    continue;
-                }
-
                 //Try to create an image out of the file
                 try
                 {
@@ -230,7 +215,6 @@ namespace MDump
             imlLVIcons.Images.Add(Properties.Resources.ImageIcon);
             imlLVIcons.Images.Add(Properties.Resources.Folder);
             dirMan = new ImageDirectoryManager();
-            CurrentMode = Mode.NotSet;
             //Try to add any images dragged onto program:
             string[] clArgs = Environment.GetCommandLineArgs();
             if (clArgs.Length > 1)
@@ -258,17 +242,94 @@ namespace MDump
                 Opts = new MDumpOptions();
             }
             dlgSplitDest = new frmSplitDest(Opts);
+            CurrentMode = Mode.NotSet;
         }
 
         private void lvImages_DragDrop(object sender, DragEventArgs e)
         {
-            //TODO: Update to directory system
-            AddImages((string[])e.Data.GetData(DataFormats.FileDrop));
+            List<string> images = new List<string>();
+            //We want to add our directories after we add images so
+            //the images can set the mode (if not set)
+            List<string> dirs = new List<string>();
+
+            //We don't know whether these are images or folders
+            string[] tokens = (string[])e.Data.GetData(DataFormats.FileDrop);
+            
+            foreach (string token in tokens)
+            {
+                //If this is a directory, add all images in it. 
+                if(Directory.Exists(token))
+                {
+                    dirs.Add(token);
+                }
+                else
+                {
+                    if (PathManager.IsSupportedImage(token))
+                    {
+                        images.Add(token);
+                    }
+                }
+            }
+
+            AddImages(images);
+
+            switch (CurrentMode)
+            {
+                case Mode.NotSet:
+                    //TODO: Check if we have just individual images or just merges. Set mode appropriately
+                    break;
+
+                case Mode.Merge:
+                    if (Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath)
+                    {
+                        foreach (string dir in dirs)
+                        {
+                            //TODO: Implement some kind of dirMan.AddImageByPath and just
+                            //add each image in the directory structure by their path
+                        }
+                    }
+                    else
+                    {
+                        //Reuse images to hold on to images in the directory
+                        images.Clear();
+                        foreach (string dir in dirs)
+                        {
+                            //Dir structure doesn't have to be maintained
+                            string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                            foreach (string file in files)
+                            {
+                                if (PathManager.IsSupportedImage(file))
+                                {
+                                    images.Add(file);
+                                }
+                            }
+                        }
+                        AddImages(images);
+                    }
+                    break;
+
+                case Mode.Split:
+                    //Reuse images to hold on to images in the directory
+                    images.Clear();
+                    foreach (string dir in dirs)
+                    {
+                        //Dir structure doesn't have to be maintained
+                        string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                        foreach (string file in files)
+                        {
+                            if (PathManager.IsSupportedImage(file))
+                            {
+                                images.Add(file);
+                            }
+                        }
+                    }
+                    AddImages(images);
+                    break;
+            }
         }
 
         private void lvImages_DragEnter(object sender, DragEventArgs e)
         {
-            //TODO: Update to directory system
             if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
             {
                 e.Effect = DragDropEffects.All;
@@ -286,7 +347,15 @@ namespace MDump
             {
                 try
                 {
-                    AddImages(dlgOpenImg.FileNames);
+                    List<string> images = new List<string>();
+                    foreach (string file in dlgOpenImg.FileNames)
+                    {
+                        if (PathManager.IsSupportedImage(file))
+                        {
+                            images.Add(file);
+                        }
+                    }
+                    AddImages(images);
                 }
                 catch (InvalidOperationException)
                 {
@@ -363,12 +432,17 @@ namespace MDump
                 }
                 else if (!newOpts.Equals(Opts))
                 {
-                    Opts.SaveToFile(MDumpOptions.fileName);
+                    newOpts.SaveToFile(MDumpOptions.fileName);
                 }
                 Opts = newOpts;
                 if (CurrentMode == Mode.Merge)
                 {
-                    DirectoryUIEnabled = Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
+                    btnAddFolder.Enabled = DirectoryUIEnabled
+                        = Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
+                }
+                else if (CurrentMode == Mode.NotSet)
+                {
+                    btnAddFolder.Enabled = Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
                 }
             }
         }
@@ -405,10 +479,10 @@ namespace MDump
 
         private void dlgMerge_FileOk(object sender, CancelEventArgs e)
         {
-            //Get all files in the directory that start with the name provided
+            //Get all images in the directory that start with the name provided
             string[] dirFiles = Directory.GetFiles(Path.GetDirectoryName(dlgMerge.FileName));
 
-            //Keep track of merge files (we'll be deleting these if the user wants to overwrite)
+            //Keep track of merge images (we'll be deleting these if the user wants to overwrite)
             List<string> mergeFiles = new List<string>();
             
             //Get requested filename
@@ -418,7 +492,7 @@ namespace MDump
             int fnLen =  extIdx - fnIdx;
             string name = fn.Substring(fnIdx, fnLen);
 
-            //Gather all merge files
+            //Gather all merge images
             foreach (string file in dirFiles)
             {
                 //The name format of merges is <name>.<num>.png
@@ -491,6 +565,20 @@ namespace MDump
 
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
+            if (CurrentMode == Mode.NotSet)
+            {
+                if (MessageBox.Show(switchToMergeMsg, switchToMergeTitle,
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                    == System.Windows.Forms.DialogResult.Yes)
+                {
+                    CurrentMode = Mode.Merge;
+                }
+                else
+                {
+                    return;
+                } 
+            }
+
             frmFolderName dlg = new frmFolderName();
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -549,6 +637,12 @@ namespace MDump
 
         private void lvImages_AfterLabelEdit(object sender, LabelEditEventArgs e)
         {
+            //Apparently e.Label is null when no change has occurred
+            if (e.Label == null)
+            {
+                return;
+            }
+
             ListViewItem item = lvImages.Items[e.Item];
             string newName = e.Label;
             if (dirMan.ItemRepresentsDirectory(item))
@@ -561,7 +655,7 @@ namespace MDump
                 {
                     e.CancelEdit = true;
                     MessageBox.Show(newName + PathManager.InvalidDirNameMsg, PathManager.InvalidDirNameTitle,
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             else
@@ -573,7 +667,7 @@ namespace MDump
                 else
                 {
                     e.CancelEdit = true;
-                    MessageBox.Show(newName + PathManager.InvalidBmpTagMsg, PathManager.InvalidBmpTagTitle,
+                    MessageBox.Show(PathManager.InvalidBmpNameMsg, PathManager.InvalidBmpTagTitle,
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
