@@ -29,6 +29,14 @@ namespace MDump
         private const string duplicateInDirTitle = "Duplicate in folder";
         private const string errorLoadingImageMsg = " could not be loaded.  It will not be added to the list.";
         private const string errorLoadingImageTitle = "Problem loading image";
+        private const string revertingToDefaultsMsg = "An error occurred while trying to load settings."
+            + " Reverting to defaults.";
+        private const string revertingToDefaultsTitle = "Error loading settings";
+        private const string bothTypesInSelectionMsg = "Both merged and individual images are in the dragged"
+            + " files and folders. MDump cannot split and merge images at the same time";
+        private const string bothTypesInSelectionTitle = "Merged and individual images present";
+        private const string noImagesInSelectionMsg = "There are no images in the dragged files and folders";
+        private const string noImagesInSelectionTitle = "No images present";
         private const string dllNotFoundMsg = PNGOps.DllName + " could not be found."
                     + " Make sure it is in the same folder as this program.";
         private const string dllNotFoundTitle = "Couldn't find DLL";
@@ -46,6 +54,7 @@ namespace MDump
         /// </summary>
         public enum Mode
         {
+            
             NotSet,
             Merge,
             Split
@@ -160,7 +169,7 @@ namespace MDump
                         bmp = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height),
                             System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                     }
-                    //Check if the image is a merged image, and if we're in the right mode
+                    //Check if the image is a mergedImages image, and if we're in the right mode
                     //to handle it.
                     bool mergedImg = PNGOps.IsMDumpMergedImage(filepath);
                     if (mergedImg && CurrentMode == Mode.Merge
@@ -232,8 +241,8 @@ namespace MDump
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("An error occurred while trying to load settings."
-                        + " Reverting to default settings.");
+                    MessageBox.Show(revertingToDefaultsMsg, revertingToDefaultsTitle,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Opts = new MDumpOptions();
                 }
             }
@@ -273,42 +282,59 @@ namespace MDump
 
             AddImages(images);
 
-            switch (CurrentMode)
+            //If we don't have a set mode yet, check if the folders contain individual images,
+            //merged images, or neither
+            if (CurrentMode == Mode.NotSet)
             {
-                case Mode.NotSet:
-                    //TODO: Check if we have just individual images or just merges. Set mode appropriately
-                    break;
-
-                case Mode.Merge:
-                    if (Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath)
+                bool mergedImages = false;
+                bool individualImages = false;
+                images.Clear();
+                foreach (string dir in dirs)
+                {
+                    string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                    foreach (string file in files)
                     {
-                        foreach (string dir in dirs)
+                        if (PathManager.IsSupportedImage(file))
                         {
-                            //TODO: Implement some kind of dirMan.AddImageByPath and just
-                            //add each image in the directory structure by their path
-                        }
-                    }
-                    else
-                    {
-                        //Reuse images to hold on to images in the directory
-                        images.Clear();
-                        foreach (string dir in dirs)
-                        {
-                            //Dir structure doesn't have to be maintained
-                            string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
-                            foreach (string file in files)
+                            if (PNGOps.IsMDumpMergedImage(file))
                             {
-                                if (PathManager.IsSupportedImage(file))
-                                {
-                                    images.Add(file);
-                                }
+                                mergedImages = true;
+                            }
+                            else
+                            {
+                                individualImages = true;
                             }
                         }
-                        AddImages(images);
                     }
-                    break;
+                }
+                if (mergedImages && individualImages)
+                {
+                    MessageBox.Show(bothTypesInSelectionMsg, bothTypesInSelectionTitle,
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                else if (!mergedImages && !individualImages)
+                {
+                    //This entire selection has nothing of use to us
+                    MessageBox.Show(noImagesInSelectionMsg, noImagesInSelectionTitle,
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                CurrentMode = individualImages ? Mode.Merge : Mode.Split;
+            }
 
-                case Mode.Split:
+            if(CurrentMode == Mode.Merge)
+            {
+                if (Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath)
+                {
+                    foreach (string dir in dirs)
+                    {
+                        //TODO: Implement some kind of dirMan.AddImageByPath and just
+                        //add each image in the directory structure by their path
+                    }
+                }
+                else
+                {
                     //Reuse images to hold on to images in the directory
                     images.Clear();
                     foreach (string dir in dirs)
@@ -324,7 +350,25 @@ namespace MDump
                         }
                     }
                     AddImages(images);
-                    break;
+                }
+            }
+            else
+            {
+                //Reuse images to hold on to images in the directory
+                images.Clear();
+                foreach (string dir in dirs)
+                {
+                    //Dir structure doesn't have to be maintained
+                    string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                    foreach (string file in files)
+                    {
+                        if (PathManager.IsSupportedImage(file))
+                        {
+                            images.Add(file);
+                        }
+                    }
+                }
+                AddImages(images);
             }
         }
 

@@ -131,7 +131,7 @@ namespace MDump
         /// Uses a binary tree to merge images into a single bitmap.
         /// </summary>
         /// <param name="bitmaps">Bitmaps to merge into one</param>
-        /// <param name="maxSize">The maximum size the merged bimap can take (in pixels)</param>
+        /// <param name="maxSize">The maximum size the merged bitmap can take (in pixels)</param>
         /// <param name="pixelFormat">The pixel format the merged image should use</param>
         /// <param name="mdData">MDump Data to save</param>
         /// <returns>The single bitmap containing all the provided bitmaps.</returns>

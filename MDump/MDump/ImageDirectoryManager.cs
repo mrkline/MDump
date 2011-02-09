@@ -185,6 +185,65 @@ namespace MDump
             }
 
             /// <summary>
+            /// Adds an already created and tagged image to a path within this directory
+            /// </summary>
+            /// <param name="img">Image to add</param>
+            /// <param name="dirPath">Path of image, starting in this folder.
+            /// Directories are created automatically if they do not exist.</param>
+            /// <returns>
+            /// GUI representation of the topmost folder of the path, if it does not already exist.
+            /// Otherwise returns null.
+            /// </returns>
+            public ListViewItem AddImagePath(Bitmap img, string dirPath)
+            {
+                //Get rid of any formatting concerns
+                char dirSepChar = System.IO.Path.DirectorySeparatorChar;
+                dirPath = dirPath.Replace(System.IO.Path.AltDirectorySeparatorChar, dirSepChar);
+                string[] dirs = dirPath.Split(new char[] { dirSepChar },
+                    StringSplitOptions.RemoveEmptyEntries);
+                
+                ImageDirectory currDir = this;
+                int dirIdx;
+
+                //dirs[dirs.Length - 1] is the image name itself
+                for (dirIdx = 0; dirIdx < dirs.Length - 1; ++dirIdx)
+                {
+                    if (currDir.HasChild(dirs[dirIdx]))
+                    {
+                        currDir = currDir.GetChild(dirs[dirIdx]);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                bool createIcon = dirIdx == 0;
+
+                //If the directories don't exist all the way in, create them
+                if (dirIdx < dirs.Length - 1)
+                {
+                    for (; dirIdx < dirs.Length - 1; ++dirIdx)
+                    {
+                        currDir = currDir.AddDirectoryInternal(dirs[dirIdx]);
+                    }
+                }
+                currDir.AddTaggedImage(img);
+
+                ListViewItem ret;
+                if (createIcon)
+                {
+                    ret = new ListViewItem(dirs[0], folderIconIndex);
+                    ret.Tag = GetChild(dirs[0]);
+                }
+                else
+                {
+                    ret = null;
+                }
+                return ret;
+            }
+
+            /// <summary>
             /// Adds a child directory to this directory
             /// </summary>
             /// <param name="name">Name of directory to add</param>
@@ -200,6 +259,20 @@ namespace MDump
                 ret.Tag = toAdd;
                 children.Add(toAdd);
                 return ret;
+            }
+
+            /// <summary>
+            /// Identical to AddDirectory except returns the new directory itself.
+            /// </summary>
+            private ImageDirectory AddDirectoryInternal(string name)
+            {
+                ImageDirectory toAdd = new ImageDirectory(name, this);
+                if (children.Contains(toAdd))
+                {
+                    throw new ArgumentException(duplicateDirMsg + name);
+                }
+                children.Add(toAdd);
+                return toAdd;
             }
 
             /// <summary>
@@ -294,10 +367,27 @@ namespace MDump
             /// Checks if this directory has a given directory as a child
             /// </summary>
             /// <param name="dir">child directory</param>
-            /// <returns>true if this directory is the parent of dir</returns>
+            /// <returns>true if this directory is the parent of directory</returns>
             public bool HasChild(ImageDirectory dir)
             {
                 return children.Contains(dir);
+            }
+
+            /// <summary>
+            /// Checks if this directory has a given directory as a child
+            /// </summary>
+            /// <param name="dirName">Name of the child directory</param>
+            /// <returns>true if a directory with the given name is a child of this directory</returns>
+            public bool HasChild(String dirName)
+            {
+                foreach (ImageDirectory child in children)
+                {
+                    if (child.Name.Equals(dirName, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             /// <summary>
@@ -509,7 +599,7 @@ namespace MDump
         /// <summary>
         /// Sets the active directory using a given path
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">The path of the directory, from root\</param>
         public void SetActiveDirectory(string path)
         {
             //Get rid of any formatting concerns
