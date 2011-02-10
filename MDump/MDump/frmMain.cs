@@ -332,6 +332,10 @@ namespace MDump
                     dirMan.CurrentPath);
 
                 ListViewItem dmRet = dirMan.AddImagePath(bmp, filepath.Substring(baseDir.Length));
+                if (dmRet != null)
+                {
+                    lvImages.Items.Add(dmRet);
+                }
             }
         }
 
@@ -438,7 +442,7 @@ namespace MDump
                             dirImages.Add(file);
                         }
                     }
-                    AddImagesWithPaths(dirImages, Directory.GetParent(dir).Name);
+                    AddImagesWithPaths(dirImages, Directory.GetParent(dir).FullName);
                 }
             }
             //Otherwise chuck all the images into AddImages

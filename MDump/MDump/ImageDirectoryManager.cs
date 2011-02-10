@@ -175,7 +175,7 @@ namespace MDump
                        (img.Tag as ImageTagBase).Name, StringComparison.InvariantCultureIgnoreCase))
                     {
                         //Duplicate image found.  Kill it with fire
-                        throw new ArgumentException(duplicateImgMsg + img.Tag);
+                        throw new ArgumentException(duplicateImgMsg + ((ImageTagBase)img.Tag).Name);
                     }
                 }
                 ListViewItem ret = new ListViewItem((img.Tag as ImageTagBase).Name, imageIconIndex);
