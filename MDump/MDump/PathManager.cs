@@ -45,21 +45,26 @@ namespace MDump
         public static string DiscardedFilename { get { return "\a"; } }
 
         /// <summary>
-        /// Returns true if the provided file has one of the supported image extensions
+        /// Returns true if an image can be generated from the file
         /// </summary>
         /// <param name="filepath">File to test</param>
         /// <returns>true if the provided file has one of the supported image extensions</returns>
         public static bool IsSupportedImage(string filepath)
         {
-            string ext = filepath.Substring(filepath.LastIndexOf('.') + 1);
-            foreach (string extension in supportedImageExtensions)
+            //HACK: Are freshly allocated objects always generation 0?
+            int gen;
+            try
             {
-                if (ext.Equals(extension, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return true;
-                }
+                System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(filepath);
+                gen = GC.GetGeneration(bmp);
             }
-            return false;
+            catch
+            {
+                return false;
+            }
+            //Clean up from the created bitmap (we don't need it hanging around in memory)
+            GC.Collect(gen);
+            return true;
         }
 
 

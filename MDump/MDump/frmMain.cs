@@ -22,17 +22,41 @@ namespace MDump
         private const string splitActionText = "Split images";
         private const string splitActionTooltip = "Split the merged images in the list above"
                             + " back into the original images.";
-        private const string incorrectModeMsg = "MDump cannot split merged images at the same time it"
-                        + " merges individual images.  Please add either inidividual images to merge"
-                        + " or MDump merged images to split back up, but not both at once.";
+        /// <summary>
+        /// Gets the incorrect mode message based on the current mode.
+        /// </summary>
+        private string IncorrectModeMsg
+        {
+            get
+            {
+                if (CurrentMode == Mode.Merge)
+                {
+                    return "MDump is current in merge mode, and therefore cannot split merged images."
+                        + " Please add only individual images to merge.";
+                }
+                else if (CurrentMode == Mode.Split)
+                {
+                    return "MDump is currently in split mode, and therefore cannot merge individual images."
+                        + " Please add only merged images to split.";
+                }
+                else
+                {
+                    throw new InvalidOperationException("incorrectModeMsg should not be used when no mode is set to begin with");
+                }
+            }
+        }
         private const string incorrectModeTitle = "Cannot split and merge at the same time";
         private const string duplicateInDirTitle = "Duplicate in folder";
         private const string errorLoadingImageMsg = " could not be loaded.  It will not be added to the list.";
         private const string errorLoadingImageTitle = "Problem loading image";
+        private const string incorrectModeForPaths = "Images with path information cannot be added unless we are in merge mode"
+            + " with settings configured to preserve the path.";
+        private const string badBaseDir =
+            "One of the images provided to AddImagesWithPaths does not come from the specified base directory";
         private const string revertingToDefaultsMsg = "An error occurred while trying to load settings."
             + " Reverting to defaults.";
         private const string revertingToDefaultsTitle = "Error loading settings";
-        private const string bothTypesInSelectionMsg = "Both merged and individual images are in the dragged"
+        private const string bothTypesInSelectionMsg = "Both merged and individual images are in the selected"
             + " files and folders. MDump cannot split and merge images at the same time";
         private const string bothTypesInSelectionTitle = "Merged and individual images present";
         private const string noImagesInSelectionMsg = "There are no images in the dragged files and folders";
@@ -152,12 +176,93 @@ namespace MDump
         }
 
         /// <summary>
+        /// If the mode is not set, it will be set based on whether the provided images are all merged
+        /// or all individual. If they are a combination of the two, the mode will not be set and the function
+        /// will return false.
+        /// </summary>
+        /// <param name="paths">Collection of files (assumably images)</param>
+        /// <returns>True if the images are all of one type and the mode is either set or maintained</returns>
+        private bool SetModeFromImages(IEnumerable<string> paths)
+        {
+            bool hasMerged = false;
+            bool hasIndividual = false;
+
+            foreach (string path in paths)
+            {
+                if (PNGOps.IsMDumpMergedImage(path))
+                {
+                    hasMerged = true;
+                }
+                else
+                {
+                    hasIndividual = true;
+                }
+            }
+
+            if (hasIndividual && hasMerged)
+            {
+                MessageBox.Show(bothTypesInSelectionMsg, bothTypesInSelectionTitle,
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if (CurrentMode == Mode.NotSet)
+            {
+                if (hasIndividual)
+                {
+                    CurrentMode = Mode.Merge;
+                    return true;
+                }
+                else
+                {
+                    CurrentMode = Mode.Split;
+                    return true;
+                }
+            }
+            else
+            {
+                if ((hasIndividual && CurrentMode == Mode.Split)
+                    || hasMerged && CurrentMode == Mode.Merge)
+                {
+                    MessageBox.Show(IncorrectModeMsg, incorrectModeTitle,
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        /// <summary>
         /// Add Images to the current directory
         /// </summary>
-        /// <param name="paths">paths of each image</param>
-        private void AddImages(IEnumerable<string> paths) 
+        /// <param name="paths">paths of each file (assumably images) to add</param>
+        /// <param name="modeAlreadySet">
+        /// true if SetModeFromImages has already been called, i.e., when files are dragged into the list view.
+        /// false if SetModeFromImages has not already been called, i.e., when images are added from the file open dialog.
+        /// </param>
+        private void AddImages(IEnumerable<string> paths, bool modeAlreadySet) 
         {
-            foreach (string filepath in paths)
+            List<string> images = new List<string>();
+            foreach (string path in paths)
+            {
+                if (PathManager.IsSupportedImage(path))
+                {
+                    images.Add(path);
+                }
+            }
+
+            //If we haven't done this already, set the mode from the images
+            if (!modeAlreadySet)
+            {
+                //Make sure all of the provided images are either merged or individual
+                if (!SetModeFromImages(images))
+                {
+                    return;
+                }
+            }
+
+           foreach (string filepath in images)
             {
                 //Try to create an image out of the file
                 try
@@ -169,22 +274,8 @@ namespace MDump
                         bmp = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height),
                             System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                     }
-                    //Check if the image is a mergedImages image, and if we're in the right mode
-                    //to handle it.
-                    bool mergedImg = PNGOps.IsMDumpMergedImage(filepath);
-                    if (mergedImg && CurrentMode == Mode.Merge
-                        || !mergedImg && CurrentMode == Mode.Split)
-                    {
-                        //We're not in the mode to handle the image being added
-                        MessageBox.Show(incorrectModeMsg, incorrectModeTitle,
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        break;
-                    }
-                    else if (CurrentMode == Mode.NotSet)
-                    {
-                        CurrentMode = mergedImg ? Mode.Split : Mode.Merge;
-                    }
-
+                    
+                    //Based on the current mode, properly tag our image and add it.
                     if (CurrentMode == Mode.Merge)
                     {
 
@@ -205,13 +296,42 @@ namespace MDump
                     MessageBox.Show(ex.Message, duplicateInDirTitle,
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                catch
+            }
+        }
+
+        /// <summary>
+        /// When merging with path data, add an image with a given path from the current directory
+        /// </summary>
+        /// <param name="paths">Paths of the images</param>
+        /// <param name="baseDir">The path of the first directory you want to add to the merge's directory structure</param>
+        private void AddImagesWithPaths(IEnumerable<string> paths, string baseDir)
+        {
+            if (!(CurrentMode == Mode.Merge && Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath))
+            {
+                throw new InvalidOperationException(incorrectModeForPaths);
+            }
+            foreach (string filepath in paths)
+            {
+                if (!filepath.StartsWith(baseDir, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    //File has an image extension but couldn't be loaded
-                    MessageBox.Show(Path.GetFileName(filepath) + errorLoadingImageMsg,
-                        errorLoadingImageTitle,
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    throw new ArgumentException(badBaseDir);
                 }
+            }
+
+            foreach (string filepath in paths)
+            {
+                Bitmap bmp = new Bitmap(filepath);
+                //Make sure we're in 32-bpp argb format
+                if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+                {
+                    bmp = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height),
+                        System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                }
+
+                bmp.Tag = new MergeImageTag(Path.GetFileNameWithoutExtension(filepath),
+                    dirMan.CurrentPath);
+
+                ListViewItem dmRet = dirMan.AddImagePath(bmp, filepath.Substring(baseDir.Length));
             }
         }
 
@@ -230,7 +350,7 @@ namespace MDump
             {
                 string[] toAdd = new string[clArgs.Length - 1];
                 clArgs.CopyTo(toAdd, 1);
-                AddImages(clArgs);
+                AddImages(clArgs, false);
             }
             //Load up any settings (if they exist)
             if (File.Exists(MDumpOptions.fileName))
@@ -256,9 +376,7 @@ namespace MDump
 
         private void lvImages_DragDrop(object sender, DragEventArgs e)
         {
-            List<string> images = new List<string>();
-            //We want to add our directories after we add images so
-            //the images can set the mode (if not set)
+            List<string> rootImages = new List<string>(); //Images not contained in a folder
             List<string> dirs = new List<string>();
 
             //We don't know whether these are images or folders
@@ -275,100 +393,58 @@ namespace MDump
                 {
                     if (PathManager.IsSupportedImage(token))
                     {
-                        images.Add(token);
+                        rootImages.Add(token);
                     }
                 }
             }
 
-            AddImages(images);
+            //Used to set the mode from all iamges at the same time
+            List<string> allImages = new List<string>(rootImages.Count);
+            allImages.AddRange(rootImages);
 
-            //If we don't have a set mode yet, check if the folders contain individual images,
-            //merged images, or neither
-            if (CurrentMode == Mode.NotSet)
+            //Add all images in the directories to allImages
+            foreach (string dir in dirs)
             {
-                bool mergedImages = false;
-                bool individualImages = false;
-                images.Clear();
+                string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                foreach (string file in files)
+                {
+                    if (PathManager.IsSupportedImage(file))
+                    {
+                        allImages.Add(file);
+                    }
+                }
+            }
+
+            //Set the correct mode
+            if (!SetModeFromImages(allImages))
+            {
+                return;
+            }
+
+            //If we're keeping track of directories, we have some work to do
+            if (CurrentMode == Mode.Merge && Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath)
+            {
+                AddImages(rootImages, false);
+
+                List<string> dirImages = new List<string>();
                 foreach (string dir in dirs)
                 {
+                    dirImages.Clear();
                     string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
-                    foreach (string file in files)
+                    foreach(string file in files)
                     {
-                        if (PathManager.IsSupportedImage(file))
+                        if(PathManager.IsSupportedImage(file))
                         {
-                            if (PNGOps.IsMDumpMergedImage(file))
-                            {
-                                mergedImages = true;
-                            }
-                            else
-                            {
-                                individualImages = true;
-                            }
+                            dirImages.Add(file);
                         }
                     }
-                }
-                if (mergedImages && individualImages)
-                {
-                    MessageBox.Show(bothTypesInSelectionMsg, bothTypesInSelectionTitle,
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-                else if (!mergedImages && !individualImages)
-                {
-                    //This entire selection has nothing of use to us
-                    MessageBox.Show(noImagesInSelectionMsg, noImagesInSelectionTitle,
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-                CurrentMode = individualImages ? Mode.Merge : Mode.Split;
-            }
-
-            if(CurrentMode == Mode.Merge)
-            {
-                if (Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath)
-                {
-                    foreach (string dir in dirs)
-                    {
-                        //TODO: Implement some kind of dirMan.AddImageByPath and just
-                        //add each image in the directory structure by their path
-                    }
-                }
-                else
-                {
-                    //Reuse images to hold on to images in the directory
-                    images.Clear();
-                    foreach (string dir in dirs)
-                    {
-                        //Dir structure doesn't have to be maintained
-                        string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
-                        foreach (string file in files)
-                        {
-                            if (PathManager.IsSupportedImage(file))
-                            {
-                                images.Add(file);
-                            }
-                        }
-                    }
-                    AddImages(images);
+                    AddImagesWithPaths(dirImages, Directory.GetParent(dir).Name);
                 }
             }
+            //Otherwise chuck all the images into AddImages
             else
             {
-                //Reuse images to hold on to images in the directory
-                images.Clear();
-                foreach (string dir in dirs)
-                {
-                    //Dir structure doesn't have to be maintained
-                    string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
-                    foreach (string file in files)
-                    {
-                        if (PathManager.IsSupportedImage(file))
-                        {
-                            images.Add(file);
-                        }
-                    }
-                }
-                AddImages(images);
+                AddImages(allImages, true);
             }
         }
 
@@ -389,24 +465,7 @@ namespace MDump
         {
             if (dlgOpenImg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                try
-                {
-                    List<string> images = new List<string>();
-                    foreach (string file in dlgOpenImg.FileNames)
-                    {
-                        if (PathManager.IsSupportedImage(file))
-                        {
-                            images.Add(file);
-                        }
-                    }
-                    AddImages(images);
-                }
-                catch (InvalidOperationException)
-                {
-                    MessageBox.Show("MDump cannot merge and split images at the same time.\n"
-                       + "Select some images to merge or some merged images to split.", "Error",
-                       MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                 AddImages(dlgOpenImg.FileNames, false);
             }
         }
 

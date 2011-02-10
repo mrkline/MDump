@@ -625,6 +625,15 @@ namespace MDump
         }
 
         /// <summary>
+        /// Calls AddImagePath on the active directory
+        /// </summary>
+        /// <seealso cref="ImageDirectory.AddImagePath"/>
+        public ListViewItem AddImagePath(Bitmap img, string dirPath)
+        {
+            return activeDirectory.AddImagePath(img, dirPath);
+        }
+
+        /// <summary>
         /// Calls AddDirectory on the active directory
         /// </summary>
         /// <seealso cref="ImageDirectory.AddDirectory"/>
