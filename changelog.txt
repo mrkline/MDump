@@ -1,3 +1,10 @@
+version 0.2.0 (Feb 11, 2011)
+
+- Added folder system. When merging, and with folder info enabled
+  in the options menu, users can now add folders, which will be saved
+  into the merge files. This replaces the prior system which would 
+  automatically create folders based on the images added.
+
 version 0.1.3 (Jan 9, 2011)
 
 - Added error logging in the event of unanticipated errors.

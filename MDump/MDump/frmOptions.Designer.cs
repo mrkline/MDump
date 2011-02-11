@@ -83,10 +83,11 @@
             // btnCancelOptions
             // 
             this.btnCancelOptions.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnCancelOptions.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancelOptions.Location = new System.Drawing.Point(263, 308);
             this.btnCancelOptions.Name = "btnCancelOptions";
             this.btnCancelOptions.Size = new System.Drawing.Size(100, 23);
-            this.btnCancelOptions.TabIndex = 2;
+            this.btnCancelOptions.TabIndex = 3;
             this.btnCancelOptions.Text = "Cancel";
             this.btnCancelOptions.UseVisualStyleBackColor = true;
             this.btnCancelOptions.Click += new System.EventHandler(this.btnCancelOptions_Click);
@@ -102,7 +103,7 @@
             this.tabOptions.Name = "tabOptions";
             this.tabOptions.SelectedIndex = 0;
             this.tabOptions.Size = new System.Drawing.Size(390, 290);
-            this.tabOptions.TabIndex = 5;
+            this.tabOptions.TabIndex = 0;
             // 
             // tbpMerging
             // 
@@ -168,7 +169,7 @@
             this.lblCompression.Location = new System.Drawing.Point(3, 111);
             this.lblCompression.Name = "lblCompression";
             this.lblCompression.Size = new System.Drawing.Size(99, 13);
-            this.lblCompression.TabIndex = 21;
+            this.lblCompression.TabIndex = 1;
             this.lblCompression.Text = "Compression Level:";
             // 
             // lblMoreComp
@@ -177,7 +178,7 @@
             this.lblMoreComp.Location = new System.Drawing.Point(229, 133);
             this.lblMoreComp.Name = "lblMoreComp";
             this.lblMoreComp.Size = new System.Drawing.Size(112, 39);
-            this.lblMoreComp.TabIndex = 20;
+            this.lblMoreComp.TabIndex = 4;
             this.lblMoreComp.Text = "More Compression\r\nSlower\r\nFewer Merged Images";
             this.lblMoreComp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -187,7 +188,7 @@
             this.lblLessComp.Location = new System.Drawing.Point(6, 133);
             this.lblLessComp.Name = "lblLessComp";
             this.lblLessComp.Size = new System.Drawing.Size(107, 39);
-            this.lblLessComp.TabIndex = 19;
+            this.lblLessComp.TabIndex = 2;
             this.lblLessComp.Text = "Less Compression\r\nFaster\r\nMore Merged Images";
             this.lblLessComp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -199,7 +200,7 @@
             this.trkCompression.Maximum = 6;
             this.trkCompression.Name = "trkCompression";
             this.trkCompression.Size = new System.Drawing.Size(104, 45);
-            this.trkCompression.TabIndex = 18;
+            this.trkCompression.TabIndex = 3;
             this.trkCompression.Value = 3;
             // 
             // chkAddTitleBar
@@ -208,7 +209,7 @@
             this.chkAddTitleBar.Location = new System.Drawing.Point(12, 241);
             this.chkAddTitleBar.Name = "chkAddTitleBar";
             this.chkAddTitleBar.Size = new System.Drawing.Size(261, 17);
-            this.chkAddTitleBar.TabIndex = 17;
+            this.chkAddTitleBar.TabIndex = 8;
             this.chkAddTitleBar.Text = "Add \"Created with MDump\" bar to merged images";
             this.chkAddTitleBar.UseVisualStyleBackColor = true;
             // 
@@ -218,7 +219,7 @@
             this.lblKB.Location = new System.Drawing.Point(138, 208);
             this.lblKB.Name = "lblKB";
             this.lblKB.Size = new System.Drawing.Size(72, 13);
-            this.lblKB.TabIndex = 16;
+            this.lblKB.TabIndex = 7;
             this.lblKB.Text = "Kilobytes (KB)";
             // 
             // nudMaxMergeSize
@@ -236,7 +237,7 @@
             0});
             this.nudMaxMergeSize.Name = "nudMaxMergeSize";
             this.nudMaxMergeSize.Size = new System.Drawing.Size(120, 20);
-            this.nudMaxMergeSize.TabIndex = 15;
+            this.nudMaxMergeSize.TabIndex = 6;
             this.nudMaxMergeSize.Value = new decimal(new int[] {
             100,
             0,
@@ -249,7 +250,7 @@
             this.lblMaxMergeSize.Location = new System.Drawing.Point(6, 190);
             this.lblMaxMergeSize.Name = "lblMaxMergeSize";
             this.lblMaxMergeSize.Size = new System.Drawing.Size(340, 13);
-            this.lblMaxMergeSize.TabIndex = 14;
+            this.lblMaxMergeSize.TabIndex = 5;
             this.lblMaxMergeSize.Text = "Maximum size of each merged image (max upload size of image board):";
             // 
             // grpImageNaming
@@ -260,7 +261,7 @@
             this.grpImageNaming.Location = new System.Drawing.Point(6, 6);
             this.grpImageNaming.Name = "grpImageNaming";
             this.grpImageNaming.Size = new System.Drawing.Size(370, 93);
-            this.grpImageNaming.TabIndex = 13;
+            this.grpImageNaming.TabIndex = 0;
             this.grpImageNaming.TabStop = false;
             this.grpImageNaming.Text = "Image Naming Options";
             // 
@@ -270,7 +271,7 @@
             this.radSaveFilePath.Location = new System.Drawing.Point(6, 19);
             this.radSaveFilePath.Name = "radSaveFilePath";
             this.radSaveFilePath.Size = new System.Drawing.Size(318, 17);
-            this.radSaveFilePath.TabIndex = 12;
+            this.radSaveFilePath.TabIndex = 0;
             this.radSaveFilePath.TabStop = true;
             this.radSaveFilePath.Text = "Save the names and folder layout of the images when merging";
             this.radSaveFilePath.UseVisualStyleBackColor = true;
@@ -281,7 +282,7 @@
             this.radSaveFilenames.Location = new System.Drawing.Point(6, 42);
             this.radSaveFilenames.Name = "radSaveFilenames";
             this.radSaveFilenames.Size = new System.Drawing.Size(292, 17);
-            this.radSaveFilenames.TabIndex = 10;
+            this.radSaveFilenames.TabIndex = 1;
             this.radSaveFilenames.TabStop = true;
             this.radSaveFilenames.Text = "Save the names of the images (no folders) when merging\r\n";
             this.radSaveFilenames.UseVisualStyleBackColor = true;
@@ -292,7 +293,7 @@
             this.radDiscardFilenames.Location = new System.Drawing.Point(6, 65);
             this.radDiscardFilenames.Name = "radDiscardFilenames";
             this.radDiscardFilenames.Size = new System.Drawing.Size(270, 17);
-            this.radDiscardFilenames.TabIndex = 11;
+            this.radDiscardFilenames.TabIndex = 2;
             this.radDiscardFilenames.TabStop = true;
             this.radDiscardFilenames.Text = "Do not save the names of the images when merging";
             this.radDiscardFilenames.UseVisualStyleBackColor = true;
@@ -363,7 +364,7 @@
             this.btnDefaults.Location = new System.Drawing.Point(157, 308);
             this.btnDefaults.Name = "btnDefaults";
             this.btnDefaults.Size = new System.Drawing.Size(100, 23);
-            this.btnDefaults.TabIndex = 6;
+            this.btnDefaults.TabIndex = 2;
             this.btnDefaults.Text = "Reset to Defaults";
             this.btnDefaults.UseVisualStyleBackColor = true;
             this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
@@ -378,8 +379,10 @@
             // 
             // frmOptions
             // 
+            this.AcceptButton = this.btnSaveOptions;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnCancelOptions;
             this.ClientSize = new System.Drawing.Size(414, 343);
             this.Controls.Add(this.btnDefaults);
             this.Controls.Add(this.tabOptions);

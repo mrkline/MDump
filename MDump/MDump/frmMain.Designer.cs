@@ -68,7 +68,7 @@
             this.lvImages.Size = new System.Drawing.Size(460, 236);
             this.lvImages.SmallImageList = this.imlLVIcons;
             this.lvImages.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lvImages.TabIndex = 0;
+            this.lvImages.TabIndex = 3;
             this.lvImages.UseCompatibleStateImageBehavior = false;
             this.lvImages.View = System.Windows.Forms.View.List;
             this.lvImages.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lvImages_AfterLabelEdit);
@@ -90,13 +90,13 @@
             this.tsiDelete,
             this.tsiRename});
             this.conImages.Name = "conImages";
-            this.conImages.Size = new System.Drawing.Size(153, 114);
+            this.conImages.Size = new System.Drawing.Size(138, 92);
             this.conImages.Opening += new System.ComponentModel.CancelEventHandler(this.conImages_Opening);
             // 
             // tsiAddImages
             // 
             this.tsiAddImages.Name = "tsiAddImages";
-            this.tsiAddImages.Size = new System.Drawing.Size(152, 22);
+            this.tsiAddImages.Size = new System.Drawing.Size(137, 22);
             this.tsiAddImages.Text = "Add &Images";
             this.tsiAddImages.Visible = false;
             this.tsiAddImages.Click += new System.EventHandler(this.tsiAddImages_Click);
@@ -104,22 +104,23 @@
             // tsiAddFolder
             // 
             this.tsiAddFolder.Name = "tsiAddFolder";
-            this.tsiAddFolder.Size = new System.Drawing.Size(152, 22);
+            this.tsiAddFolder.Size = new System.Drawing.Size(137, 22);
             this.tsiAddFolder.Text = "Add &Folder";
             this.tsiAddFolder.Click += new System.EventHandler(this.tsiAddFolder_Click);
             // 
             // tsiDelete
             // 
             this.tsiDelete.Name = "tsiDelete";
-            this.tsiDelete.Size = new System.Drawing.Size(152, 22);
+            this.tsiDelete.Size = new System.Drawing.Size(137, 22);
             this.tsiDelete.Text = "&Delete";
             this.tsiDelete.Click += new System.EventHandler(this.tsiDelete_Click);
             // 
             // tsiRename
             // 
             this.tsiRename.Name = "tsiRename";
-            this.tsiRename.Size = new System.Drawing.Size(152, 22);
+            this.tsiRename.Size = new System.Drawing.Size(137, 22);
             this.tsiRename.Text = "&Rename";
+            this.tsiRename.Click += new System.EventHandler(this.tsiRename_Click);
             // 
             // imlLVIcons
             // 
@@ -133,7 +134,7 @@
             this.btnOptions.Location = new System.Drawing.Point(361, 284);
             this.btnOptions.Name = "btnOptions";
             this.btnOptions.Size = new System.Drawing.Size(75, 30);
-            this.btnOptions.TabIndex = 5;
+            this.btnOptions.TabIndex = 8;
             this.btnOptions.Text = "Options...";
             this.ttpMain.SetToolTip(this.btnOptions, "Edit options and settings for MDump");
             this.btnOptions.UseVisualStyleBackColor = true;
@@ -157,7 +158,7 @@
             this.btnAddImage.Location = new System.Drawing.Point(12, 284);
             this.btnAddImage.Name = "btnAddImage";
             this.btnAddImage.Size = new System.Drawing.Size(75, 30);
-            this.btnAddImage.TabIndex = 8;
+            this.btnAddImage.TabIndex = 4;
             this.btnAddImage.Text = "Add Images";
             this.ttpMain.SetToolTip(this.btnAddImage, "Add an image to the list");
             this.btnAddImage.UseVisualStyleBackColor = true;
@@ -169,7 +170,7 @@
             this.btnHowWork.Location = new System.Drawing.Point(245, 284);
             this.btnHowWork.Name = "btnHowWork";
             this.btnHowWork.Size = new System.Drawing.Size(110, 30);
-            this.btnHowWork.TabIndex = 9;
+            this.btnHowWork.TabIndex = 7;
             this.btnHowWork.Text = "How does it work?";
             this.ttpMain.SetToolTip(this.btnHowWork, "Click to learn how MDump works");
             this.btnHowWork.UseVisualStyleBackColor = true;
@@ -182,7 +183,7 @@
             this.btnInfo.Location = new System.Drawing.Point(442, 284);
             this.btnInfo.Name = "btnInfo";
             this.btnInfo.Size = new System.Drawing.Size(30, 30);
-            this.btnInfo.TabIndex = 7;
+            this.btnInfo.TabIndex = 9;
             this.ttpMain.SetToolTip(this.btnInfo, "Info about MDump");
             this.btnInfo.UseVisualStyleBackColor = true;
             this.btnInfo.Click += new System.EventHandler(this.btnInfo_Click);
@@ -194,7 +195,7 @@
             this.btnUpFolder.Location = new System.Drawing.Point(426, 14);
             this.btnUpFolder.Name = "btnUpFolder";
             this.btnUpFolder.Size = new System.Drawing.Size(46, 24);
-            this.btnUpFolder.TabIndex = 12;
+            this.btnUpFolder.TabIndex = 2;
             this.ttpMain.SetToolTip(this.btnUpFolder, "Move up one folder");
             this.btnUpFolder.UseVisualStyleBackColor = true;
             this.btnUpFolder.Click += new System.EventHandler(this.btnUpFolder_Click);
@@ -204,7 +205,7 @@
             this.btnAddFolder.Location = new System.Drawing.Point(93, 284);
             this.btnAddFolder.Name = "btnAddFolder";
             this.btnAddFolder.Size = new System.Drawing.Size(75, 30);
-            this.btnAddFolder.TabIndex = 13;
+            this.btnAddFolder.TabIndex = 5;
             this.btnAddFolder.Text = "Add Folder";
             this.ttpMain.SetToolTip(this.btnAddFolder, "Add a folder to put additional images in to");
             this.btnAddFolder.UseVisualStyleBackColor = true;
@@ -231,7 +232,7 @@
             this.txtPath.Location = new System.Drawing.Point(53, 16);
             this.txtPath.Name = "txtPath";
             this.txtPath.Size = new System.Drawing.Size(367, 20);
-            this.txtPath.TabIndex = 10;
+            this.txtPath.TabIndex = 1;
             this.txtPath.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPath_KeyPress);
             this.txtPath.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtPath_KeyUp);
             // 
@@ -241,7 +242,7 @@
             this.lblRoot.Location = new System.Drawing.Point(12, 19);
             this.lblRoot.Name = "lblRoot";
             this.lblRoot.Size = new System.Drawing.Size(35, 13);
-            this.lblRoot.TabIndex = 11;
+            this.lblRoot.TabIndex = 0;
             this.lblRoot.Text = "\\root\\";
             // 
             // frmMain

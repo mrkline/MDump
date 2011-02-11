@@ -48,7 +48,7 @@
             this.btnOK.Location = new System.Drawing.Point(99, 174);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
-            this.btnOK.TabIndex = 0;
+            this.btnOK.TabIndex = 7;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -60,7 +60,7 @@
             this.btnCancel.Location = new System.Drawing.Point(180, 174);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 1;
+            this.btnCancel.TabIndex = 8;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -71,7 +71,7 @@
             this.lblSelectDir.Location = new System.Drawing.Point(12, 9);
             this.lblSelectDir.Name = "lblSelectDir";
             this.lblSelectDir.Size = new System.Drawing.Size(268, 26);
-            this.lblSelectDir.TabIndex = 2;
+            this.lblSelectDir.TabIndex = 0;
             this.lblSelectDir.Text = "Select a folder to split the merged images to,\r\nor leave blank to split images to" +
                 " same folder as this exe:";
             // 
@@ -82,7 +82,7 @@
             this.txtDir.Location = new System.Drawing.Point(12, 37);
             this.txtDir.Name = "txtDir";
             this.txtDir.Size = new System.Drawing.Size(248, 20);
-            this.txtDir.TabIndex = 3;
+            this.txtDir.TabIndex = 1;
             this.txtDir.TextChanged += new System.EventHandler(this.txtDir_TextChanged);
             // 
             // btnBrowse
@@ -92,7 +92,7 @@
             this.btnBrowse.Location = new System.Drawing.Point(266, 35);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(76, 23);
-            this.btnBrowse.TabIndex = 4;
+            this.btnBrowse.TabIndex = 2;
             this.btnBrowse.Text = "Browse...";
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
@@ -103,7 +103,7 @@
             this.lblSelectFilename.Location = new System.Drawing.Point(12, 93);
             this.lblSelectFilename.Name = "lblSelectFilename";
             this.lblSelectFilename.Size = new System.Drawing.Size(177, 13);
-            this.lblSelectFilename.TabIndex = 5;
+            this.lblSelectFilename.TabIndex = 4;
             this.lblSelectFilename.Text = "Set at runtime based on split options";
             // 
             // txtFilename
@@ -111,7 +111,7 @@
             this.txtFilename.Location = new System.Drawing.Point(12, 109);
             this.txtFilename.Name = "txtFilename";
             this.txtFilename.Size = new System.Drawing.Size(238, 20);
-            this.txtFilename.TabIndex = 6;
+            this.txtFilename.TabIndex = 5;
             this.txtFilename.TextChanged += new System.EventHandler(this.txtFilename_TextChanged);
             // 
             // lblFilenameStatus
@@ -120,7 +120,7 @@
             this.lblFilenameStatus.Location = new System.Drawing.Point(12, 132);
             this.lblFilenameStatus.Name = "lblFilenameStatus";
             this.lblFilenameStatus.Size = new System.Drawing.Size(87, 13);
-            this.lblFilenameStatus.TabIndex = 7;
+            this.lblFilenameStatus.TabIndex = 6;
             this.lblFilenameStatus.Text = "Status goes here";
             this.lblFilenameStatus.Visible = false;
             // 
@@ -130,7 +130,7 @@
             this.lblDirStatus.Location = new System.Drawing.Point(12, 61);
             this.lblDirStatus.Name = "lblDirStatus";
             this.lblDirStatus.Size = new System.Drawing.Size(87, 13);
-            this.lblDirStatus.TabIndex = 8;
+            this.lblDirStatus.TabIndex = 3;
             this.lblDirStatus.Text = "Status goes here";
             this.lblDirStatus.Visible = false;
             // 

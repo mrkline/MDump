@@ -865,5 +865,10 @@ namespace MDump
         {
             DeleteSelectedItems();
         }
+
+        private void tsiRename_Click(object sender, EventArgs e)
+        {
+            lvImages.SelectedItems[0].BeginEdit();
+        }
     }
 }
