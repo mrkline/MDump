@@ -11,8 +11,18 @@ namespace MDump
 {
     public partial class frmWait : Form
     {
+        #region String Constants
         private const string mergeTitle = "Merging Images...";
         private const string splitTitle = "Splitting Images...";
+        private const string startingMerge = "Starting merge process...";
+        private const string determiningImgNum = "Determining number of images we can fit in one merged image...\n\n";
+        private const string wasTooLarge = "The last attempt created a PNG too large for the maximum size set in the options.\n"
+                                    + "Now trying with fewer images";
+        private const string wasTooSmall = "The last attempt created a PNG too large for the maximum size set in the options.\n"
+                                    + "Now trying with more images";
+        private const string nowSaving = "Determined the most images that can be fit in this merged image.\n"
+                                + "Now saving ";
+        #endregion
 
         private frmMain.Mode mode;
         private List<Bitmap> bmpList;
@@ -96,24 +106,22 @@ namespace MDump
                 switch (currStage)
                 {
                     case ImageMerger.MergeStage.Starting:
-                        lblWaitStatus.Text = "Starting merge process...";
+                        lblWaitStatus.Text = startingMerge;
                         prgOverall.Maximum = (int)info;
                         prgOverall.Value = current;
                         break;
 
                     case ImageMerger.MergeStage.DeterminingNumPerMerge:
                         ImageMerger.LastAttemptInfo lastInfo = (ImageMerger.LastAttemptInfo)info;
-                        string msg = "Determining number of images we can fit in one merged image...\n\n";
+                        string msg = determiningImgNum;
                         switch (lastInfo)
                         {
                             case ImageMerger.LastAttemptInfo.TooLarge:
-                                msg += "The last attempt created a PNG too large for the maximum size set in the options.\n"
-                                    + "Now trying with fewer images";
+                                msg += wasTooLarge;
                                 break;
 
                             case ImageMerger.LastAttemptInfo.TooSmall:
-                                msg += "The last attempt created a PNG too large for the maximum size set in the options.\n"
-                                    + "Now trying with more images";
+                                msg += wasTooSmall;
                                 break;
                         }
                         lblWaitStatus.Text = msg;
@@ -121,8 +129,7 @@ namespace MDump
                         break;
 
                     case ImageMerger.MergeStage.Saving:
-                        lblWaitStatus.Text = "Determined the most images that can be fit in this merged image.\n"
-                                + "Now saving " + (string)info;
+                        lblWaitStatus.Text = nowSaving + (string)info;
                         prgOverall.Value = current;
                         break;
 

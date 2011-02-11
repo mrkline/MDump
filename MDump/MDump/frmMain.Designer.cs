@@ -32,6 +32,10 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.lvImages = new System.Windows.Forms.ListView();
             this.clmImages = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.conImages = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tsiAddImages = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsiAddFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsiDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.imlLVIcons = new System.Windows.Forms.ImageList(this.components);
             this.btnOptions = new System.Windows.Forms.Button();
             this.btnAction = new System.Windows.Forms.Button();
@@ -45,6 +49,7 @@
             this.dlgMerge = new System.Windows.Forms.SaveFileDialog();
             this.txtPath = new System.Windows.Forms.TextBox();
             this.lblRoot = new System.Windows.Forms.Label();
+            this.conImages.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvImages
@@ -74,6 +79,35 @@
             // 
             this.clmImages.Text = "SetAtRuntime";
             this.clmImages.Width = 250;
+            // 
+            // conImages
+            // 
+            this.conImages.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsiAddImages,
+            this.tsiAddFolder,
+            this.tsiDelete});
+            this.conImages.Name = "conImages";
+            this.conImages.Size = new System.Drawing.Size(138, 70);
+            this.conImages.Opening += new System.ComponentModel.CancelEventHandler(this.conImages_Opening);
+            // 
+            // tsiAddImages
+            // 
+            this.tsiAddImages.Name = "tsiAddImages";
+            this.tsiAddImages.Size = new System.Drawing.Size(137, 22);
+            this.tsiAddImages.Text = "Add &Images";
+            this.tsiAddImages.Visible = false;
+            // 
+            // tsiAddFolder
+            // 
+            this.tsiAddFolder.Name = "tsiAddFolder";
+            this.tsiAddFolder.Size = new System.Drawing.Size(137, 22);
+            this.tsiAddFolder.Text = "Add &Folder";
+            // 
+            // tsiDelete
+            // 
+            this.tsiDelete.Name = "tsiDelete";
+            this.tsiDelete.Size = new System.Drawing.Size(137, 22);
+            this.tsiDelete.Text = "&Delete";
             // 
             // imlLVIcons
             // 
@@ -218,6 +252,7 @@
             this.Name = "frmMain";
             this.Text = "MDump";
             this.Load += new System.EventHandler(this.frmMain_Load);
+            this.conImages.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -240,6 +275,10 @@
         private System.Windows.Forms.Button btnUpFolder;
         private System.Windows.Forms.Button btnAddFolder;
         internal System.Windows.Forms.ImageList imlLVIcons;
+        private System.Windows.Forms.ContextMenuStrip conImages;
+        private System.Windows.Forms.ToolStripMenuItem tsiAddImages;
+        private System.Windows.Forms.ToolStripMenuItem tsiAddFolder;
+        private System.Windows.Forms.ToolStripMenuItem tsiDelete;
 
     }
 }

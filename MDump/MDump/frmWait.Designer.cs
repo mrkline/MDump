@@ -102,7 +102,7 @@
             this.MinimizeBox = false;
             this.Name = "frmWait";
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "frmWait";
             this.Shown += new System.EventHandler(this.frmWait_Shown);
             this.ResumeLayout(false);

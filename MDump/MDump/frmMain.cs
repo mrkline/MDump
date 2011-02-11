@@ -84,6 +84,7 @@ namespace MDump
             Split
         }
 
+        #region Vars and Properties
         private ImageDirectoryManager dirMan;
 
         /// <summary>
@@ -161,7 +162,12 @@ namespace MDump
                 }
             }
         }
+        #endregion
 
+        //This region contains functions used to split common behavior from the GUI itself.
+        //For example, moving up a directory can be done in multiple ways through the GUI,
+        //so common functions to do so are provided here.
+        #region Common Functionality
         /// <summary>
         /// Clears the list view and repopulates it with the current directory's items.
         /// </summary>
@@ -351,6 +357,20 @@ namespace MDump
             }
         }
 
+        private static bool IsInt(string str)
+        {
+            try
+            {
+                Convert.ToInt32(str);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -390,6 +410,7 @@ namespace MDump
             CurrentMode = Mode.NotSet;
         }
 
+        #region Event Handlers
         private void lvImages_DragDrop(object sender, DragEventArgs e)
         {
             List<string> rootImages = new List<string>(); //Images not contained in a folder
@@ -466,6 +487,7 @@ namespace MDump
 
         private void lvImages_DragEnter(object sender, DragEventArgs e)
         {
+            //Only allow files and folders to be dropped in
             if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
             {
                 e.Effect = DragDropEffects.All;
@@ -485,21 +507,9 @@ namespace MDump
             }
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            foreach (ListViewItem lvi in lvImages.SelectedItems)
-            {
-                dirMan.RemoveItem(lvi);
-                lvi.Remove();
-            }
-            if (dirMan.IsEmpty)
-            {
-                CurrentMode = Mode.NotSet;
-            }
-        }
-
         private void lvImages_KeyUp(object sender, KeyEventArgs e)
         {
+            //TODO: Move to common functions
             switch (e.KeyCode)
             {
                 case Keys.Delete:
@@ -656,19 +666,6 @@ namespace MDump
                 dlgMerge.FileName = fn.Substring(0, extIdx);
             }
         }
-  
-        private static bool IsInt(string str)
-        {
-            try
-            {
-                Convert.ToInt32(str);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
 
         private void btnHowWork_Click(object sender, EventArgs e)
         {
@@ -799,5 +796,14 @@ namespace MDump
                 }
             }
         }
+
+        private void conImages_Opening(object sender, CancelEventArgs e)
+        {
+            bool selectedItems = lvImages.SelectedItems.Count > 0;
+            tsiAddImages.Visible = tsiAddFolder.Visible = !selectedItems;
+            tsiDelete.Visible = selectedItems;
+        }
+
+        #endregion
     }
 }

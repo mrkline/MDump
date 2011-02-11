@@ -280,10 +280,10 @@
             this.radSaveFilenames.AutoSize = true;
             this.radSaveFilenames.Location = new System.Drawing.Point(6, 42);
             this.radSaveFilenames.Name = "radSaveFilenames";
-            this.radSaveFilenames.Size = new System.Drawing.Size(343, 17);
+            this.radSaveFilenames.Size = new System.Drawing.Size(292, 17);
             this.radSaveFilenames.TabIndex = 10;
             this.radSaveFilenames.TabStop = true;
-            this.radSaveFilenames.Text = "Save the names of the images (ingoring folder layout) when merging\r\n";
+            this.radSaveFilenames.Text = "Save the names of the images (no folders) when merging\r\n";
             this.radSaveFilenames.UseVisualStyleBackColor = true;
             // 
             // radDiscardFilenames
@@ -347,10 +347,10 @@
             this.radIgnore.AutoSize = true;
             this.radIgnore.Location = new System.Drawing.Point(6, 65);
             this.radIgnore.Name = "radIgnore";
-            this.radIgnore.Size = new System.Drawing.Size(263, 17);
+            this.radIgnore.Size = new System.Drawing.Size(281, 17);
             this.radIgnore.TabIndex = 0;
             this.radIgnore.TabStop = true;
-            this.radIgnore.Text = "Ignore it and ask for a name for the images instead";
+            this.radIgnore.Text = "Ignore image names and use the provided one instead";
             this.radIgnore.UseVisualStyleBackColor = true;
             // 
             // dlgFolderBrowse
