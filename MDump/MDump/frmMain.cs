@@ -162,6 +162,7 @@ namespace MDump
                 }
             }
         }
+
         #endregion
 
         //This region contains functions used to split common behavior from the GUI itself.
@@ -357,6 +358,66 @@ namespace MDump
             }
         }
 
+        /// <summary>
+        /// Deletes selected items when the delete key is pressed or
+        /// the context menu item is clicked
+        /// </summary>
+        private void DeleteSelectedItems()
+        {
+            if (lvImages.SelectedItems.Count > 0)
+            {
+                foreach (ListViewItem lvi in lvImages.SelectedItems)
+                {
+                    dirMan.RemoveItem(lvi);
+                    lvi.Remove();
+                }
+                if (dirMan.IsEmpty)
+                {
+                    CurrentMode = Mode.NotSet;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Performs Add Folder action when the button or context menu item is clicked
+        /// </summary>
+        private void AddFolder()
+        {
+            if (CurrentMode == Mode.NotSet)
+            {
+                if (MessageBox.Show(switchToMergeMsg, switchToMergeTitle,
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                    == System.Windows.Forms.DialogResult.Yes)
+                {
+                    CurrentMode = Mode.Merge;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            frmFolderName dlg = new frmFolderName();
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                try
+                {
+                    lvImages.Items.Add(dirMan.AddChildDirectory(dlg.FolderName));
+                }
+                catch (ArgumentException)
+                {
+                    //A duplicate directory exists
+                    MessageBox.Show(duplicateDirMsg, duplicateDirTitle,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns true if string can be converted to integer
+        /// </summary>
+        /// <param name="str">string representation of an integer</param>
+        /// <returns>true if str can be converted to an Integer</returns>
         private static bool IsInt(string str)
         {
             try
@@ -513,19 +574,7 @@ namespace MDump
             switch (e.KeyCode)
             {
                 case Keys.Delete:
-                    //Delete selected items
-                    if (lvImages.SelectedItems.Count > 0)
-                    {
-                        foreach(ListViewItem lvi in lvImages.SelectedItems)
-                        {
-                            dirMan.RemoveItem(lvi);
-                            lvi.Remove();
-                        }
-                        if (dirMan.IsEmpty)
-                        {
-                            CurrentMode = Mode.NotSet;
-                        }
-                    }
+                    DeleteSelectedItems();
                     break;
 
                 case Keys.A:
@@ -689,34 +738,7 @@ namespace MDump
 
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
-            if (CurrentMode == Mode.NotSet)
-            {
-                if (MessageBox.Show(switchToMergeMsg, switchToMergeTitle,
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                    == System.Windows.Forms.DialogResult.Yes)
-                {
-                    CurrentMode = Mode.Merge;
-                }
-                else
-                {
-                    return;
-                } 
-            }
-
-            frmFolderName dlg = new frmFolderName();
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                try
-                {
-                    lvImages.Items.Add(dirMan.AddChildDirectory(dlg.FolderName));
-                }
-                catch (ArgumentException)
-                {
-                    //A duplicate directory exists
-                    MessageBox.Show(duplicateDirMsg, duplicateDirTitle,
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
+            AddFolder();
         }
 
         private void txtPath_KeyUp(object sender, KeyEventArgs e)
@@ -797,13 +819,51 @@ namespace MDump
             }
         }
 
+        #endregion
+
         private void conImages_Opening(object sender, CancelEventArgs e)
         {
-            bool selectedItems = lvImages.SelectedItems.Count > 0;
-            tsiAddImages.Visible = tsiAddFolder.Visible = !selectedItems;
-            tsiDelete.Visible = selectedItems;
+            //Reset all items to insisible, then make the ones we need visible
+            foreach (ToolStripItem tsi in conImages.Items)
+            {
+                tsi.Visible = false;
+            }
+
+            switch (lvImages.SelectedItems.Count)
+            {
+                case 0:
+                    tsiAddImages.Visible = true;
+                    tsiAddFolder.Visible = CurrentMode != Mode.Split
+                        && Opts.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
+                    break;
+
+                case 1:
+                    tsiRename.Visible = true;
+                    tsiDelete.Visible = true;
+                    break;
+
+                default:
+                    tsiDelete.Visible = true;
+                    break;
+            }
         }
 
-        #endregion
+        private void tsiAddImages_Click(object sender, EventArgs e)
+        {
+            if (dlgOpenImg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                AddImages(dlgOpenImg.FileNames, false);
+            }
+        }
+
+        private void tsiAddFolder_Click(object sender, EventArgs e)
+        {
+            AddFolder();
+        }
+
+        private void tsiDelete_Click(object sender, EventArgs e)
+        {
+            DeleteSelectedItems();
+        }
     }
 }
