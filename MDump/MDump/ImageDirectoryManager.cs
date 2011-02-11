@@ -206,7 +206,7 @@ namespace MDump
                 int dirIdx;
 
                 //dirs[dirs.Length - 1] is the image name itself
-                for (dirIdx = 0; dirIdx < dirs.Length - 1; ++dirIdx)
+                for (dirIdx = 0; dirIdx < dirs.Length; ++dirIdx)
                 {
                     if (currDir.HasChild(dirs[dirIdx]))
                     {
@@ -221,13 +221,14 @@ namespace MDump
                 bool createIcon = dirIdx == 0;
 
                 //If the directories don't exist all the way in, create them
-                if (dirIdx < dirs.Length - 1)
+                if (dirIdx < dirs.Length)
                 {
-                    for (; dirIdx < dirs.Length - 1; ++dirIdx)
+                    for (; dirIdx < dirs.Length; ++dirIdx)
                     {
                         currDir = currDir.AddDirectoryInternal(dirs[dirIdx]);
                     }
                 }
+                
                 currDir.AddTaggedImage(img);
 
                 ListViewItem ret;
@@ -667,7 +668,8 @@ namespace MDump
         /// <seealso cref=">ImageDirectory.MoveChildDirImagesHere"/>
         public void MoveAllToRoot()
         {
-            root.MoveChildDirImagesHere();   
+            root.MoveChildDirImagesHere();
+            
         }
     }
 }

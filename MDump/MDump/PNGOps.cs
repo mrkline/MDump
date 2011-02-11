@@ -96,7 +96,10 @@ namespace MDump
         /// </summary>
         public static bool DllIsPresent
         {
-            get { return System.IO.File.Exists(DllName); }
+            get
+            { 
+                return System.IO.File.Exists(PathManager.AppPath + DllName); 
+            }
         }
 
         /// <summary>

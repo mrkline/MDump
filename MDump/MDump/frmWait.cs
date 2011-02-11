@@ -103,7 +103,7 @@ namespace MDump
 
                     case ImageMerger.MergeStage.DeterminingNumPerMerge:
                         ImageMerger.LastAttemptInfo lastInfo = (ImageMerger.LastAttemptInfo)info;
-                        string msg = "Determining number of images we can fit in one merged image...\n";
+                        string msg = "Determining number of images we can fit in one merged image...\n\n";
                         switch (lastInfo)
                         {
                             case ImageMerger.LastAttemptInfo.TooLarge:

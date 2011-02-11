@@ -211,7 +211,8 @@ namespace MDump
                             //If not even a single image could fit in the merge, we have an issue
                             if (currMergeSet.Count == 1)
                             {
-                                throw new MergeException(GenerateTooSmallMessage((currMergeSet[0].Tag as ImageTagBase).Name));
+                                throw new MergeException(GenerateTooSmallMessage((currMergeSet[0].Tag as ImageTagBase).Name,
+                                    currMergeSet[0].RawFormat.Guid == ImageFormat.Jpeg.Guid));
                             }
 
                             //If the current merge size is over the limit but the last wasn't, use the last one
@@ -291,14 +292,14 @@ namespace MDump
         /// Generates the message for a MessageBox informing the user that one of their images
         /// is too large for the max merge size.
         /// </summary>
-        /// <param name="filepath">Name of the file that is too large</param>
+        /// <param name="name">Name of the file that is too large</param>
+        /// <param name="isJPEG">Should be true if the file started out as a JPEG</param>
         /// <returns>message to display</returns>
-        private static string GenerateTooSmallMessage(string filepath)
+        private static string GenerateTooSmallMessage(string name, bool isJPEG)
         {
-           string ret = "The maximum merge size is too small to fit the image " + Path.GetFileName(filepath)
+           string ret = "The maximum merge size is too small to fit the image " + Path.GetFileName(name)
                 + ". Increasing the maximum merge size may help.";
-                if(filepath.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase)
-                    || filepath.EndsWith(".jpeg", StringComparison.InvariantCultureIgnoreCase))
+                if(isJPEG)
                 {
                     ret += " Please note that PNG cannot compress large images as well as JPEG"
                         + " since JPEG sacrifices information to make the image smaller."

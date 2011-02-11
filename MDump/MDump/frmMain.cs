@@ -152,6 +152,7 @@ namespace MDump
                 if (_dirUIEnabled == false)
                 {
                     dirMan.MoveAllToRoot();
+                    RefreshDirUI();
                 }
                 else
                 {
@@ -328,13 +329,24 @@ namespace MDump
                         System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                 }
 
-                bmp.Tag = new MergeImageTag(Path.GetFileNameWithoutExtension(filepath),
-                    dirMan.CurrentPath);
+                string path = filepath.Substring(baseDir.Length);
+                path = path.Substring(0, path.LastIndexOf(Path.DirectorySeparatorChar));
 
-                ListViewItem dmRet = dirMan.AddImagePath(bmp, filepath.Substring(baseDir.Length));
-                if (dmRet != null)
+                bmp.Tag = new MergeImageTag(Path.GetFileNameWithoutExtension(filepath),
+                    dirMan.CurrentPath + path);
+
+                try
                 {
-                    lvImages.Items.Add(dmRet);
+                    ListViewItem dmRet = dirMan.AddImagePath(bmp, path);
+                    if (dmRet != null)
+                    {
+                        lvImages.Items.Add(dmRet);
+                    }
+                }
+                catch (ArgumentException)
+                {
+                    //This is thrown by AddImagePath if we have duplicates. Since this may happen
+                    //if say, we added a sub-directory, just ignore it.
                 }
             }
         }
@@ -361,9 +373,9 @@ namespace MDump
             {
                 try
                 {
-                    Opts = MDumpOptions.FromFile(MDumpOptions.fileName);
+                    Opts = MDumpOptions.FromFile(PathManager.AppPath + MDumpOptions.fileName);
                 }
-                catch (Exception)
+                catch
                 {
                     MessageBox.Show(revertingToDefaultsMsg, revertingToDefaultsTitle,
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -524,6 +536,14 @@ namespace MDump
                         lvImages.SelectedItems[0].BeginEdit();
                     }
                     break;
+
+                case Keys.Back:
+                    //Go up a directory
+                    if (btnUpFolder.Enabled)
+                    {
+                        btnUpFolder.PerformClick();
+                    }
+                    break;
             }
         }
 
@@ -535,11 +555,11 @@ namespace MDump
                 MDumpOptions newOpts = optsDlg.GetOptions();
                 if (newOpts.IsDefaultOptions())
                 {
-                    File.Delete(MDumpOptions.fileName);
+                    File.Delete(PathManager.AppPath + MDumpOptions.fileName);
                 }
                 else if (!newOpts.Equals(Opts))
                 {
-                    newOpts.SaveToFile(MDumpOptions.fileName);
+                    newOpts.SaveToFile(PathManager.AppPath + MDumpOptions.fileName);
                 }
                 Opts = newOpts;
                 if (CurrentMode == Mode.Merge)

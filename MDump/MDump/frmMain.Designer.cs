@@ -39,7 +39,6 @@
             this.btnAddImage = new System.Windows.Forms.Button();
             this.btnHowWork = new System.Windows.Forms.Button();
             this.btnInfo = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
             this.btnUpFolder = new System.Windows.Forms.Button();
             this.btnAddFolder = new System.Windows.Forms.Button();
             this.dlgOpenImg = new System.Windows.Forms.OpenFileDialog();
@@ -142,19 +141,6 @@
             this.btnInfo.UseVisualStyleBackColor = true;
             this.btnInfo.Click += new System.EventHandler(this.btnInfo_Click);
             // 
-            // btnDelete
-            // 
-            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnDelete.Enabled = false;
-            this.btnDelete.Image = global::MDump.Properties.Resources.XIcon;
-            this.btnDelete.Location = new System.Drawing.Point(174, 284);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(30, 30);
-            this.btnDelete.TabIndex = 4;
-            this.ttpMain.SetToolTip(this.btnDelete, "Remove the selected image(s) from the list");
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-            // 
             // btnUpFolder
             // 
             this.btnUpFolder.Enabled = false;
@@ -226,7 +212,6 @@
             this.Controls.Add(this.btnInfo);
             this.Controls.Add(this.btnAction);
             this.Controls.Add(this.btnOptions);
-            this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.lvImages);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(460, 200);
@@ -242,7 +227,6 @@
 
         private System.Windows.Forms.ListView lvImages;
         private System.Windows.Forms.ColumnHeader clmImages;
-        private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnOptions;
         private System.Windows.Forms.Button btnAction;
         private System.Windows.Forms.Button btnInfo;

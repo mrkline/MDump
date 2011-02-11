@@ -152,6 +152,7 @@ namespace MDump
             string splitDir = splitPath.Substring(0, splitPath.LastIndexOf(Path.DirectorySeparatorChar));
             string splitName = splitPath.Substring(splitPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
             List<string> splitsSaved = new List<string>();
+            List<string> dirsCreated = new List<string>();
 
             callback(SplitStage.Starting, new SplitCallbackData(sa.Bitmaps.Count));
 
@@ -171,6 +172,8 @@ namespace MDump
                     callback(SplitStage.SplittingNewMerge,
                         new SplitCallbackData(((SplitImageTag)image.Tag).Name,
                             MDDataReader.GetNumImages(dataTokens[0])));
+
+                    int imagesRead = 0;
 
                     //Parse the rest of the tokens, each of which represents an image in the merged image
                     for (int c = 1; c < dataTokens.Length; ++c)
@@ -193,14 +196,19 @@ namespace MDump
                                    saveName += ".png";
                                }
                                callback(SplitStage.SplittingImage,
-                                   new SplitCallbackData(saveName, c - 1));
+                                   new SplitCallbackData(saveName, ++imagesRead));
                                split.Save(saveName,
                                    System.Drawing.Imaging.ImageFormat.Png);
                                splitsSaved.Add(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + saveName);
                                break;
 
                            case MDDataReader.TokenType.Directory:
-                               Directory.SetCurrentDirectory(splitDir + MDDataReader.GetDirectory(dataTokens[c]));
+                               if (opts.SplitPathOpts == MDumpOptions.PathOptions.PreservePath)
+                               {
+                                   string dir = splitDir + MDDataReader.GetDirectory(dataTokens[c]);
+                                   Directory.CreateDirectory(dir);
+                                   Directory.SetCurrentDirectory(dir);
+                               }
                                break;
 
                            default:
@@ -215,14 +223,14 @@ namespace MDump
             catch (PNGOpsException ex)
             {
                 MessageBox.Show(ex.Message, splitFailedTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                CleanupOnSplitFail(splitsSaved);
+                CleanupOnSplitFail(splitsSaved, dirsCreated);
             }
             catch(Exception ex)
             {
                 ErrorHandling.LogException(ex);
                 MessageBox.Show(unexpecError + ErrorHandling.ErrorMessage,
                     splitFailedTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                CleanupOnSplitFail(splitsSaved);
+                CleanupOnSplitFail(splitsSaved, dirsCreated);
             }
             finally
             {
@@ -235,11 +243,15 @@ namespace MDump
         /// This way we don't have a half-baked split.
         /// </summary>
         /// <param name="splitsSaved">Split images already saved</param>
-        private static void CleanupOnSplitFail(List<string> splitsSaved)
+        private static void CleanupOnSplitFail(List<string> splitsSaved, List<string> dirsCreated)
         {
             foreach (string split in splitsSaved)
             {
                 File.Delete(split);
+            }
+            foreach (string dir in dirsCreated)
+            {
+                Directory.Delete(dir);
             }
         }
     }

@@ -37,7 +37,14 @@ namespace MDump
         public static string InvalidBmpNameMsg
             { get { return "Extensions will automatically be added to the images when they are split again"; } }
         public static string InvalidBmpTagTitle { get { return "Invalid image name"; } }
-        
+
+        /// <summary>
+        /// Gets the path of the executable of this running application
+        /// </summary>
+        public static string AppPath
+        {
+            get { return Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + @"\"; }
+        }        
         
         /// <summary>
         /// Gets a placeholder for discarded filenames

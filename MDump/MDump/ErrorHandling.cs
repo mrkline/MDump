@@ -50,15 +50,15 @@ namespace MDump
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter(ErrorFilename, true, Encoding.UTF8))
+                using (StreamWriter sw = new StreamWriter(PathManager.AppPath + ErrorFilename, true, Encoding.UTF8))
                 {
                     Version ver = Assembly.GetExecutingAssembly().GetName().Version;
                     sw.WriteLine("*****Begin Error Report*****");
                     sw.WriteLine("Error on " + DateTime.Now.ToShortDateString());
-                    sw.WriteLine("MDump version " + ver.Major.ToString() + '.'
+                    sw.WriteLine("MDump version " + ver.Major.ToString() + "."
                         + ver.Minor.ToString() + " Build " + ver.Build.ToString());
                     sw.WriteLine();
-                    sw.WriteLine("Exception is of type: " + ex.GetType() + '.');
+                    sw.WriteLine("Exception is of type: " + ex.GetType() + ".");
                     sw.WriteLine("Exception message is:");
                     sw.WriteLine(ex.Message);
                     sw.WriteLine();

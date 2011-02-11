@@ -31,8 +31,8 @@ namespace MDump
         /// <param name="numImages">Number of images in the merged image this data represents</param>
         public void WriteNumImages(int numImages)
         {
-            bw.Write(Encoding.GetBytes(numImagesIndicator + subSeparator
-                + numImages.ToString() + separator));
+            bw.Write(Encoding.GetBytes(numImagesIndicator + subSeparator.ToString()
+                + numImages.ToString() + separator.ToString()));
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace MDump
         /// <param name="dir">MDump path to write</param>
         public void WriteDirectory(string dir)
         {
-            string write = directoryIndicator + subSeparator + dir + separator;
+            string write = directoryIndicator + subSeparator.ToString() + dir + separator.ToString();
             bw.Write(Encoding.GetBytes(write));
         }
 
@@ -55,9 +55,9 @@ namespace MDump
         /// <param name="height">The height of the image</param>
         public void WriteImageData(string name, int x, int y, int width, int height)
         {
-            string write = imageIndicator + subSeparator + name + subSeparator
-                                    + x.ToString() + subSeparator + y.ToString() + subSeparator
-                                    + width.ToString() + subSeparator + height.ToString() + separator;
+            string write = imageIndicator.ToString() + subSeparator.ToString() + name + subSeparator.ToString()
+                                    + x.ToString() + subSeparator.ToString() + y.ToString() + subSeparator.ToString()
+                                    + width.ToString() + subSeparator.ToString() + height.ToString() + separator.ToString();
             bw.Write(Encoding.GetBytes(write));
         }
 
