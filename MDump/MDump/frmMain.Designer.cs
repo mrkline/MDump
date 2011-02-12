@@ -264,7 +264,6 @@
             this.MinimumSize = new System.Drawing.Size(460, 200);
             this.Name = "frmMain";
             this.Text = "MDump";
-            this.Load += new System.EventHandler(this.frmMain_Load);
             this.conImages.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

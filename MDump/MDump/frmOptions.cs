@@ -20,12 +20,12 @@ namespace MDump
         private static readonly Color invalidColor = Color.Red;
 
         private const int kBytesPerKB = 1024;
-        private const int kSliderOffset = 3;
 
         /// <summary>
         /// Construct the form using default options
         /// </summary>
-        public frmOptions() : this(new MDumpOptions())
+        public frmOptions()
+            : this(new MDumpOptions())
         { }
 
         /// <summary>
@@ -59,7 +59,26 @@ namespace MDump
                     radDiscardFilenames.Checked = true;
                     break;
             }
-            trkCompression.Value = opts.CompressionLevel - kSliderOffset;
+            //Build the combo box, picking out the selected item
+            int idx = 0;
+            bool idxFound = false;
+            foreach (string str in MasterFormatHandler.Instance.SupportedFormatNames)
+            {
+                cmbFormat.Items.Add(str);
+
+                if (str == opts.MergeFormat)
+                {
+                    idxFound = true;
+                }
+
+                if (!idxFound)
+                {
+                    ++idx;
+                }
+            }
+            cmbFormat.SelectedIndex = idx;
+            trkCompression.Maximum = Enum.GetValues(typeof(MDumpOptions.CompressionLevel)).Length;
+            trkCompression.Value = (int)opts.CompLevel;
             nudMaxMergeSize.Value = Convert.ToDecimal(opts.MaxMergeSize / kBytesPerKB);
             chkAddTitleBar.Checked = opts.AddTitleBar;
             switch (opts.SplitPathOpts)
@@ -82,6 +101,7 @@ namespace MDump
         /// Used to retrieve the options the user configured in this form.
         /// </summary>
         /// <returns>The options represented by the form controls</returns>
+        /// 
         public MDumpOptions GetOptions()
         {
             MDumpOptions opts = new MDumpOptions();
@@ -109,7 +129,8 @@ namespace MDump
             {
                 opts.SplitPathOpts = MDumpOptions.PathOptions.Discard;
             }
-            opts.CompressionLevel = trkCompression.Value + kSliderOffset;
+            opts.MergeFormat = cmbFormat.SelectedText;
+            opts.CompLevel = (MDumpOptions.CompressionLevel)trkCompression.Value;
             opts.MaxMergeSize = Convert.ToInt32(nudMaxMergeSize.Value) * kBytesPerKB;
             opts.AddTitleBar = chkAddTitleBar.Checked;
             return opts;

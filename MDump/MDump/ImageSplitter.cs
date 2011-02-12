@@ -107,15 +107,13 @@ namespace MDump
         private class SplitThreadArgs
         {
             public List<Bitmap> Bitmaps { get; private set; }
-            public MDumpOptions Options { get; private set; }
             public string SplitPath { get; private set; }
             public SplitCallback Callback { get; private set; }
 
-            public SplitThreadArgs(List<Bitmap> bitmaps, MDumpOptions opts, string splitPath,
+            public SplitThreadArgs(List<Bitmap> bitmaps, string splitPath,
                 SplitCallback callback)
             {
                 Bitmaps = bitmaps;
-                Options = opts;
                 SplitPath = splitPath;
                 Callback = callback;
             }
@@ -126,13 +124,12 @@ namespace MDump
         /// passing a wait dialog updates on its current state via callbacks
         /// </summary>
         /// <param name="bitmaps">Bitmaps to split and save. Their tag contains afile name or path.</param>
-        /// <param name="opts">Options to use for splitting the images</param>
         /// <param name="SplitPath">Directory to split merge images to</param>
         /// <param name="callback">Callback for wait form to show user what is going on</param>
-        public static void SplitImages(List<Bitmap> bitmaps, MDumpOptions opts, string splitDir,
+        public static void SplitImages(List<Bitmap> bitmaps, string splitDir,
             SplitCallback callback)
         {
-            SplitThreadArgs ta = new SplitThreadArgs(bitmaps, opts, splitDir, callback);
+            SplitThreadArgs ta = new SplitThreadArgs(bitmaps, splitDir, callback);
             Thread thread = new Thread(SplitThreadProc);
             thread.Start(ta);
         }
@@ -147,7 +144,7 @@ namespace MDump
 
             //Cache our args since we'll be using them constantly
             SplitCallback callback = sa.Callback;
-            MDumpOptions opts = sa.Options;
+            MDumpOptions opts = MDumpOptions.Instance;
             string splitPath = sa.SplitPath;
             string splitDir = splitPath.Substring(0, splitPath.LastIndexOf(Path.DirectorySeparatorChar));
             string splitName = splitPath.Substring(splitPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
@@ -220,7 +217,7 @@ namespace MDump
                 }
                 MessageBox.Show(successMsg + splitDir, successTitle);
             }
-            catch (PNGOpsException ex)
+            catch (FormatHandlerException ex)
             {
                 MessageBox.Show(ex.Message, splitFailedTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 CleanupOnSplitFail(splitsSaved, dirsCreated);

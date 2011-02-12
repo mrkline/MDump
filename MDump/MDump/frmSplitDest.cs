@@ -22,11 +22,9 @@ namespace MDump
         #endregion
 
         private readonly Color defaultTextBackColor;
-        private readonly MDumpOptions opts;
 
-        public frmSplitDest(MDumpOptions options)
+        public frmSplitDest()
         {
-            opts = options;
             InitializeComponent();
             lblDirStatus.ForeColor = Colors.InvalidColor;
             defaultTextBackColor = txtFilename.BackColor;
@@ -68,7 +66,7 @@ namespace MDump
             txtFilename.Text = string.Empty;
             txtFilename.BackColor = defaultTextBackColor;
             btnOK.Enabled = false;
-            if (opts.SplitPathOpts == MDumpOptions.PathOptions.Discard)
+            if (MDumpOptions.Instance.SplitPathOpts == MDumpOptions.PathOptions.Discard)
             {
                 lblSelectFilename.Text = ignoreInfoLabel;
             }

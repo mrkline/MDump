@@ -26,18 +26,15 @@ namespace MDump
 
         private frmMain.Mode mode;
         private List<Bitmap> bmpList;
-        private MDumpOptions opts;
         private string path;
 
         private string currentMerge;
        
-        public frmWait(frmMain.Mode mode, List<Bitmap> bmpList, MDumpOptions opts,
-            string path)
+        public frmWait(frmMain.Mode mode, List<Bitmap> bmpList, string path)
         {
             InitializeComponent();
             this.mode = mode;
             this.bmpList = bmpList;
-            this.opts = opts;
             this.path = path;
         }
 
@@ -47,13 +44,13 @@ namespace MDump
             {
                 prgIndividual.Style = ProgressBarStyle.Marquee;
                 Text = mergeTitle;
-                ImageMerger.MergeImages(bmpList, opts, path, MergeCallback);
+                ImageMerger.MergeImages(bmpList, path, MergeCallback);
             }
             else
             {
                 prgIndividual.Style = ProgressBarStyle.Blocks;
                 Text = splitTitle;
-                ImageSplitter.SplitImages(bmpList, opts, path, SplitCallback);
+                ImageSplitter.SplitImages(bmpList, path, SplitCallback);
             }
         }
 

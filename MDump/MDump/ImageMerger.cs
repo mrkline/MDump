@@ -121,15 +121,13 @@ namespace MDump
         private class MergeThreadArgs
         {
             public List<Bitmap> Bitmaps { get; private set; }
-            public MDumpOptions Options { get; private set; }
             public string MergePath { get; private set; }
             public MergeCallback Callback { get; private set; }
 
-            public MergeThreadArgs(List<Bitmap> bitmaps, MDumpOptions options,
+            public MergeThreadArgs(List<Bitmap> bitmaps,
                 string mPath, MergeCallback callback)
             {
                 Bitmaps = bitmaps;
-                Options = options;
                 MergePath = mPath;
                 Callback = callback;
             }
@@ -140,13 +138,12 @@ namespace MDump
         /// passing a wait dialog updates on its current state via callbacks
         /// </summary>
         /// <param name="images">Bitmaps to merge and save. Their tag contains afile name or path.</param>
-        /// <param name="opts">Options to use for merging the images</param>
         /// <param name="mergeDir">Directory to merge images to</param>
         /// <param name="callback">Callback for wait form to show user what is going on</param>
-        public static void MergeImages(List<Bitmap> images, MDumpOptions opts, string mergeDir,
+        public static void MergeImages(List<Bitmap> images, string mergeDir,
             MergeCallback callback)
         {
-            MergeThreadArgs ta = new MergeThreadArgs(images, opts, mergeDir, callback);
+            MergeThreadArgs ta = new MergeThreadArgs(images, mergeDir, callback);
             Thread thread = new Thread(MergeThreadProc);
             thread.Start(ta);
         }
@@ -163,7 +160,7 @@ namespace MDump
             //Cache commonly used values
             List<Bitmap> bitmaps = ta.Bitmaps;
             MergeCallback callback = ta.Callback;
-            MDumpOptions opts = ta.Options;
+            MDumpOptions opts = MDumpOptions.Instance;
             string mergePath = ta.MergePath;
             int maxMergeSize = opts.MaxMergeSize;
 
@@ -202,7 +199,7 @@ namespace MDump
                         {
                             currentMergeMem = CreateMergedImage(currMergeSet, opts);
                         }
-                        catch(PNGOpsException ex)
+                        catch (FormatHandlerException ex)
                         {
                             throw new MergeException(mergeFailedMsg, ex);
                         }
@@ -344,7 +341,8 @@ namespace MDump
         /// </summary>
         /// <param name="bitmaps">Bitmaps to merge into a PNG</param>
         /// <param name="opts">Options to use while merging</param>
-        /// <returns>The </returns>
+        /// <param name="handler">Image format handler to save the image with</param>
+        /// <returns>The merged image in managed memory</returns>
         private static byte[] CreateMergedImage(IEnumerable<Bitmap> bitmaps, MDumpOptions opts)
         {
             int maxWidth = 0;
@@ -403,7 +401,7 @@ namespace MDump
                 merged = mergedWithTitle;
             }
 
-            return PNGOps.SavePNGToMemory(merged, mdData, opts.CompressionLevel);
+            return MasterFormatHandler.Instance.SaveToMemory(merged, mdData, opts.CompLevel);
         }
 
         /// <summary>
