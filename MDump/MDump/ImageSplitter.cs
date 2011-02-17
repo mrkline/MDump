@@ -151,10 +151,10 @@ namespace MDump
             List<string> splitsSaved = new List<string>();
             List<string> dirsCreated = new List<string>();
 
-            callback(SplitStage.Starting, new SplitCallbackData(sa.Bitmaps.Count));
-
             try
             {
+                callback(SplitStage.Starting, new SplitCallbackData(sa.Bitmaps.Count));
+
                 //Set the starting directory to the specified one
                 Directory.SetCurrentDirectory(splitDir);
 

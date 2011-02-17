@@ -15,7 +15,6 @@ namespace MDump
         private const string ignoreInfoLabel = "Select a name to save all split images as:";
         private const string useInfoLabel = "Select a name to use for any merges that didn't save file info:";
         private const string invalidDirStatus = "This is not an existing folder";
-        private const string noRelativeDirsStatus = "Relative directories are not allowed";
         private const string overwriteFilenameStatus = "Split files with this name already exist in this folder.\nThey will be overwritten.";
         private const string hasExtensionFilenameStatus = "Do not add an extension to the file name.\nIt will be done automatically";
         private const string invalidFilenameStatus = "This is not a valid file name.";
@@ -28,6 +27,9 @@ namespace MDump
             InitializeComponent();
             lblDirStatus.ForeColor = Colors.InvalidColor;
             defaultTextBackColor = txtFilename.BackColor;
+            //Set current directory to the application directory so relative paths
+            //work as expected
+            Directory.SetCurrentDirectory(PathManager.AppDir);
         }
 
         public string SplitDir
@@ -36,11 +38,11 @@ namespace MDump
             {
                 if (txtDir.Text.Length == 0)
                 {
-                    return Path.GetDirectoryName(Application.ExecutablePath);
+                    return Directory.GetCurrentDirectory();
                 }
                 else
                 {
-                    return txtDir.Text;
+                    return Path.GetFullPath(txtDir.Text);
                 }
             }
         }
@@ -96,13 +98,6 @@ namespace MDump
                 lblDirStatus.Text = invalidDirStatus;
                 lblDirStatus.Visible = true;
                 txtDir.BackColor = Colors.InvalidColor;
-            }
-            //Relative paths are not allowed
-            else if (txtDir.Text.Contains(".."))
-            {
-                lblDirStatus.Text = noRelativeDirsStatus;
-                lblDirStatus.Visible = true;
-                txtDir.BackColor = Colors.InvalidBGColor;
             }
             else
             {

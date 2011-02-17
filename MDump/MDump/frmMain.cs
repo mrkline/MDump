@@ -106,7 +106,7 @@ namespace MDump
                 {
                     case Mode.NotSet:
                         //Disable merge directory fun
-                        btnAddFolder.Enabled = MDumpOptions.Instance.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
+                        btnCreateFolder.Enabled = MDumpOptions.Instance.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
                         DirectoryUIEnabled = false;
                         btnAction.Enabled = false;
                         btnAction.Text = notSetActionText;
@@ -115,7 +115,7 @@ namespace MDump
                         break;
 
                     case Mode.Merge:
-                        btnAddFolder.Enabled = DirectoryUIEnabled
+                        btnCreateFolder.Enabled = DirectoryUIEnabled
                             = MDumpOptions.Instance.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
                         btnAction.Enabled = true;
                         btnAction.Text = mergeActionText;
@@ -124,7 +124,7 @@ namespace MDump
                         break;
 
                     case Mode.Split:
-                        btnAddFolder.Enabled = DirectoryUIEnabled = false;
+                        btnCreateFolder.Enabled = DirectoryUIEnabled = false;
                         btnAction.Enabled = true;
                         btnAction.Text = splitActionText;
                         ttpMain.SetToolTip(btnAction, splitActionTooltip);
@@ -182,7 +182,7 @@ namespace MDump
             {
                 try
                 {
-                    MDumpOptions.Instance = MDumpOptions.FromFile(PathManager.AppPath + MDumpOptions.fileName);
+                    MDumpOptions.Instance = MDumpOptions.FromFile(PathManager.AppDir + MDumpOptions.fileName);
                 }
                 catch
                 {
@@ -415,36 +415,18 @@ namespace MDump
         /// <summary>
         /// Performs Add Folder action when the button or context menu item is clicked
         /// </summary>
-        private void AddFolder()
+        private void CreateFolder()
         {
             if (CurrentMode == Mode.NotSet)
             {
-                if (MessageBox.Show(switchToMergeMsg, switchToMergeTitle,
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                    == System.Windows.Forms.DialogResult.Yes)
-                {
-                    CurrentMode = Mode.Merge;
-                }
-                else
-                {
-                    return;
-                }
+                CurrentMode = Mode.Merge;
             }
 
-            frmFolderName dlg = new frmFolderName();
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                try
-                {
-                    lvImages.Items.Add(dirMan.AddChildDirectory(dlg.FolderName));
-                }
-                catch (ArgumentException)
-                {
-                    //A duplicate directory exists
-                    MessageBox.Show(duplicateDirMsg, duplicateDirTitle,
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
+            lvImages.SelectedItems.Clear();
+
+            ListViewItem newItem = dirMan.AddChildDirectory();
+            lvImages.Items.Add(newItem);
+            newItem.BeginEdit();
         }
 
         /// <summary>
@@ -564,9 +546,13 @@ namespace MDump
             }
         }
 
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            //TODO: Implement
+        }
+
         private void lvImages_KeyUp(object sender, KeyEventArgs e)
         {
-            //TODO: Move to common functions
             switch (e.KeyCode)
             {
                 case Keys.Delete:
@@ -610,21 +596,21 @@ namespace MDump
                 MDumpOptions newOpts = optsDlg.GetOptions();
                 if (newOpts.IsDefaultOptions())
                 {
-                    File.Delete(PathManager.AppPath + MDumpOptions.fileName);
+                    File.Delete(PathManager.AppDir + MDumpOptions.fileName);
                 }
                 else if (!newOpts.Equals(MDumpOptions.Instance))
                 {
-                    newOpts.SaveToFile(PathManager.AppPath + MDumpOptions.fileName);
+                    newOpts.SaveToFile(PathManager.AppDir + MDumpOptions.fileName);
                 }
                 MDumpOptions.Instance = newOpts;
                 if (CurrentMode == Mode.Merge)
                 {
-                    btnAddFolder.Enabled = DirectoryUIEnabled
+                    btnCreateFolder.Enabled = DirectoryUIEnabled
                         = MDumpOptions.Instance.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
                 }
                 else if (CurrentMode == Mode.NotSet)
                 {
-                    btnAddFolder.Enabled = MDumpOptions.Instance.MergePathOpts
+                    btnCreateFolder.Enabled = MDumpOptions.Instance.MergePathOpts
                         == MDumpOptions.PathOptions.PreservePath;
                 }
             }
@@ -713,20 +699,15 @@ namespace MDump
             }
         }
 
-        private void btnHowWork_Click(object sender, EventArgs e)
-        {
-            new frmHowItWorks().ShowDialog();
-        }
-
         private void btnUpFolder_Click(object sender, EventArgs e)
         {
             dirMan.MoveUpDirectory();
             RefreshDirUI();
         }
 
-        private void btnAddFolder_Click(object sender, EventArgs e)
+        private void btnCreateFolder_Click(object sender, EventArgs e)
         {
-            AddFolder();
+            CreateFolder();
         }
 
         private void txtPath_KeyUp(object sender, KeyEventArgs e)
@@ -819,7 +800,7 @@ namespace MDump
             {
                 case 0:
                     tsiAddImages.Visible = true;
-                    tsiAddFolder.Visible = CurrentMode != Mode.Split
+                    tsiCreateFolder.Visible = CurrentMode != Mode.Split
                         && MDumpOptions.Instance.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
                     break;
 
@@ -842,9 +823,9 @@ namespace MDump
             }
         }
 
-        private void tsiAddFolder_Click(object sender, EventArgs e)
+        private void tsiCreateFolder_Click(object sender, EventArgs e)
         {
-            AddFolder();
+            CreateFolder();
         }
 
         private void tsiDelete_Click(object sender, EventArgs e)

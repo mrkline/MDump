@@ -103,5 +103,10 @@ namespace MDump
         {
             Close();
         }
+
+        private void btnHowItWorks_Click(object sender, EventArgs e)
+        {
+            new frmHowItWorks().ShowDialog();
+        }
     }
 }

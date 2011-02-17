@@ -34,7 +34,7 @@
             this.clmImages = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.conImages = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsiAddImages = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsiAddFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsiCreateFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.tsiDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.tsiRename = new System.Windows.Forms.ToolStripMenuItem();
             this.imlLVIcons = new System.Windows.Forms.ImageList(this.components);
@@ -42,14 +42,14 @@
             this.btnAction = new System.Windows.Forms.Button();
             this.ttpMain = new System.Windows.Forms.ToolTip(this.components);
             this.btnAddImage = new System.Windows.Forms.Button();
-            this.btnHowWork = new System.Windows.Forms.Button();
             this.btnInfo = new System.Windows.Forms.Button();
             this.btnUpFolder = new System.Windows.Forms.Button();
-            this.btnAddFolder = new System.Windows.Forms.Button();
+            this.btnCreateFolder = new System.Windows.Forms.Button();
             this.dlgOpenImg = new System.Windows.Forms.OpenFileDialog();
             this.dlgMerge = new System.Windows.Forms.SaveFileDialog();
             this.txtPath = new System.Windows.Forms.TextBox();
             this.lblRoot = new System.Windows.Forms.Label();
+            this.btnReset = new System.Windows.Forms.Button();
             this.conImages.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -86,39 +86,39 @@
             // 
             this.conImages.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsiAddImages,
-            this.tsiAddFolder,
+            this.tsiCreateFolder,
             this.tsiDelete,
             this.tsiRename});
             this.conImages.Name = "conImages";
-            this.conImages.Size = new System.Drawing.Size(138, 92);
+            this.conImages.Size = new System.Drawing.Size(145, 92);
             this.conImages.Opening += new System.ComponentModel.CancelEventHandler(this.conImages_Opening);
             // 
             // tsiAddImages
             // 
             this.tsiAddImages.Name = "tsiAddImages";
-            this.tsiAddImages.Size = new System.Drawing.Size(137, 22);
+            this.tsiAddImages.Size = new System.Drawing.Size(144, 22);
             this.tsiAddImages.Text = "Add &Images";
             this.tsiAddImages.Visible = false;
             this.tsiAddImages.Click += new System.EventHandler(this.tsiAddImages_Click);
             // 
-            // tsiAddFolder
+            // tsiCreateFolder
             // 
-            this.tsiAddFolder.Name = "tsiAddFolder";
-            this.tsiAddFolder.Size = new System.Drawing.Size(137, 22);
-            this.tsiAddFolder.Text = "Add &Folder";
-            this.tsiAddFolder.Click += new System.EventHandler(this.tsiAddFolder_Click);
+            this.tsiCreateFolder.Name = "tsiCreateFolder";
+            this.tsiCreateFolder.Size = new System.Drawing.Size(144, 22);
+            this.tsiCreateFolder.Text = "Create &Folder";
+            this.tsiCreateFolder.Click += new System.EventHandler(this.tsiCreateFolder_Click);
             // 
             // tsiDelete
             // 
             this.tsiDelete.Name = "tsiDelete";
-            this.tsiDelete.Size = new System.Drawing.Size(137, 22);
+            this.tsiDelete.Size = new System.Drawing.Size(144, 22);
             this.tsiDelete.Text = "&Delete";
             this.tsiDelete.Click += new System.EventHandler(this.tsiDelete_Click);
             // 
             // tsiRename
             // 
             this.tsiRename.Name = "tsiRename";
-            this.tsiRename.Size = new System.Drawing.Size(137, 22);
+            this.tsiRename.Size = new System.Drawing.Size(144, 22);
             this.tsiRename.Text = "&Rename";
             this.tsiRename.Click += new System.EventHandler(this.tsiRename_Click);
             // 
@@ -164,18 +164,6 @@
             this.btnAddImage.UseVisualStyleBackColor = true;
             this.btnAddImage.Click += new System.EventHandler(this.btnAdd_Click);
             // 
-            // btnHowWork
-            // 
-            this.btnHowWork.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnHowWork.Location = new System.Drawing.Point(245, 284);
-            this.btnHowWork.Name = "btnHowWork";
-            this.btnHowWork.Size = new System.Drawing.Size(110, 30);
-            this.btnHowWork.TabIndex = 7;
-            this.btnHowWork.Text = "How does it work?";
-            this.ttpMain.SetToolTip(this.btnHowWork, "Click to learn how MDump works");
-            this.btnHowWork.UseVisualStyleBackColor = true;
-            this.btnHowWork.Click += new System.EventHandler(this.btnHowWork_Click);
-            // 
             // btnInfo
             // 
             this.btnInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -200,20 +188,20 @@
             this.btnUpFolder.UseVisualStyleBackColor = true;
             this.btnUpFolder.Click += new System.EventHandler(this.btnUpFolder_Click);
             // 
-            // btnAddFolder
+            // btnCreateFolder
             // 
-            this.btnAddFolder.Location = new System.Drawing.Point(93, 284);
-            this.btnAddFolder.Name = "btnAddFolder";
-            this.btnAddFolder.Size = new System.Drawing.Size(75, 30);
-            this.btnAddFolder.TabIndex = 5;
-            this.btnAddFolder.Text = "Add Folder";
-            this.ttpMain.SetToolTip(this.btnAddFolder, "Add a folder to put additional images in to");
-            this.btnAddFolder.UseVisualStyleBackColor = true;
-            this.btnAddFolder.Click += new System.EventHandler(this.btnAddFolder_Click);
+            this.btnCreateFolder.Location = new System.Drawing.Point(93, 284);
+            this.btnCreateFolder.Name = "btnCreateFolder";
+            this.btnCreateFolder.Size = new System.Drawing.Size(85, 30);
+            this.btnCreateFolder.TabIndex = 5;
+            this.btnCreateFolder.Text = "Create Folder";
+            this.ttpMain.SetToolTip(this.btnCreateFolder, "Add a folder to put additional images in to");
+            this.btnCreateFolder.UseVisualStyleBackColor = true;
+            this.btnCreateFolder.Click += new System.EventHandler(this.btnCreateFolder_Click);
             // 
             // dlgOpenImg
             // 
-            this.dlgOpenImg.Filter = "Images|*gif;*jpg;*jpeg;*wmf;*bmp;*png";
+            this.dlgOpenImg.Filter = "Images|*.gif;*.jpg;*.jpeg;*.wmf;*.bmp;*.png";
             this.dlgOpenImg.Multiselect = true;
             // 
             // dlgMerge
@@ -245,16 +233,27 @@
             this.lblRoot.TabIndex = 0;
             this.lblRoot.Text = "\\root\\";
             // 
+            // btnReset
+            // 
+            this.btnReset.Location = new System.Drawing.Point(184, 284);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(81, 30);
+            this.btnReset.TabIndex = 10;
+            this.btnReset.Text = "Reset";
+            this.ttpMain.SetToolTip(this.btnReset, "Resets MDump, clearing out all images.");
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(484, 362);
-            this.Controls.Add(this.btnAddFolder);
+            this.Controls.Add(this.btnCreateFolder);
             this.Controls.Add(this.btnUpFolder);
+            this.Controls.Add(this.btnReset);
             this.Controls.Add(this.lblRoot);
             this.Controls.Add(this.txtPath);
-            this.Controls.Add(this.btnHowWork);
             this.Controls.Add(this.btnAddImage);
             this.Controls.Add(this.btnInfo);
             this.Controls.Add(this.btnAction);
@@ -281,17 +280,17 @@
         private System.Windows.Forms.Button btnAddImage;
         private System.Windows.Forms.OpenFileDialog dlgOpenImg;
         private System.Windows.Forms.SaveFileDialog dlgMerge;
-        private System.Windows.Forms.Button btnHowWork;
         private System.Windows.Forms.TextBox txtPath;
         private System.Windows.Forms.Label lblRoot;
         private System.Windows.Forms.Button btnUpFolder;
-        private System.Windows.Forms.Button btnAddFolder;
+        private System.Windows.Forms.Button btnCreateFolder;
         internal System.Windows.Forms.ImageList imlLVIcons;
         private System.Windows.Forms.ContextMenuStrip conImages;
         private System.Windows.Forms.ToolStripMenuItem tsiAddImages;
-        private System.Windows.Forms.ToolStripMenuItem tsiAddFolder;
+        private System.Windows.Forms.ToolStripMenuItem tsiCreateFolder;
         private System.Windows.Forms.ToolStripMenuItem tsiDelete;
         private System.Windows.Forms.ToolStripMenuItem tsiRename;
+        private System.Windows.Forms.Button btnReset;
 
     }
 }

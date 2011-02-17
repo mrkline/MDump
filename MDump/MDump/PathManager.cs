@@ -39,9 +39,9 @@ namespace MDump
         public static string InvalidBmpTagTitle { get { return "Invalid image name"; } }
 
         /// <summary>
-        /// Gets the path of the executable of this running application
+        /// Gets the directory of the executable of this running application
         /// </summary>
-        public static string AppPath
+        public static string AppDir
         {
             get { return Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + @"\"; }
         }        

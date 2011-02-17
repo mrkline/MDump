@@ -50,7 +50,7 @@ namespace MDump
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter(PathManager.AppPath + ErrorFilename, true, Encoding.UTF8))
+                using (StreamWriter sw = new StreamWriter(PathManager.AppDir + ErrorFilename, true, Encoding.UTF8))
                 {
                     Version ver = Assembly.GetExecutingAssembly().GetName().Version;
                     sw.WriteLine("*****Begin Error Report*****");

@@ -33,6 +33,7 @@
             this.lblVersion = new System.Windows.Forms.Label();
             this.lblCopyright = new System.Windows.Forms.Label();
             this.btnClose = new System.Windows.Forms.Button();
+            this.btnHowItWorks = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.imgSidebar)).BeginInit();
             this.SuspendLayout();
             // 
@@ -90,6 +91,16 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
+            // btnHowItWorks
+            // 
+            this.btnHowItWorks.Location = new System.Drawing.Point(197, 205);
+            this.btnHowItWorks.Name = "btnHowItWorks";
+            this.btnHowItWorks.Size = new System.Drawing.Size(104, 23);
+            this.btnHowItWorks.TabIndex = 5;
+            this.btnHowItWorks.Text = "How does it work?";
+            this.btnHowItWorks.UseVisualStyleBackColor = true;
+            this.btnHowItWorks.Click += new System.EventHandler(this.btnHowItWorks_Click);
+            // 
             // frmAbout
             // 
             this.AcceptButton = this.btnClose;
@@ -97,6 +108,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(394, 240);
+            this.Controls.Add(this.btnHowItWorks);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.lblCopyright);
             this.Controls.Add(this.lblVersion);
@@ -124,6 +136,7 @@
         private System.Windows.Forms.Label lblVersion;
         private System.Windows.Forms.Label lblCopyright;
         private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.Button btnHowItWorks;
 
     }
 }

@@ -15,6 +15,7 @@ namespace MDump
     class ImageDirectoryManager
     {
         private const string rootName = "root";
+        private const string defaultDirName = "New Folder";
         private const string cannotEscapeRoot = "There is no directory higher than the root directory";
 
         #region ImageDirectory Class
@@ -632,6 +633,25 @@ namespace MDump
         public ListViewItem AddImagePath(Bitmap img, string dirPath)
         {
             return activeDirectory.AddImagePath(img, dirPath);
+        }
+
+        /// <summary>
+        /// Adds a child directory with a default name.
+        /// </summary>
+        /// <returns>LVI representation of the directory</returns>
+        public ListViewItem AddChildDirectory()
+        {
+            string name = defaultDirName;
+
+            if (activeDirectory.HasChild(name))
+            {
+                for (int c = 2; activeDirectory.HasChild(name); ++c)
+                {
+                    name = defaultDirName + " (" + c.ToString() + ")";
+                }
+            }
+
+            return activeDirectory.AddDirectory(name);
         }
 
         /// <summary>
