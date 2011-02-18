@@ -87,6 +87,7 @@
       <DependentUpon>frmWait.cs</DependentUpon>
     </Compile>
     <Compile Include="Colors.cs" />
+    <Compile Include="ImageCreator.cs" />
     <Compile Include="ImageDirectoryManager.cs" />
     <Compile Include="ImageMerger.cs" />
     <Compile Include="ImageFormatHandler.cs" />
@@ -98,7 +99,7 @@
     <Compile Include="MDDataReader.cs" />
     <Compile Include="MDDataWriter.cs" />
     <Compile Include="MDumpOptions.cs" />
-    <Compile Include="PathManager.cs" />
+    <Compile Include="PathUtils.cs" />
     <Compile Include="PNGHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

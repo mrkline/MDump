@@ -56,7 +56,7 @@ namespace MDump
 
             public static int BitmapTagComparison(NodeData d1, NodeData d2)
             {
-                return ((MergeImageTag)d1.Bmp.Tag).MDumpDir.CompareTo(((MergeImageTag)d2.Bmp.Tag).MDumpDir);
+                return ((IndividualImageTag)d1.Bmp.Tag).MDumpDir.CompareTo(((IndividualImageTag)d2.Bmp.Tag).MDumpDir);
             }
         }
 
@@ -240,7 +240,7 @@ namespace MDump
                                 {
                                     Bitmap b = data.Bmp;
                                     Rectangle r = data.Rect;
-                                    MergeImageTag t = (MergeImageTag)b.Tag;
+                                    IndividualImageTag t = (IndividualImageTag)b.Tag;
                                     string currDir = t.MDumpDir;
                                     if (prevDir != currDir)
                                     {
@@ -261,7 +261,7 @@ namespace MDump
                                         Rectangle r = data.Rect;
 
                                         g.DrawImage(b, r.X, r.Y, b.Width, b.Height);
-                                        mddw.WriteImageData(((MergeImageTag)b.Tag).Name,
+                                        mddw.WriteImageData(((IndividualImageTag)b.Tag).Name,
                                             r.X, r.Y, b.Width, b.Height);
                                     }
                                 }
@@ -276,7 +276,7 @@ namespace MDump
                                         Rectangle r = data.Rect;
 
                                         g.DrawImage(b, r.X, r.Y, b.Width, b.Height);
-                                        mddw.WriteImageData(PathManager.DiscardedFilename,
+                                        mddw.WriteImageData(PathUtils.DiscardedFilename,
                                             r.X, r.Y, b.Width, b.Height);
                                     }
                                 }

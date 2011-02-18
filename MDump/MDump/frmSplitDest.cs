@@ -29,7 +29,7 @@ namespace MDump
             defaultTextBackColor = txtFilename.BackColor;
             //Set current directory to the application directory so relative paths
             //work as expected
-            Directory.SetCurrentDirectory(PathManager.AppDir);
+            Directory.SetCurrentDirectory(PathUtils.AppDir);
         }
 
         public string SplitDir

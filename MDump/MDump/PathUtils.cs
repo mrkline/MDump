@@ -9,7 +9,7 @@ namespace MDump
     /// Manages path validation. The idea behind this class is to isolate this functionality
     /// so that future changes are simple (as they weren't the first time it changed).
     /// </summary>
-    static class PathManager
+    static class PathUtils
     {
         private static char[] invalidDirNameChars;
         private static char[] invalidMergeNameChars;
@@ -20,7 +20,7 @@ namespace MDump
         /// <summary>
         /// Constructor
         /// </summary>
-        static PathManager()
+        static PathUtils()
         {
             List<char> invDirNameCharList = new List<char>();
             invDirNameCharList.Add(Path.PathSeparator);
@@ -58,19 +58,15 @@ namespace MDump
         /// <returns>true if the provided file has one of the supported image extensions</returns>
         public static bool IsSupportedImage(string filepath)
         {
-            //HACK: Are freshly allocated objects always generation 0?
-            int gen;
             try
             {
                 System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(filepath);
-                gen = GC.GetGeneration(bmp);
+                bmp.Dispose();
             }
             catch
             {
                 return false;
             }
-            //Clean up from the created bitmap (we don't need it hanging around in memory)
-            GC.Collect(gen);
             return true;
         }
 

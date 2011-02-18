@@ -108,7 +108,7 @@ namespace MDump
                         //Disable merge directory fun
                         btnCreateFolder.Enabled = MDumpOptions.Instance.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
                         DirectoryUIEnabled = false;
-                        btnAction.Enabled = false;
+                        btnAction.Enabled = btnReset.Enabled = false;
                         btnAction.Text = notSetActionText;
                         ttpMain.SetToolTip(btnAction, notSetActionTooltip);
                         lvImages.LabelEdit = false;
@@ -117,7 +117,7 @@ namespace MDump
                     case Mode.Merge:
                         btnCreateFolder.Enabled = DirectoryUIEnabled
                             = MDumpOptions.Instance.MergePathOpts == MDumpOptions.PathOptions.PreservePath;
-                        btnAction.Enabled = true;
+                        btnAction.Enabled = btnReset.Enabled = true;
                         btnAction.Text = mergeActionText;
                         ttpMain.SetToolTip(btnAction, mergeActionTooltip);
                         lvImages.LabelEdit = true;
@@ -125,7 +125,7 @@ namespace MDump
 
                     case Mode.Split:
                         btnCreateFolder.Enabled = DirectoryUIEnabled = false;
-                        btnAction.Enabled = true;
+                        btnAction.Enabled = btnReset.Enabled = true;
                         btnAction.Text = splitActionText;
                         ttpMain.SetToolTip(btnAction, splitActionTooltip);
                         lvImages.LabelEdit = false;
@@ -182,7 +182,7 @@ namespace MDump
             {
                 try
                 {
-                    MDumpOptions.Instance = MDumpOptions.FromFile(PathManager.AppDir + MDumpOptions.fileName);
+                    MDumpOptions.Instance = MDumpOptions.FromFile(PathUtils.AppDir + MDumpOptions.fileName);
                 }
                 catch
                 {
@@ -288,7 +288,7 @@ namespace MDump
             List<string> images = new List<string>();
             foreach (string path in paths)
             {
-                if (PathManager.IsSupportedImage(path))
+                if (PathUtils.IsSupportedImage(path))
                 {
                     images.Add(path);
                 }
@@ -309,27 +309,16 @@ namespace MDump
                 //Try to create an image out of the file
                 try
                 {
-                    Bitmap bmp = new Bitmap(filepath);
-                    //Make sure we're in 32-bpp argb format
-                    if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
-                    {
-                        bmp = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height),
-                            System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                    }
-                    
-                    //Based on the current mode, properly tag our image and add it.
                     if (CurrentMode == Mode.Merge)
                     {
 
-                        bmp.Tag = new MergeImageTag(Path.GetFileNameWithoutExtension(filepath),
-                            dirMan.CurrentPath);
+                        lvImages.Items.Add(dirMan.AddImage(ImageCreator.CreateIndividualImage(filepath,
+                            dirMan.CurrentPath)));
                     }
                     else
                     {
-                        bmp.Tag = new SplitImageTag(Path.GetFileName(filepath),
-                            MasterFormatHandler.Instance.LoadMergedImageData(filepath));
+                        lvImages.Items.Add(dirMan.AddImage(ImageCreator.CreateMergedImage(filepath)));
                     }
-                    lvImages.Items.Add(dirMan.AddImage(bmp));
                 }
                 catch (ArgumentException ex)
                 {
@@ -373,7 +362,7 @@ namespace MDump
                 string path = filepath.Substring(baseDir.Length);
                 path = path.Substring(0, path.LastIndexOf(Path.DirectorySeparatorChar));
 
-                bmp.Tag = new MergeImageTag(Path.GetFileNameWithoutExtension(filepath),
+                bmp.Tag = new IndividualImageTag(Path.GetFileNameWithoutExtension(filepath),
                     dirMan.CurrentPath + path);
 
                 try
@@ -466,7 +455,7 @@ namespace MDump
                 }
                 else
                 {
-                    if (PathManager.IsSupportedImage(token))
+                    if (PathUtils.IsSupportedImage(token))
                     {
                         rootImages.Add(token);
                     }
@@ -483,7 +472,7 @@ namespace MDump
                 string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
-                    if (PathManager.IsSupportedImage(file))
+                    if (PathUtils.IsSupportedImage(file))
                     {
                         allImages.Add(file);
                     }
@@ -509,7 +498,7 @@ namespace MDump
                     string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
                     foreach(string file in files)
                     {
-                        if(PathManager.IsSupportedImage(file))
+                        if(PathUtils.IsSupportedImage(file))
                         {
                             dirImages.Add(file);
                         }
@@ -548,7 +537,9 @@ namespace MDump
 
         private void btnReset_Click(object sender, EventArgs e)
         {
-            //TODO: Implement
+            lvImages.Items.Clear();
+            dirMan.Reset();
+            CurrentMode = Mode.NotSet;
         }
 
         private void lvImages_KeyUp(object sender, KeyEventArgs e)
@@ -572,7 +563,7 @@ namespace MDump
 
                 case Keys.F2:
                     //Rename selected item
-                    if (lvImages.SelectedItems.Count == 1)
+                    if (CurrentMode == Mode.Merge && lvImages.SelectedItems.Count == 1)
                     {
                         lvImages.SelectedItems[0].BeginEdit();
                     }
@@ -596,11 +587,11 @@ namespace MDump
                 MDumpOptions newOpts = optsDlg.GetOptions();
                 if (newOpts.IsDefaultOptions())
                 {
-                    File.Delete(PathManager.AppDir + MDumpOptions.fileName);
+                    File.Delete(PathUtils.AppDir + MDumpOptions.fileName);
                 }
                 else if (!newOpts.Equals(MDumpOptions.Instance))
                 {
-                    newOpts.SaveToFile(PathManager.AppDir + MDumpOptions.fileName);
+                    newOpts.SaveToFile(PathUtils.AppDir + MDumpOptions.fileName);
                 }
                 MDumpOptions.Instance = newOpts;
                 if (CurrentMode == Mode.Merge)
@@ -762,27 +753,27 @@ namespace MDump
             string newName = e.Label;
             if (dirMan.ItemRepresentsDirectory(item))
             {
-                if (PathManager.IsValidDirName(newName))
+                if (PathUtils.IsValidDirName(newName))
                 {
                     dirMan.RenameItem(item, newName);
                 }
                 else
                 {
                     e.CancelEdit = true;
-                    MessageBox.Show(newName + PathManager.InvalidDirNameMsg, PathManager.InvalidDirNameTitle,
+                    MessageBox.Show(newName + PathUtils.InvalidDirNameMsg, PathUtils.InvalidDirNameTitle,
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             else
             {
-                if (PathManager.IsValidMergeName(newName))
+                if (PathUtils.IsValidMergeName(newName))
                 {
                     dirMan.RenameItem(item, newName);
                 }
                 else
                 {
                     e.CancelEdit = true;
-                    MessageBox.Show(PathManager.InvalidBmpNameMsg, PathManager.InvalidBmpTagTitle,
+                    MessageBox.Show(PathUtils.InvalidBmpNameMsg, PathUtils.InvalidBmpTagTitle,
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -805,7 +796,7 @@ namespace MDump
                     break;
 
                 case 1:
-                    tsiRename.Visible = true;
+                    tsiRename.Visible = CurrentMode == Mode.Merge;
                     tsiDelete.Visible = true;
                     break;
 

@@ -18,14 +18,14 @@ namespace MDump
     /// <summary>
     /// Tag specific to merging images
     /// </summary>
-    class MergeImageTag : ImageTagBase
+    class IndividualImageTag : ImageTagBase
     {
         /// <summary>
         /// Gets the MDump directory info of this image
         /// </summary>
         public string MDumpDir { get; set; }
 
-        public MergeImageTag(string name, string dir)
+        public IndividualImageTag(string name, string dir)
         {
             Name = name;
             MDumpDir = dir;
@@ -35,14 +35,14 @@ namespace MDump
     /// <summary>
     /// Tag specific to splitting images
     /// </summary>
-    class SplitImageTag : ImageTagBase
+    class MergedImageTag : ImageTagBase
     {
         /// <summary>
         /// Gets the MDData needed to split the merged image apart
         /// </summary>
         public byte[] MDData { get; private set; }
 
-        public SplitImageTag(string name, byte[] mdData)
+        public MergedImageTag(string name, byte[] mdData)
         {
             Name = name;
             MDData = mdData;

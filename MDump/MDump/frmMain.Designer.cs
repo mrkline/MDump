@@ -45,11 +45,11 @@
             this.btnInfo = new System.Windows.Forms.Button();
             this.btnUpFolder = new System.Windows.Forms.Button();
             this.btnCreateFolder = new System.Windows.Forms.Button();
+            this.btnReset = new System.Windows.Forms.Button();
             this.dlgOpenImg = new System.Windows.Forms.OpenFileDialog();
             this.dlgMerge = new System.Windows.Forms.SaveFileDialog();
             this.txtPath = new System.Windows.Forms.TextBox();
             this.lblRoot = new System.Windows.Forms.Label();
-            this.btnReset = new System.Windows.Forms.Button();
             this.conImages.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -90,13 +90,14 @@
             this.tsiDelete,
             this.tsiRename});
             this.conImages.Name = "conImages";
-            this.conImages.Size = new System.Drawing.Size(145, 92);
+            this.conImages.Size = new System.Drawing.Size(188, 92);
             this.conImages.Opening += new System.ComponentModel.CancelEventHandler(this.conImages_Opening);
             // 
             // tsiAddImages
             // 
             this.tsiAddImages.Name = "tsiAddImages";
-            this.tsiAddImages.Size = new System.Drawing.Size(144, 22);
+            this.tsiAddImages.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
+            this.tsiAddImages.Size = new System.Drawing.Size(187, 22);
             this.tsiAddImages.Text = "Add &Images";
             this.tsiAddImages.Visible = false;
             this.tsiAddImages.Click += new System.EventHandler(this.tsiAddImages_Click);
@@ -104,21 +105,22 @@
             // tsiCreateFolder
             // 
             this.tsiCreateFolder.Name = "tsiCreateFolder";
-            this.tsiCreateFolder.Size = new System.Drawing.Size(144, 22);
+            this.tsiCreateFolder.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.tsiCreateFolder.Size = new System.Drawing.Size(187, 22);
             this.tsiCreateFolder.Text = "Create &Folder";
             this.tsiCreateFolder.Click += new System.EventHandler(this.tsiCreateFolder_Click);
             // 
             // tsiDelete
             // 
             this.tsiDelete.Name = "tsiDelete";
-            this.tsiDelete.Size = new System.Drawing.Size(144, 22);
+            this.tsiDelete.Size = new System.Drawing.Size(187, 22);
             this.tsiDelete.Text = "&Delete";
             this.tsiDelete.Click += new System.EventHandler(this.tsiDelete_Click);
             // 
             // tsiRename
             // 
             this.tsiRename.Name = "tsiRename";
-            this.tsiRename.Size = new System.Drawing.Size(144, 22);
+            this.tsiRename.Size = new System.Drawing.Size(187, 22);
             this.tsiRename.Text = "&Rename";
             this.tsiRename.Click += new System.EventHandler(this.tsiRename_Click);
             // 
@@ -199,6 +201,17 @@
             this.btnCreateFolder.UseVisualStyleBackColor = true;
             this.btnCreateFolder.Click += new System.EventHandler(this.btnCreateFolder_Click);
             // 
+            // btnReset
+            // 
+            this.btnReset.Location = new System.Drawing.Point(184, 284);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(81, 30);
+            this.btnReset.TabIndex = 10;
+            this.btnReset.Text = "Reset";
+            this.ttpMain.SetToolTip(this.btnReset, "Resets MDump, clearing out all images and/or folders");
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            // 
             // dlgOpenImg
             // 
             this.dlgOpenImg.Filter = "Images|*.gif;*.jpg;*.jpeg;*.wmf;*.bmp;*.png";
@@ -232,17 +245,6 @@
             this.lblRoot.Size = new System.Drawing.Size(35, 13);
             this.lblRoot.TabIndex = 0;
             this.lblRoot.Text = "\\root\\";
-            // 
-            // btnReset
-            // 
-            this.btnReset.Location = new System.Drawing.Point(184, 284);
-            this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(81, 30);
-            this.btnReset.TabIndex = 10;
-            this.btnReset.Text = "Reset";
-            this.ttpMain.SetToolTip(this.btnReset, "Resets MDump, clearing out all images.");
-            this.btnReset.UseVisualStyleBackColor = true;
-            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
             // frmMain
             // 

@@ -163,11 +163,11 @@ namespace MDump
                 foreach (Bitmap image in sa.Bitmaps)
                 {
                     //Decode MDump data into a string using the text encoding it was saved with
-                    string[] dataTokens = MDDataReader.DecodeAndSplitData((image.Tag as SplitImageTag).MDData);
+                    string[] dataTokens = MDDataReader.DecodeAndSplitData((image.Tag as MergedImageTag).MDData);
                     
                     //The first token contains the number of images in this merge
                     callback(SplitStage.SplittingNewMerge,
-                        new SplitCallbackData(((SplitImageTag)image.Tag).Name,
+                        new SplitCallbackData(((MergedImageTag)image.Tag).Name,
                             MDDataReader.GetNumImages(dataTokens[0])));
 
                     int imagesRead = 0;
@@ -184,7 +184,7 @@ namespace MDump
                                //If we're going to discard the file name or it wasn't given, switch to
                                //the name <name>.split<num>.png
                                if (opts.SplitPathOpts == MDumpOptions.PathOptions.Discard
-                                   || saveName == PathManager.DiscardedFilename)
+                                   || saveName == PathUtils.DiscardedFilename)
                                {
                                    saveName = splitName + '.' + SplitKeyword + splitsSaved.Count + ".png";
                                }

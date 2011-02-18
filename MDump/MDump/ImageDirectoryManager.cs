@@ -294,9 +294,9 @@ namespace MDump
                     }
                     else
                     {
-                        if (!PathManager.IsValidDirName(newName))
+                        if (!PathUtils.IsValidDirName(newName))
                         {
-                            throw new ArgumentException(newName + PathManager.InvalidDirNameMsg);
+                            throw new ArgumentException(newName + PathUtils.InvalidDirNameMsg);
                         }
                         if (!children.Contains(dir))
                         {
@@ -307,9 +307,9 @@ namespace MDump
                 }
                 else
                 {
-                    if (!PathManager.IsValidMergeName(newName))
+                    if (!PathUtils.IsValidMergeName(newName))
                     {
-                        throw new ArgumentException(PathManager.InvalidBmpNameMsg);
+                        throw new ArgumentException(PathUtils.InvalidBmpNameMsg);
                     }
                     foreach (Bitmap img in images)
                     {
@@ -422,6 +422,15 @@ namespace MDump
                     }
                 }
                 children.Clear();
+            }
+
+            /// <summary>
+            /// Clears the directory of all images and children
+            /// </summary>
+            public void Reset()
+            {
+                children.Clear();
+                images.Clear();
             }
 
             #region Predicates
@@ -679,6 +688,15 @@ namespace MDump
         public void RemoveItem(ListViewItem imgItem)
         {
             activeDirectory.RemoveItem(imgItem);
+        }
+
+        /// <summary>
+        /// Clears out everything and sets the active directory to root.
+        /// </summary>
+        public void Reset()
+        {
+            activeDirectory = root;
+            root.Reset();
         }
 
         /// <summary>
