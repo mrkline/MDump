@@ -351,18 +351,9 @@ namespace MDump
 
             foreach (string filepath in paths)
             {
-                Bitmap bmp = new Bitmap(filepath);
-                //Make sure we're in 32-bpp argb format
-                if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
-                {
-                    bmp = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height),
-                        System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                }
-
                 string path = filepath.Substring(baseDir.Length);
                 path = path.Substring(0, path.LastIndexOf(Path.DirectorySeparatorChar));
-
-                bmp.Tag = new IndividualImageTag(Path.GetFileNameWithoutExtension(filepath),
+                Bitmap bmp = ImageCreator.CreateIndividualImage(Path.GetFileNameWithoutExtension(filepath),
                     dirMan.CurrentPath + path);
 
                 try
