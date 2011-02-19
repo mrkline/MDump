@@ -20,20 +20,41 @@ namespace MDump
         /// </summary>
         public class ImageCacheTicket
         {
+            /// <summary>
+            /// Miliseconds to wait for the garbage collector to finish collecting the image
+            /// </summary>
             private const int deletionWaitMS = 500;
 
+            /// <summary>
+            /// Path of the image to delete from the cache on destruction
+            /// </summary>
             private string path;
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="filepath">
+            /// Path of the image to delete from the cache on destruction
+            /// </param>
             internal ImageCacheTicket(string filepath)
             {
                 path = filepath;
             }
 
+            /// <summary>
+            /// On deconstruction, spawn a thread that waits for the Garbage Collector
+            /// to collect the Bitmap object, then delete the underlying file.
+            /// </summary>
             ~ImageCacheTicket()
             {
                 new System.Threading.Thread(DeleteThreadProc).Start(path);
             }
 
+            /// <summary>
+            /// Thread procedure to delete a file after the Garbage Collector
+            /// has removed the image object tied to it
+            /// </summary>
+            /// <param name="arg">The path of the file to delete</param>
             private static void DeleteThreadProc(object arg)
             {
                 string path = (string)arg;
@@ -69,8 +90,18 @@ namespace MDump
 
         private ImageCache()
         {
+            //Clear out any previously existing directory, which may exist due to an error
+            if (Directory.Exists(cacheDir))
+            {
+                Directory.Delete(cacheDir, true);
+            }
+            //Set up the cache directory
             Directory.CreateDirectory(cacheDir);
         }
+
+        /// <summary>
+        /// Destroy the cache directory on destruction
+        /// </summary>
         ~ImageCache()
         {
             Directory.Delete(cacheDir, true);
@@ -84,7 +115,7 @@ namespace MDump
         /// <param name="force32BppARGB">true if returned image must be in 32-bpp ARGB format</param>
         /// <param name="ticket">
         /// The ticket to be attached to the image. When the ticket goes out of scope,
-        /// the cached image is deleted
+        /// the cached image file is deleted.
         /// </param>
         /// <returns>The cached copy of the image</returns>
         public Bitmap CreateCachedImage(string filepath, bool force32BppARGB, out ImageCacheTicket ticket)

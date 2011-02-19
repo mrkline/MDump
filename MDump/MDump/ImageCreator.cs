@@ -6,13 +6,17 @@ using System.IO;
 
 namespace MDump
 {
-    //TODO: Being replaced by ImageCache and ImagePackage combo. 
-
     /// <summary>
     /// Creates and images for use by the rest of MDump 
     /// </summary>
     static class ImageCreator
     {
+        /// <summary>
+        /// Create a Bitmap representing an individual image
+        /// </summary>
+        /// <param name="filepath">File path of the individual image</param>
+        /// <param name="mdPath">MDump directory path for the image</param>
+        /// <returns>A Bitmap tagged with an IndividualImageTag</returns>
         public static Bitmap CreateIndividualImage(string filepath,
             string mdPath)
         {
@@ -25,6 +29,11 @@ namespace MDump
             return ret;
         }
 
+        /// <summary>
+        /// Create a Bitmap representing an merged image
+        /// </summary>
+        /// <param name="filepath">File path of the merged image</param>
+        /// <returns>A Bitmap tagged with a MergedImageTag</returns>
         public static Bitmap CreateMergedImage(string filepath)
         {
             ImageCache.ImageCacheTicket ticket;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace MDump
 {
@@ -12,19 +13,19 @@ namespace MDump
         [STAThread]
         static void Main()
         {
-            try
-            {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new frmMain());
-            }
-            catch (Exception ex)
-            {
-                ErrorHandling.LogException(ex);
-                MessageBox.Show("A fatal unexpected error occurred.\n"
-                    + ErrorHandling.ErrorMessage, "Unexpected fatal error", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.ThreadException += new ThreadExceptionEventHandler(GlobalExceptionHandler);
+            Application.Run(new frmMain());
+        }
+
+        static void GlobalExceptionHandler(object sender, ThreadExceptionEventArgs e)
+        {
+            ErrorHandling.LogException(e.Exception);
+            MessageBox.Show("A fatal unexpected error occurred.\n"
+                + ErrorHandling.ErrorMessage, "Unexpected fatal error", MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+            Application.Exit();
         }
     }
 }

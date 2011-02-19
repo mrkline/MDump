@@ -99,7 +99,9 @@ namespace MDump
                 }
             }
 
-            //Gets the path of current directory, without "root\"
+            /// <summary>
+            /// Gets the path of current directory, without "root\"
+            /// </summary>
             public string Path
             {
                 get

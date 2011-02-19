@@ -22,8 +22,6 @@ namespace MDump
         private const string splitActionText = "Split images";
         private const string splitActionTooltip = "Split the merged images in the list above"
                             + " back into the original images.";
-        private readonly string unexpectedErrorMsg = "An unexpected error occurred.\n" + ErrorHandling.ErrorMessage;
-        private const string unexpectedErrorTitle = "Unexpected fatal error";
         /// <summary>
         /// Gets the incorrect mode message based on the current mode.
         /// </summary>
