@@ -22,6 +22,8 @@ namespace MDump
         private const string splitActionText = "Split images";
         private const string splitActionTooltip = "Split the merged images in the list above"
                             + " back into the original images.";
+        private readonly string unexpectedErrorMsg = "An unexpected error occurred.\n" + ErrorHandling.ErrorMessage;
+        private const string unexpectedErrorTitle = "Unexpected fatal error";
         /// <summary>
         /// Gets the incorrect mode message based on the current mode.
         /// </summary>
@@ -169,14 +171,6 @@ namespace MDump
             imlLVIcons.Images.Add(Properties.Resources.ImageIcon);
             imlLVIcons.Images.Add(Properties.Resources.Folder);
             dirMan = new ImageDirectoryManager();
-            //Try to add any images dragged onto program:
-            string[] clArgs = Environment.GetCommandLineArgs();
-            if (clArgs.Length > 1)
-            {
-                string[] toAdd = new string[clArgs.Length - 1];
-                clArgs.CopyTo(toAdd, 1);
-                AddImages(clArgs, false);
-            }
             //Load up any settings (if they exist)
             if (File.Exists(MDumpOptions.fileName))
             {
@@ -197,6 +191,13 @@ namespace MDump
             }
             dlgSplitDest = new frmSplitDest();
             CurrentMode = Mode.NotSet;
+
+            //Try to add any images dragged onto program:
+            List<string> images = IsolateImages(Environment.GetCommandLineArgs());
+            if(images.Count > 0 && SetModeFromImages(images))
+            {
+                AddImages(images);
+            }
         }
 
         //This region contains functions used to split common behavior from the GUI itself.
@@ -241,6 +242,13 @@ namespace MDump
                 }
             }
 
+            if (!hasIndividual && !hasMerged)
+            {
+                MessageBox.Show(noImagesInSelectionMsg, noImagesInSelectionTitle,
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
             if (hasIndividual && hasMerged)
             {
                 MessageBox.Show(bothTypesInSelectionMsg, bothTypesInSelectionTitle,
@@ -276,49 +284,49 @@ namespace MDump
         }
 
         /// <summary>
+        /// Scrubs a list of files for readable images and returns them
+        /// </summary>
+        /// <param name="files">Files to sift through to find images</param>
+        /// <returns>Readable images contained in files</returns>
+        private List<string> IsolateImages(IEnumerable<string> files)
+        {
+            List<string> ret = new List<string>();
+            foreach (string file in files)
+            {
+                if (PathUtils.IsSupportedImage(file))
+                {
+                    ret.Add(file);
+                }
+            }
+            return ret;
+        }
+
+        /// <summary>
         /// Add Images to the current directory
         /// </summary>
-        /// <param name="paths">paths of each file (assumably images) to add</param>
+        /// <param name="images">paths of each file (assumably images) to add</param>
         /// <param name="modeAlreadySet">
         /// true if SetModeFromImages has already been called, i.e., when files are dragged into the list view.
         /// false if SetModeFromImages has not already been called, i.e., when images are added from the file open dialog.
         /// </param>
-        private void AddImages(IEnumerable<string> paths, bool modeAlreadySet) 
+        private void AddImages(IEnumerable<string> images) 
         {
-            List<string> images = new List<string>();
-            foreach (string path in paths)
-            {
-                if (PathUtils.IsSupportedImage(path))
-                {
-                    images.Add(path);
-                }
-            }
-
-            //If we haven't done this already, set the mode from the images
-            if (!modeAlreadySet)
-            {
-                //Make sure all of the provided images are either merged or individual
-                if (!SetModeFromImages(images))
-                {
-                    return;
-                }
-            }
-
            foreach (string filepath in images)
             {
                 //Try to create an image out of the file
                 try
                 {
+                    Bitmap bmp = null;
                     if (CurrentMode == Mode.Merge)
                     {
-
-                        lvImages.Items.Add(dirMan.AddImage(ImageCreator.CreateIndividualImage(filepath,
-                            dirMan.CurrentPath)));
+                        bmp = ImageCreator.CreateIndividualImage(filepath, dirMan.CurrentPath);
                     }
                     else
                     {
-                        lvImages.Items.Add(dirMan.AddImage(ImageCreator.CreateMergedImage(filepath)));
+                        bmp = ImageCreator.CreateMergedImage(filepath);
                     }
+                    dirMan.AddImage(bmp);
+                    lvImages.Items.Add((bmp.Tag as ImageTagBase).LVI);
                 }
                 catch (ArgumentException ex)
                 {
@@ -480,7 +488,7 @@ namespace MDump
             if (CurrentMode == Mode.Merge
                 && MDumpOptions.Instance.MergePathOpts == MDumpOptions.PathOptions.PreservePath)
             {
-                AddImages(rootImages, false);
+                AddImages(rootImages);
 
                 List<string> dirImages = new List<string>();
                 foreach (string dir in dirs)
@@ -500,7 +508,7 @@ namespace MDump
             //Otherwise chuck all the images into AddImages
             else
             {
-                AddImages(allImages, true);
+                AddImages(allImages);
             }
         }
 
@@ -522,7 +530,10 @@ namespace MDump
         {
             if (dlgOpenImg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                 AddImages(dlgOpenImg.FileNames, false);
+                if (SetModeFromImages(dlgOpenImg.FileNames))
+                {
+                    AddImages(dlgOpenImg.FileNames);
+                }
             }
         }
 
@@ -744,11 +755,7 @@ namespace MDump
             string newName = e.Label;
             if (dirMan.ItemRepresentsDirectory(item))
             {
-                if (PathUtils.IsValidDirName(newName))
-                {
-                    dirMan.RenameItem(item, newName);
-                }
-                else
+                if(!PathUtils.IsValidDirName(newName))
                 {
                     e.CancelEdit = true;
                     MessageBox.Show(newName + PathUtils.InvalidDirNameMsg, PathUtils.InvalidDirNameTitle,
@@ -757,11 +764,7 @@ namespace MDump
             }
             else
             {
-                if (PathUtils.IsValidMergeName(newName))
-                {
-                    dirMan.RenameItem(item, newName);
-                }
-                else
+                if(!PathUtils.IsValidMergeName(newName))
                 {
                     e.CancelEdit = true;
                     MessageBox.Show(PathUtils.InvalidBmpNameMsg, PathUtils.InvalidBmpTagTitle,
@@ -801,7 +804,10 @@ namespace MDump
         {
             if (dlgOpenImg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                AddImages(dlgOpenImg.FileNames, false);
+                if (SetModeFromImages(dlgOpenImg.FileNames))
+                {
+                    AddImages(dlgOpenImg.FileNames);
+                }
             }
         }
 

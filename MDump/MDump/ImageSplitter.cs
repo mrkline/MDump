@@ -179,7 +179,7 @@ namespace MDump
                        {
                            case MDDataReader.TokenType.Image:
                                Bitmap split = MDDataReader.GetSplitImage(dataTokens[c], image);
-                               string saveName = ((ImageTagBase)split.Tag).Name;
+                               string saveName = (string)split.Tag;
 
                                //If we're going to discard the file name or it wasn't given, switch to
                                //the name <name>.split<num>.png

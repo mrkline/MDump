@@ -95,7 +95,7 @@ namespace MDump
         /// </summary>
         /// <param name="token">Token containing split data</param>
         /// <param name="mergedImage">The merged image to split from</param>
-        /// <returns>The split image with an ImageTagBase tag containing its name (including extension)</returns>
+        /// <returns>The split image with an its name tagged on</returns>
         public static Bitmap GetSplitImage(string token, Bitmap mergedImage)
         {
             string[] tokens = token.Split(subSeparator);
@@ -103,8 +103,6 @@ namespace MDump
             {
                 throw new ArgumentException(notImageTokenMsg);
             }
-            ImageTagBase nameTag = new ImageTagBase();
-            nameTag.Name = tokens[1];
             int x = Convert.ToInt32(tokens[2]);
             int y = Convert.ToInt32(tokens[3]);
             int width = Convert.ToInt32(tokens[4]);
@@ -115,7 +113,7 @@ namespace MDump
             {
                 g.DrawImage(mergedImage, 0, 0, r, GraphicsUnit.Pixel);
             }
-            ret.Tag = nameTag;
+            ret.Tag = tokens[1];
             return ret;
         }
     }

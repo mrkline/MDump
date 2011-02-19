@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace MDump
 {
@@ -9,10 +11,33 @@ namespace MDump
     /// </summary>
     class ImageTagBase
     {
+        private const int imageIconIndex = 0;
+
         /// <summary>
-        /// Gets the name of the image
+        /// Gets the ListViewRepresentation of the 
         /// </summary>
-        public string Name { get; set; }
+        public ListViewItem LVI { get; private set;}
+
+        /// <summary>
+        /// Gets name of the image via it's LVI representation.
+        /// Name is set via LVI.BeginEdit()
+        /// </summary>
+        public string Name
+        {
+            get { return LVI.Text; }
+        }
+
+        /// <summary>
+        /// Sets the image cache ticket for the 
+        /// </summary>
+        private ImageCache.ImageCacheTicket _ticket = null;
+        public ImageCache.ImageCacheTicket CacheTicket { set { _ticket = value; } }
+
+        public ImageTagBase(string name, Bitmap bmp)
+        {
+            LVI = new ListViewItem(name, imageIconIndex);
+            LVI.Tag = bmp;
+        }
     }
 
     /// <summary>
@@ -25,9 +50,9 @@ namespace MDump
         /// </summary>
         public string MDumpDir { get; set; }
 
-        public IndividualImageTag(string name, string dir)
+        public IndividualImageTag(string name, Bitmap bmp, string dir)
+            : base(name, bmp)
         {
-            Name = name;
             MDumpDir = dir;
         }
     }
@@ -42,9 +67,9 @@ namespace MDump
         /// </summary>
         public byte[] MDData { get; private set; }
 
-        public MergedImageTag(string name, byte[] mdData)
+        public MergedImageTag(string name, Bitmap bmp, byte[] mdData)
+            : base(name, bmp)
         {
-            Name = name;
             MDData = mdData;
         }
     }

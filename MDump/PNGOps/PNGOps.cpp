@@ -24,12 +24,14 @@ extern "C"
 		png_byte* rBuff = static_cast<unsigned char*>(malloc(8));
 		if(rBuff == nullptr)
 		{
+			fclose(fp);
 			return MC_ERROR;
 		}
 
 		if(fread(rBuff, 1, kPngSigLen, fp) != kPngSigLen)
 		{
 			free(rBuff);
+			fclose(fp);
 			//There weren't even 8 bytes in the file.
 			//Any image would have at least 8
 			return MC_ERROR;
@@ -38,6 +40,7 @@ extern "C"
 		{
 			//Not a PNG
 			free(rBuff);
+			fclose(fp);
 			return MC_NOT_MERGED;
 		}
 		free(rBuff);
@@ -46,6 +49,7 @@ extern "C"
 			nullptr, nullptr, nullptr);
 		if(readStruct == nullptr)
 		{
+			fclose(fp);
 			return MC_ERROR;
 		}
 
@@ -53,13 +57,14 @@ extern "C"
 		if(info == nullptr)
 		{
 			png_destroy_read_struct(&readStruct, nullptr, nullptr);
+			fclose(fp);
 			return MC_ERROR;
 		}
 
 		if(setjmp(png_jmpbuf(readStruct)))
 		{
-			fclose(fp);
 			png_destroy_read_struct(&readStruct, &info, nullptr);
+			fclose(fp);
 			return MC_ERROR;
 		}
 		png_init_io(readStruct, fp);
@@ -80,8 +85,8 @@ extern "C"
 			ret = MC_MERGED;
 		}
 
-		fclose(fp);
 		png_destroy_read_struct(&readStruct, &info, nullptr);
+		fclose(fp);
 		return ret;
 	}
 
@@ -106,6 +111,7 @@ extern "C"
 			nullptr, nullptr, nullptr);
 		if(readStruct == nullptr)
 		{
+			fclose(fp);
 			return EC_INIT_FAILURE;
 		}
 
@@ -113,21 +119,22 @@ extern "C"
 		if(info == nullptr)
 		{
 			png_destroy_read_struct(&readStruct, nullptr, nullptr);
+			fclose(fp);
 			return EC_INIT_FAILURE;
 		}
 
 		if(setjmp(png_jmpbuf(readStruct)))
 		{
-			fclose(fp);
 			png_destroy_read_struct(&readStruct, &info, nullptr);
+			fclose(fp);
 			return EC_IO_FAILURE;
 		}
 		png_init_io(readStruct, fp);
 
 		if(setjmp(png_jmpbuf(readStruct)))
 		{
-			fclose(fp);
 			png_destroy_read_struct(&readStruct, &info, nullptr);
+			fclose(fp);
 			return EC_RW_INFO_FAILURE;
 		}
 		png_read_info(readStruct, info);
@@ -140,8 +147,8 @@ extern "C"
 		if(numTextFields != 1
 			 || strcmp(textInfo->key, MagicString) != 0)
 		{
-			fclose(fp);
 			png_destroy_read_struct(&readStruct, &info, nullptr);
+			fclose(fp);
 			return EC_RW_INFO_FAILURE;
 		}
 		//Get mdump data and copy it to a buffer
@@ -149,8 +156,8 @@ extern "C"
 		char* mdData = static_cast<char*>(malloc(mdDataLen));
 		if(mdData == nullptr)
 		{
-			fclose(fp);
 			png_destroy_read_struct(&readStruct, &info, nullptr);
+			fclose(fp);
 			return EC_ALLOC_FAILURE;
 		}
 		memcpy(mdData, textInfo[0].text, mdDataLen);
@@ -160,8 +167,8 @@ extern "C"
 		*mdDataLenOut = mdDataLen;
 		*mdDataOut = mdData;
 		//Close up shop
-		fclose(fp);
 		png_destroy_read_struct(&readStruct, &info, nullptr);
+		fclose(fp);
 		return EC_SUCCESS;
 	}
 

@@ -92,7 +92,6 @@
     <Compile Include="ImageDirectoryManager.cs" />
     <Compile Include="ImageMerger.cs" />
     <Compile Include="ImageFormatHandler.cs" />
-    <Compile Include="ImagePackage.cs" />
     <Compile Include="ImageSplitter.cs" />
     <Compile Include="ImageTags.cs" />
     <Compile Include="JPEGHandler.cs" />

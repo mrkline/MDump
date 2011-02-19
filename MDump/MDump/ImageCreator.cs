@@ -16,39 +16,23 @@ namespace MDump
         public static Bitmap CreateIndividualImage(string filepath,
             string mdPath)
         {
-            Bitmap ret = CreateUntaggedImage(filepath, true);
-            ret.Tag = new IndividualImageTag(Path.GetFileNameWithoutExtension(filepath), mdPath);
-            GC.Collect(); //TEMP to make sure image doesn't disappear
+            ImageCache.ImageCacheTicket ticket;
+            Bitmap ret = ImageCache.Instance.CreateCachedImage(filepath, true, out ticket);
+            IndividualImageTag tag = new IndividualImageTag(Path.GetFileNameWithoutExtension(filepath),
+                ret, mdPath);
+            tag.CacheTicket = ticket;
+            ret.Tag = tag;
             return ret;
         }
 
         public static Bitmap CreateMergedImage(string filepath)
         {
-            Bitmap ret = CreateUntaggedImage(filepath, false);
-            ret.Tag = new MergedImageTag(Path.GetFileName(filepath),
+            ImageCache.ImageCacheTicket ticket;
+            Bitmap ret = ImageCache.Instance.CreateCachedImage(filepath, false, out ticket);
+            MergedImageTag tag = new MergedImageTag(Path.GetFileName(filepath), ret,
                           MasterFormatHandler.Instance.LoadMergedImageData(filepath));
-            GC.Collect(); //TEMP
-            return ret;
-        }
-
-        public static Bitmap CreateUntaggedImage(string filepath, bool force32BitARGB)
-        {
-            byte[] imageBytes = File.ReadAllBytes(filepath);
-            byte[] copiedBytes = new byte[imageBytes.LongLength];
-            imageBytes.CopyTo(copiedBytes, 0);
-            Bitmap ret;
-            using (MemoryStream ms = new MemoryStream(copiedBytes))
-            {
-                ret = new Bitmap(ms);
-
-                //Merger assumes images will be 32-bit argb
-                if (force32BitARGB
-                    && ret.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
-                {
-                    ret = ret.Clone(new Rectangle(0, 0, ret.Width, ret.Height),
-                        System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                }
-            }
+            tag.CacheTicket = ticket;
+            ret.Tag = tag;
             return ret;
         }
     }

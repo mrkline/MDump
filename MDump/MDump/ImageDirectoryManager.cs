@@ -33,38 +33,17 @@ namespace MDump
                 + "image directory.";
             #endregion
 
-            private const int imageIconIndex = 0;
             private const int folderIconIndex = 1;
 
             private List<Bitmap> images;
             private List<ImageDirectory> children;
 
-            /// <summary>
-            /// Gets a read-only version of the image list
-            /// </summary>
-            public ReadOnlyCollection<Bitmap> Images
-            {
-                get
-                {
-                    return images.AsReadOnly();
-                }
-            }
-
-            /// <summary>
-            /// Gets read-only version of children list
-            /// </summary>
-            public ReadOnlyCollection<ImageDirectory> Children
-            {
-                get
-                {
-                    return children.AsReadOnly();
-                }
-            }
+            public ListViewItem LVI { get; private set; }
 
             /// <summary>
             /// Gets the name of the directory
             /// </summary>
-            public string Name { get; set; }
+            public string Name { get { return LVI.Text; } }
 
             /// <summary>
             /// Gets the Parent directory of this directory
@@ -99,7 +78,7 @@ namespace MDump
             /// contained within this directory.
             /// </summary>
             /// <returns>A list of ListViewItems representing the contents of this directory</returns>
-            public List<ListViewItem> LVIRepresentation
+            public List<ListViewItem> ContentsLVIList
             {
                 get
                 {
@@ -107,17 +86,13 @@ namespace MDump
                     //Add child directories
                     foreach (ImageDirectory child in children)
                     {
-                        ListViewItem toAdd = new ListViewItem(child.Name, folderIconIndex);
-                        toAdd.Tag = child;
-                        ret.Add(toAdd);
+                        ret.Add(child.LVI);
                     }
 
                     //Add images
                     foreach (Bitmap bmp in images)
                     {
-                        ListViewItem toAdd = new ListViewItem((bmp.Tag as ImageTagBase).Name, imageIconIndex);
-                        toAdd.Tag = bmp;
-                        ret.Add(toAdd);
+                        ret.Add((bmp.Tag as ImageTagBase).LVI);
                     }
 
                     return ret;
@@ -153,7 +128,8 @@ namespace MDump
             {
                 images = new List<Bitmap>();
                 children = new List<ImageDirectory>();
-                Name = name;
+                LVI = new ListViewItem(name, folderIconIndex);
+                LVI.Tag = this;
                 Parent = parent;
             }
 
@@ -168,7 +144,7 @@ namespace MDump
             /// </summary>
             /// <param name="img">Image to add, tagged with its file name</param>
             /// <returns>The GUI representation of this image</returns>
-            public ListViewItem AddTaggedImage(Bitmap img)
+            public void AddTaggedImage(Bitmap img)
             {
                 foreach (Bitmap bmp in images)
                 {
@@ -179,10 +155,7 @@ namespace MDump
                         throw new ArgumentException(duplicateImgMsg + ((ImageTagBase)img.Tag).Name);
                     }
                 }
-                ListViewItem ret = new ListViewItem((img.Tag as ImageTagBase).Name, imageIconIndex);
-                ret.Tag = img;
                 images.Add(img);
-                return ret;
             }
 
             /// <summary>
@@ -219,7 +192,7 @@ namespace MDump
                     }
                 }
 
-                bool createIcon = dirIdx == 0;
+                bool returnLVI = dirIdx == 0;
 
                 //If the directories don't exist all the way in, create them
                 if (dirIdx < dirs.Length)
@@ -232,17 +205,14 @@ namespace MDump
                 
                 currDir.AddTaggedImage(img);
 
-                ListViewItem ret;
-                if (createIcon)
+                if (returnLVI)
                 {
-                    ret = new ListViewItem(dirs[0], folderIconIndex);
-                    ret.Tag = GetChild(dirs[0]);
+                    return GetChild(dirs[0]).LVI;
                 }
                 else
                 {
-                    ret = null;
+                    return null;
                 }
-                return ret;
             }
 
             /// <summary>
@@ -257,10 +227,8 @@ namespace MDump
                 {
                     throw new ArgumentException(duplicateDirMsg + name);
                 }
-                ListViewItem ret = new ListViewItem(name, folderIconIndex);
-                ret.Tag = toAdd;
                 children.Add(toAdd);
-                return ret;
+                return toAdd.LVI;
             }
 
             /// <summary>
@@ -275,55 +243,6 @@ namespace MDump
                 }
                 children.Add(toAdd);
                 return toAdd;
-            }
-
-            /// <summary>
-            /// Renames an item in this directory
-            /// </summary>
-            /// <param name="item">The GUI representation of the item to rename</param>
-            /// <param name="newName">The new name for the given item</param>
-            public void RenameItem(ListViewItem item, string newName)
-            {
-                Bitmap bmp = item.Tag as Bitmap;
-                if (bmp == null)
-                {
-                    ImageDirectory dir = item.Tag as ImageDirectory;
-                    if (dir == null)
-                    {
-                        throw new ArgumentException(notImgOrDirMsg);
-                    }
-                    else
-                    {
-                        if (!PathUtils.IsValidDirName(newName))
-                        {
-                            throw new ArgumentException(newName + PathUtils.InvalidDirNameMsg);
-                        }
-                        if (!children.Contains(dir))
-                        {
-                            throw new ArgumentException(noSuchItemMsg);
-                        }
-                        dir.Name = newName;
-                    }
-                }
-                else
-                {
-                    if (!PathUtils.IsValidMergeName(newName))
-                    {
-                        throw new ArgumentException(PathUtils.InvalidBmpNameMsg);
-                    }
-                    foreach (Bitmap img in images)
-                    {
-                        //We should just be able to do a reference test since the tag should be
-                        //pointing at the bitmap in our list
-                        if (bmp == img)
-                        {
-                            img.Tag = newName;
-                            return;
-                        }
-                    }
-                    //If we didn't find it, we didn't have it to begin with
-                    throw new ArgumentException(noSuchItemMsg);
-                }
             }
 
             /// <summary>
@@ -416,10 +335,7 @@ namespace MDump
             {
                 foreach (ImageDirectory child in children)
                 {
-                    foreach (Bitmap bmp in child.Images)
-                    {
-                        images.Add(bmp);
-                    }
+                    images.AddRange(child.ImagesRecursive);
                 }
                 children.Clear();
             }
@@ -501,12 +417,12 @@ namespace MDump
         /// <summary>
         /// Gets the ListViewItem Representation of the active directory
         /// </summary>
-        /// <seealso cref="ImageDirectory.LVIRepresentation"/>
+        /// <seealso cref="ImageDirectory.ContentsLVIList"/>
         public List<ListViewItem> LVIRepresentation
         {
             get
             {
-                return activeDirectory.LVIRepresentation;
+                return activeDirectory.ContentsLVIList;
             }
         }
 
@@ -630,9 +546,9 @@ namespace MDump
         /// Calls AddTaggedImage on the active directory
         /// </summary>
         /// <seealso cref="ImageDirectory.AddTaggedImage"/>
-        public ListViewItem AddImage(Bitmap bmp)
+        public void AddImage(Bitmap bmp)
         {
-            return activeDirectory.AddTaggedImage(bmp);
+            activeDirectory.AddTaggedImage(bmp);
         }
 
         /// <summary>
@@ -673,15 +589,6 @@ namespace MDump
         }
 
         /// <summary>
-        /// Calls RenameItem on the active directory
-        /// </summary>
-        /// <seealso cref="ImageDirectory.RenameItem"/>
-        public void RenameItem(ListViewItem item, string newName)
-        {
-            activeDirectory.RenameItem(item, newName);
-        }
-
-        /// <summary>
         /// Calls RemoveItem on the active directory
         /// </summary>
         /// <seealso cref="ImageDirectory.RemoveItem"/>
@@ -707,7 +614,6 @@ namespace MDump
         public void MoveAllToRoot()
         {
             root.MoveChildDirImagesHere();
-            
         }
     }
 }
