@@ -27,12 +27,6 @@ namespace MDump
             get { return LVI.Text; }
         }
 
-        /// <summary>
-        /// Sets the image cache ticket for the 
-        /// </summary>
-        private ImageCache.ImageCacheTicket _ticket = null;
-        public ImageCache.ImageCacheTicket CacheTicket { set { _ticket = value; } }
-
         public ImageTagBase(string name, Bitmap bmp)
         {
             LVI = new ListViewItem(name, imageIconIndex);

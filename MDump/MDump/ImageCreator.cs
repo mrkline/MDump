@@ -20,11 +20,9 @@ namespace MDump
         public static Bitmap CreateIndividualImage(string filepath,
             string mdPath)
         {
-            ImageCache.ImageCacheTicket ticket;
-            Bitmap ret = ImageCache.Instance.CreateCachedImage(filepath, true, out ticket);
+            Bitmap ret = CreateMemoryBitmap(filepath);
             IndividualImageTag tag = new IndividualImageTag(Path.GetFileNameWithoutExtension(filepath),
                 ret, mdPath);
-            tag.CacheTicket = ticket;
             ret.Tag = tag;
             return ret;
         }
@@ -36,13 +34,20 @@ namespace MDump
         /// <returns>A Bitmap tagged with a MergedImageTag</returns>
         public static Bitmap CreateMergedImage(string filepath)
         {
-            ImageCache.ImageCacheTicket ticket;
-            Bitmap ret = ImageCache.Instance.CreateCachedImage(filepath, false, out ticket);
+            Bitmap ret = CreateMemoryBitmap(filepath);
             MergedImageTag tag = new MergedImageTag(Path.GetFileName(filepath), ret,
                           MasterFormatHandler.Instance.LoadMergedImageData(filepath));
-            tag.CacheTicket = ticket;
             ret.Tag = tag;
             return ret;
+        }
+
+        /// <summary>
+        /// Create a Bitmap tied to managed memory instead of a file itself
+        /// </summary>
+        /// <returns>Memory-based bitmap</returns>
+        private static Bitmap CreateMemoryBitmap(string filepath)
+        {
+            return new Bitmap(new MemoryStream(File.ReadAllBytes(filepath)));
         }
     }
 }

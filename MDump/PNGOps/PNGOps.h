@@ -41,6 +41,20 @@ extern "C"
 		bool flipRGB, char* mdData, int mdDataLen, int compLevel, png_bytepp memPngOut, int* memPngLenOut);
 }
 
+//Simple RAII wrapper for C file handles. C++ streams aren't used as
+//libpng works with C file handles
+class FileReader
+{
+private:
+	FILE* fp;
+
+public:
+	FileReader(char* filepath);
+	~FileReader();
+
+	FILE* GetFilePointer() { return fp; }
+};
+
 //Writes to a given memory buffer, then chops off unneeded data on completion.
 class MemoryWriter
 {

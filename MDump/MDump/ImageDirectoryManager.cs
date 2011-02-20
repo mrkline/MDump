@@ -17,6 +17,8 @@ namespace MDump
         private const string rootName = "root";
         private const string defaultDirName = "New Folder";
         private const string cannotEscapeRoot = "There is no directory higher than the root directory";
+        private const string noSuchPathMsg = "The path entered does not exist.";
+        private const string noSuchPathTitle = "No such path";
 
         #region ImageDirectory Class
         /// <summary>
@@ -531,16 +533,30 @@ namespace MDump
         /// <param name="path">The path of the directory, from root\</param>
         public void SetActiveDirectory(string path)
         {
-            //Get rid of any formatting concerns
-            path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            string[] dirs = path.Split(new char[] { Path.DirectorySeparatorChar },
-                StringSplitOptions.RemoveEmptyEntries);
-            activeDirectory = root;
+            //If all fails, fall back to the current directory
+            ImageDirectory fallback = activeDirectory;
 
-            for (int c = 0; c < dirs.Length; ++c)
+            try
             {
-                //Will throw an ArgumentException if the activedirectory does not have the desired child
-                activeDirectory = activeDirectory.GetChild(dirs[c]);
+                //Get rid of any formatting concerns
+                path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                string[] dirs = path.Split(new char[] { Path.DirectorySeparatorChar },
+                    StringSplitOptions.RemoveEmptyEntries);
+                activeDirectory = root;
+
+                for (int c = 0; c < dirs.Length; ++c)
+                {
+                    //Will throw an ArgumentException if the activedirectory does not have the desired child
+                    activeDirectory = activeDirectory.GetChild(dirs[c]);
+                }
+
+            }
+            catch (ArgumentException)
+            {
+                //A directory couldn't be resolved from the given path
+                MessageBox.Show(noSuchPathMsg, noSuchPathTitle,
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                activeDirectory = fallback;
             }
         }
 

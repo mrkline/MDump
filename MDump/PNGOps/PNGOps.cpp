@@ -13,8 +13,8 @@ extern "C"
 {
 	__declspec(dllexport) MergedCode EXP_CALL_CONV IsMergedImage(char* filename)
 	{
-		FILE* fp = fopen(filename, "rb");
-		if(fp == nullptr)
+		FileReader fr(filename);
+		if(fr.GetFilePointer() == nullptr)
 		{
 			return MC_ERROR;
 		}
@@ -24,14 +24,12 @@ extern "C"
 		png_byte* rBuff = static_cast<unsigned char*>(malloc(8));
 		if(rBuff == nullptr)
 		{
-			fclose(fp);
 			return MC_ERROR;
 		}
 
-		if(fread(rBuff, 1, kPngSigLen, fp) != kPngSigLen)
+		if(fread(rBuff, 1, kPngSigLen, fr.GetFilePointer()) != kPngSigLen)
 		{
 			free(rBuff);
-			fclose(fp);
 			//There weren't even 8 bytes in the file.
 			//Any image would have at least 8
 			return MC_ERROR;
@@ -40,7 +38,6 @@ extern "C"
 		{
 			//Not a PNG
 			free(rBuff);
-			fclose(fp);
 			return MC_NOT_MERGED;
 		}
 		free(rBuff);
@@ -49,7 +46,6 @@ extern "C"
 			nullptr, nullptr, nullptr);
 		if(readStruct == nullptr)
 		{
-			fclose(fp);
 			return MC_ERROR;
 		}
 
@@ -57,17 +53,15 @@ extern "C"
 		if(info == nullptr)
 		{
 			png_destroy_read_struct(&readStruct, nullptr, nullptr);
-			fclose(fp);
 			return MC_ERROR;
 		}
 
 		if(setjmp(png_jmpbuf(readStruct)))
 		{
 			png_destroy_read_struct(&readStruct, &info, nullptr);
-			fclose(fp);
 			return MC_ERROR;
 		}
-		png_init_io(readStruct, fp);
+		png_init_io(readStruct, fr.GetFilePointer());
 		png_set_sig_bytes(readStruct, kPngSigLen);
 		png_read_info(readStruct, info);
 
@@ -86,7 +80,6 @@ extern "C"
 		}
 
 		png_destroy_read_struct(&readStruct, &info, nullptr);
-		fclose(fp);
 		return ret;
 	}
 
@@ -99,8 +92,8 @@ extern "C"
 		*mdDataOut = nullptr;
 		*mdDataLenOut = 0;
 
-		FILE* fp = fopen(filename, "rb");
-		if(fp == nullptr)
+		FileReader fr(filename);
+		if(fr.GetFilePointer() == nullptr)
 		{
 			return EC_IO_FAILURE;
 		}
@@ -111,7 +104,6 @@ extern "C"
 			nullptr, nullptr, nullptr);
 		if(readStruct == nullptr)
 		{
-			fclose(fp);
 			return EC_INIT_FAILURE;
 		}
 
@@ -119,22 +111,19 @@ extern "C"
 		if(info == nullptr)
 		{
 			png_destroy_read_struct(&readStruct, nullptr, nullptr);
-			fclose(fp);
 			return EC_INIT_FAILURE;
 		}
 
 		if(setjmp(png_jmpbuf(readStruct)))
 		{
 			png_destroy_read_struct(&readStruct, &info, nullptr);
-			fclose(fp);
 			return EC_IO_FAILURE;
 		}
-		png_init_io(readStruct, fp);
+		png_init_io(readStruct, fr.GetFilePointer());
 
 		if(setjmp(png_jmpbuf(readStruct)))
 		{
 			png_destroy_read_struct(&readStruct, &info, nullptr);
-			fclose(fp);
 			return EC_RW_INFO_FAILURE;
 		}
 		png_read_info(readStruct, info);
@@ -148,7 +137,6 @@ extern "C"
 			 || strcmp(textInfo->key, MagicString) != 0)
 		{
 			png_destroy_read_struct(&readStruct, &info, nullptr);
-			fclose(fp);
 			return EC_RW_INFO_FAILURE;
 		}
 		//Get mdump data and copy it to a buffer
@@ -157,7 +145,6 @@ extern "C"
 		if(mdData == nullptr)
 		{
 			png_destroy_read_struct(&readStruct, &info, nullptr);
-			fclose(fp);
 			return EC_ALLOC_FAILURE;
 		}
 		memcpy(mdData, textInfo[0].text, mdDataLen);
@@ -168,7 +155,6 @@ extern "C"
 		*mdDataOut = mdData;
 		//Close up shop
 		png_destroy_read_struct(&readStruct, &info, nullptr);
-		fclose(fp);
 		return EC_SUCCESS;
 	}
 
@@ -329,6 +315,16 @@ extern "C"
 			return EC_ALLOC_FAILURE;
 		}
 	}
+}
+
+FileReader::FileReader(char* filepath)
+{
+	fp = fopen(filepath, "rb");
+}
+
+FileReader::~FileReader()
+{
+	fclose(fp);
 }
 
 MemoryWriter::MemoryWriter(png_bytep buff)

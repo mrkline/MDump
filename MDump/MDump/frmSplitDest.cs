@@ -147,7 +147,7 @@ namespace MDump
                 btnOK.Enabled = true;
             }
             //Check if directory is valid and check if an overwrite would be needed
-            else if (Directory.Exists(txtDir.Text) && !txtDir.Text.Contains(".."))
+            else if (Directory.Exists(txtDir.Text))
             {
                 //Get all images in the directory that start with the name provided
                 string[] dirFiles = Directory.GetFiles(SplitDir);

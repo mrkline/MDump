@@ -69,8 +69,6 @@ namespace MDump
         private const string switchToMergeMsg = "Adding a folder will put MDump in merge mode"            
                     + " since splitting images doesn't use folder info. Continue?";
         private const string switchToMergeTitle = "Switch to merge mode?";
-        private const string noSuchPathMsg = "The path entered does not exist.";
-        private const string noSuchPathTitle = "No such path";
         #endregion
 
         /// <summary>
@@ -359,8 +357,7 @@ namespace MDump
             {
                 string path = filepath.Substring(baseDir.Length);
                 path = path.Substring(0, path.LastIndexOf(Path.DirectorySeparatorChar));
-                Bitmap bmp = ImageCreator.CreateIndividualImage(Path.GetFileNameWithoutExtension(filepath),
-                    dirMan.CurrentPath + path);
+                Bitmap bmp = ImageCreator.CreateIndividualImage(filepath, dirMan.CurrentPath + path);
 
                 try
                 {
@@ -437,76 +434,83 @@ namespace MDump
         #region Event Handlers
         private void lvImages_DragDrop(object sender, DragEventArgs e)
         {
-            List<string> rootImages = new List<string>(); //Images not contained in a folder
-            List<string> dirs = new List<string>();
-
-            //We don't know whether these are images or folders
-            string[] tokens = (string[])e.Data.GetData(DataFormats.FileDrop);
-            
-            foreach (string token in tokens)
+            try
             {
-                //If this is a directory, add all images in it. 
-                if(Directory.Exists(token))
+                List<string> rootImages = new List<string>(); //Images not contained in a folder
+                List<string> dirs = new List<string>();
+
+                //We don't know whether these are images or folders
+                string[] tokens = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                foreach (string token in tokens)
                 {
-                    dirs.Add(token);
-                }
-                else
-                {
-                    if (PathUtils.IsSupportedImage(token))
+                    //If this is a directory, add all images in it. 
+                    if (Directory.Exists(token))
                     {
-                        rootImages.Add(token);
+                        dirs.Add(token);
                     }
-                }
-            }
-
-            //Used to set the mode from all iamges at the same time
-            List<string> allImages = new List<string>(rootImages.Count);
-            allImages.AddRange(rootImages);
-
-            //Add all images in the directories to allImages
-            foreach (string dir in dirs)
-            {
-                string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
-                foreach (string file in files)
-                {
-                    if (PathUtils.IsSupportedImage(file))
+                    else
                     {
-                        allImages.Add(file);
-                    }
-                }
-            }
-
-            //Set the correct mode
-            if (!SetModeFromImages(allImages))
-            {
-                return;
-            }
-
-            //If we're keeping track of directories, we have some work to do
-            if (CurrentMode == Mode.Merge
-                && MDumpOptions.Instance.MergePathOpts == MDumpOptions.PathOptions.PreservePath)
-            {
-                AddImages(rootImages);
-
-                List<string> dirImages = new List<string>();
-                foreach (string dir in dirs)
-                {
-                    dirImages.Clear();
-                    string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
-                    foreach(string file in files)
-                    {
-                        if(PathUtils.IsSupportedImage(file))
+                        if (PathUtils.IsSupportedImage(token))
                         {
-                            dirImages.Add(file);
+                            rootImages.Add(token);
                         }
                     }
-                    AddImagesWithPaths(dirImages, Directory.GetParent(dir).FullName);
+                }
+
+                //Used to set the mode from all iamges at the same time
+                List<string> allImages = new List<string>(rootImages.Count);
+                allImages.AddRange(rootImages);
+
+                //Add all images in the directories to allImages
+                foreach (string dir in dirs)
+                {
+                    string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                    foreach (string file in files)
+                    {
+                        if (PathUtils.IsSupportedImage(file))
+                        {
+                            allImages.Add(file);
+                        }
+                    }
+                }
+
+                //Set the correct mode
+                if (!SetModeFromImages(allImages))
+                {
+                    return;
+                }
+
+                //If we're keeping track of directories, we have some work to do
+                if (CurrentMode == Mode.Merge
+                    && MDumpOptions.Instance.MergePathOpts == MDumpOptions.PathOptions.PreservePath)
+                {
+                    AddImages(rootImages);
+
+                    List<string> dirImages = new List<string>();
+                    foreach (string dir in dirs)
+                    {
+                        dirImages.Clear();
+                        string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                        foreach (string file in files)
+                        {
+                            if (PathUtils.IsSupportedImage(file))
+                            {
+                                dirImages.Add(file);
+                            }
+                        }
+                        AddImagesWithPaths(dirImages, Directory.GetParent(dir).FullName);
+                    }
+                }
+                //Otherwise chuck all the images into AddImages
+                else
+                {
+                    AddImages(allImages);
                 }
             }
-            //Otherwise chuck all the images into AddImages
-            else
+            catch
             {
-                AddImages(allImages);
+
             }
         }
 
@@ -705,21 +709,8 @@ namespace MDump
         {
             if (e.KeyCode == Keys.Enter)
             {
-                try
-                {
-                    dirMan.SetActiveDirectory(txtPath.Text);
-                }
-                catch (ArgumentException)
-                {
-                    //A directory couldn't be resolved from the given path
-                    dirMan.SetActiveToRoot();
-                    MessageBox.Show(noSuchPathMsg, noSuchPathTitle, MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    RefreshDirUI();
-                }
+                dirMan.SetActiveDirectory(txtPath.Text);
+                RefreshDirUI();
             }
         }
 

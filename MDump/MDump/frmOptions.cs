@@ -129,7 +129,7 @@ namespace MDump
             {
                 opts.SplitPathOpts = MDumpOptions.PathOptions.Discard;
             }
-            opts.MergeFormat = cmbFormat.SelectedText;
+            opts.MergeFormat = cmbFormat.Text;
             opts.CompLevel = (MDumpOptions.CompressionLevel)trkCompression.Value;
             opts.MaxMergeSize = Convert.ToInt32(nudMaxMergeSize.Value) * kBytesPerKB;
             opts.AddTitleBar = chkAddTitleBar.Checked;
