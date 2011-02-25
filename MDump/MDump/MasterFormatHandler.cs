@@ -50,6 +50,38 @@ namespace MDump
         }
 
         /// <summary>
+        /// Gets the extensions of supported formats (for finding merge files)
+        /// </summary>
+        public IEnumerable<string> SupportedExtensions
+        {
+            get
+            {
+                List<string> extensions = new List<string>(handlers.Count);
+                foreach (ImageFormatHandler handler in handlers.Values)
+                {
+                    extensions.Add(handler.Extension);
+                }
+                return extensions;
+            }
+        }
+
+        /// <summary>
+        /// Gets the extension of the current merge format, as set in the options
+        /// </summary>
+        public string Extension
+        {
+            get
+            {
+                if (!handlers.ContainsKey(MDumpOptions.Instance.MergeFormat))
+                {
+                    throw new NotSupportedException(unsupportedFormat);
+                }
+                return handlers[MDumpOptions.Instance.MergeFormat].Extension;
+            }
+        }
+
+
+        /// <summary>
         /// Checks if the image is a MDump merged image.
         /// </summary>
         /// <param name="filepath">File path</param>

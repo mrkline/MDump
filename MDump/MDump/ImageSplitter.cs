@@ -181,9 +181,9 @@ namespace MDump
                                Bitmap split = MDDataReader.GetSplitImage(dataTokens[c], image);
                                string saveName = (string)split.Tag;
 
-                               //TODO: Make JPEG friendly
                                //If we're going to discard the file name or it wasn't given, switch to
                                //the name <name>.split<num>.png
+                               //Right now we're only splitting to PNG, regardless of merge format
                                if (opts.SplitPathOpts == MDumpOptions.PathOptions.Discard
                                    || saveName == PathUtils.DiscardedFilename)
                                {

@@ -159,8 +159,8 @@ namespace MDump
                 bool overwriteRequired = false;
                 foreach (string file in dirFiles)
                 {
-                    //TODO: Make JPEG friendly
                     //The name format of splits is <name>.split<num>.png
+                    //For now we only split into PNG, regardless of merge format.
                     string test = Path.GetFileName(file);
                     string[] tokens = Path.GetFileName(file).Split('.');
                     if (tokens.Length == 3
@@ -214,6 +214,7 @@ namespace MDump
             {
                 //TODO: Make JPEG friendly
                 //The name format of merges is <name>.split<num>.png
+                //Right now we're only splitting to PNG, regardless of merge format
                 string test = Path.GetFileName(file);
                 string[] tokens = Path.GetFileName(file).Split('.');
                 if (tokens.Length == 3

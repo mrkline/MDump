@@ -1,15 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Media.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Media.Imaging;
 
 namespace MDump
 {
     class JPEGHandler : ImageFormatHandler
     {
         private const string magicString = "MDmpMrge";
+
+        public string Extension
+        {
+            get { return "jpg"; }
+        }
 
         public string FormatName
         {

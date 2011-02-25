@@ -656,19 +656,27 @@ namespace MDump
             int fnLen =  extIdx - fnIdx;
             string name = fn.Substring(fnIdx, fnLen);
 
+            IEnumerable<string> mergeExtensions = MasterFormatHandler.Instance.SupportedExtensions;
+
             //Gather all merge images
             foreach (string file in dirFiles)
             {
-                //TODO: Make JPEG friendly
-                //The name format of merges is <name>.<num>.png
+                //The name format of merges is <name>.<num>.ext
                 string test = Path.GetFileName(file);
                 string[] tokens = Path.GetFileName(file).Split('.');
                 if(tokens.Length == 3
                     && tokens[0].Equals(name, StringComparison.InvariantCultureIgnoreCase)
-                    && IsInt(tokens[1])
-                    && tokens[2].Equals("png", StringComparison.InvariantCultureIgnoreCase))
+                    && IsInt(tokens[1]))
                 {
-                    mergeFiles.Add(file);
+                    //See if it's a supported extension
+                    foreach (string ext in mergeExtensions)
+                    {
+                        if(tokens[2].Equals(ext, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            mergeFiles.Add(file);
+                            break;
+                        }
+                    }
                 }
             }
 

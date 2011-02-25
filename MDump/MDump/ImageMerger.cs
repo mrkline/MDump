@@ -178,9 +178,8 @@ namespace MDump
                 {
                     List<Bitmap> currMergeSet = new List<Bitmap>();
 
-                    //TODO: Make JPEG friendly
                     //Filename of the current merge image
-                    string filename = mergePath + "." + mergesSaved.Count + ".png";
+                    string filename = mergePath + "." + mergesSaved.Count + "." + MasterFormatHandler.Instance.Extension;
 
                     //Start by determining the number of images that can be into one merge.
                     //A good starting guess is based on the uncompressed size of the images

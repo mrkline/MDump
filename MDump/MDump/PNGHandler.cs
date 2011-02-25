@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace MDump
 {
@@ -100,6 +99,8 @@ namespace MDump
         }
 
         public string FormatName { get { return "PNG"; } }
+
+        public string Extension { get { return "png"; } }
 
         /// <summary>
         /// Checks if the image is a MDump merged image
