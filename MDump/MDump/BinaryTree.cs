@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 
 /// <summary>
 /// A basic template for a binary tree node

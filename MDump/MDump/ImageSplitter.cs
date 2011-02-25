@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using System.Threading;
-using System.Runtime.InteropServices;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace MDump
@@ -15,7 +13,7 @@ namespace MDump
     /// </summary>
     class ImageSplitter
     {
-        #region Constants
+        #region String Constants
         private const string successMsg = "Images were all successfully split in to ";
         private const string dataExtractionErrorMsg = "An error occurred while retrieving the MDump data."
             + "from the merged image";
@@ -66,6 +64,7 @@ namespace MDump
             Done
         }
 
+        #region Classes
         /// <summary>
         /// Used to pass additional information to the callback.
         /// Means different things depending on the current SplitStage
@@ -95,13 +94,6 @@ namespace MDump
         }
 
         /// <summary>
-        /// A callback to inform the GUI thread of what the split thread is doing
-        /// </summary>
-        /// <param name="stage">Current stage of split procedure</param>
-        /// <param name="data">Has different menaing for each stage</param>
-        public delegate void SplitCallback(SplitStage stage, SplitCallbackData data);
-
-        /// <summary>
         /// Used to pass the arguments of SplitImages to the thread it creates
         /// </summary>
         private class SplitThreadArgs
@@ -118,6 +110,14 @@ namespace MDump
                 Callback = callback;
             }
         }
+#endregion
+
+        /// <summary>
+        /// A callback to inform the GUI thread of what the split thread is doing
+        /// </summary>
+        /// <param name="stage">Current stage of split procedure</param>
+        /// <param name="data">Has different menaing for each stage</param>
+        public delegate void SplitCallback(SplitStage stage, SplitCallbackData data);
 
         /// <summary>
         /// Split and save images in another thread,

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 
 namespace MDump
@@ -11,10 +9,12 @@ namespace MDump
     /// </summary>
     class MDDataReader : MDDataBase
     {
+        #region String Constants
         private const string notNumImagesTokenMsg 
             = "The provided token does not contain the number of images in this merge.";
         private const string notImageTokenMsg = "The provided token does not contain image information.";
         private const string notDirTokenMsg = "The provided token does not contain directory information.";
+        #endregion
 
         /// <summary>
         /// Used as a return code to indicate what a given line contains

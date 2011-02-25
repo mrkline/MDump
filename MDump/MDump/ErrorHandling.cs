@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
+using System.Text;
 
 namespace MDump
 {
@@ -24,7 +23,7 @@ namespace MDump
         /// </summary>
         public static string ErrorFilename
         {
-            get { return "ErrorDump.report"; }
+            get { return "ErrorDump.txt"; }
         }
 
         /// <summary>

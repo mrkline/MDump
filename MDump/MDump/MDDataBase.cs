@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace MDump
 {
     /// <summary>
@@ -9,6 +6,7 @@ namespace MDump
     /// </summary>
     abstract class MDDataBase
     {
+        #region Character Constants
         /// <summary>
         /// Separates pieces of data in the MDump data buffer
         /// </summary>
@@ -29,5 +27,6 @@ namespace MDump
         /// Indicates that the following line contains a directory where the following split images should be placed
         /// </summary>
         protected const char directoryIndicator = 'd';
+        #endregion
     }
 }

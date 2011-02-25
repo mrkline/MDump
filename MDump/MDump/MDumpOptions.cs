@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Drawing;
 using System.Xml.Serialization;
 
 namespace MDump
@@ -11,11 +9,14 @@ namespace MDump
     /// Holds the application options.
     /// </summary>
     [Serializable]
-    public class MDumpOptions 
+    public class MDumpOptions
     {
+        #region String Constants
         private const string couldNotInitOptions = "Default options could not be initialized.";
         private const string invalidPathOptionsExMsg = "Did not pass FormatPathFromOpts a valid PathOptions value";
+        #endregion
 
+        #region Enums
         /// <summary>
         /// Options for compressions
         /// </summary>
@@ -45,6 +46,7 @@ namespace MDump
             /// </summary>
             Discard
         }
+        #endregion
 
         /// <summary>
         /// Default options file filepath
