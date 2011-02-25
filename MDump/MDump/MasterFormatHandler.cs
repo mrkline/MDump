@@ -75,7 +75,7 @@ namespace MDump
         /// </summary>
         /// <param name="filepath">Filename of the merged image</param>
         /// <returns>MDump image data from image</returns>
-        public byte[] LoadMergedImageData(string filename)
+        public string LoadMergedImageData(string filename)
         {
             foreach (ImageFormatHandler handler in handlers.Values)
             {
@@ -94,7 +94,7 @@ namespace MDump
         /// <param name="mdData">MDump data string to save</param>
         /// <param name="compLevel">Compression level to use</param>
         /// <returns>Memory containing saved image</returns>
-        public byte[] SaveToMemory(Bitmap bitmap, byte[] mdData,
+        public byte[] SaveToMemory(Bitmap bitmap, string mdData,
             MDumpOptions.CompressionLevel compLevel)
         {
             if(!handlers.ContainsKey(MDumpOptions.Instance.MergeFormat))

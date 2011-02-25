@@ -29,10 +29,5 @@ namespace MDump
         /// Indicates that the following line contains a directory where the following split images should be placed
         /// </summary>
         protected const char directoryIndicator = 'd';
-
-        public static Encoding Encoding
-        {
-            get { return Encoding.UTF8; }
-        }
     }
 }

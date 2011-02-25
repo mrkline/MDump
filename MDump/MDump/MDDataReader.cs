@@ -32,13 +32,13 @@ namespace MDump
         /// </summary>
         /// <param name="data">The MDump data buffer recovered from a merged image</param>
         /// <returns>Tokens containing information about the images to split and directories to place them in</returns>
-        public static string[] DecodeAndSplitData(byte[] data)
+        public static string[] SplitData(string data)
         {
-            return Encoding.GetString(data).Split(separator);
+            return data.Split(separator);
         }
 
         /// <summary>
-        /// Gets the type of information a token returned from <see cref="DecodeAndSplitData"/> contains.
+        /// Gets the type of information a token returned from <see cref="SplitData"/> contains.
         /// </summary>
         /// <param name="token">Token returned from DecodeAndSplitData</param>
         /// <returns>The type of information token contains</returns>

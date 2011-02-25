@@ -356,7 +356,7 @@ namespace MDump
                 maxHeight += bmp.Height;
             }
 
-            byte[] mdData;
+            string mdData;
             //Merge our images and generate our data
             Bitmap merged = BTBitmapMapper.MergeImages(bitmaps, new Size(maxWidth, maxHeight),
                 PixelFormat.Format32bppArgb, opts, out mdData);

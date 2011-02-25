@@ -136,7 +136,7 @@ namespace MDump
         /// <param name="mdData">MDump Data to save</param>
         /// <returns>The single bitmap containing all the provided bitmaps.</returns>
         public static Bitmap MergeImages(IEnumerable<Bitmap> bitmaps, Size maxSize, PixelFormat pixelFormat,
-            MDumpOptions opts, out byte[] mdData)
+            MDumpOptions opts, out string mdData)
         {
             //Do a quick check to make sure the provided size is <= the total area of all images.
             int totalArea = 0;
@@ -209,83 +209,77 @@ namespace MDump
                 }
             }
 
-            System.Text.Encoding dataEncoding = MDDataBase.Encoding;
+            MDDataWriter mddw = new MDDataWriter();
+
             using (Graphics g = Graphics.FromImage(merged))
             {
-                using(MemoryStream mdStream = new MemoryStream())
+                mddw.WriteNumImages(numImages);
+
+                switch (opts.MergePathOpts)
                 {
-                    using (BinaryWriter bw = new BinaryWriter(mdStream, dataEncoding))
-                    {
-                        MDDataWriter mddw = new MDDataWriter(bw);
-                        mddw.WriteNumImages(numImages);
-
-                        switch(opts.MergePathOpts)
+                    case MDumpOptions.PathOptions.PreservePath:
+                        //Assemble a list of images that we'll sort by path
+                        List<NodeData> imgList = new List<NodeData>();
+                        foreach (NodeData data in root)
                         {
-                            case MDumpOptions.PathOptions.PreservePath:
-                                //Assemble a list of images that we'll sort by path
-                                List<NodeData> imgList = new List<NodeData>();
-                                foreach (NodeData data in root)
-                                {
-                                    Bitmap b = data.Bmp;
-                                    if (b != null)
-                                    {
-                                        Rectangle r = data.Rect;
-                                        g.DrawImage(b, r.X, r.Y, b.Width, b.Height);
-                                        imgList.Add(data);
-                                    }   
-                                }
-                                imgList.Sort(NodeData.BitmapTagComparison);
-                                string prevDir = string.Empty;
-                                foreach (NodeData data in imgList)
-                                {
-                                    Bitmap b = data.Bmp;
-                                    Rectangle r = data.Rect;
-                                    IndividualImageTag t = (IndividualImageTag)b.Tag;
-                                    string currDir = t.MDumpDir;
-                                    if (prevDir != currDir)
-                                    {
-                                        mddw.WriteDirectory(currDir);
-                                        prevDir = currDir;
-                                    }
-                                    mddw.WriteImageData(t.Name,
-                                        r.X, r.Y, b.Width, b.Height);
-                                }
-                                break;
-
-                            case MDumpOptions.PathOptions.PreserveName:
-                                foreach (NodeData data in root)
-                                {
-                                    Bitmap b = data.Bmp;
-                                    if (b != null)
-                                    {
-                                        Rectangle r = data.Rect;
-
-                                        g.DrawImage(b, r.X, r.Y, b.Width, b.Height);
-                                        mddw.WriteImageData(((IndividualImageTag)b.Tag).Name,
-                                            r.X, r.Y, b.Width, b.Height);
-                                    }
-                                }
-                                break;
-
-                            case MDumpOptions.PathOptions.Discard:
-                                foreach (NodeData data in root)
-                                {
-                                    Bitmap b = data.Bmp;
-                                    if (b != null)
-                                    {
-                                        Rectangle r = data.Rect;
-
-                                        g.DrawImage(b, r.X, r.Y, b.Width, b.Height);
-                                        mddw.WriteImageData(PathUtils.DiscardedFilename,
-                                            r.X, r.Y, b.Width, b.Height);
-                                    }
-                                }
-                                break;
+                            Bitmap b = data.Bmp;
+                            if (b != null)
+                            {
+                                Rectangle r = data.Rect;
+                                g.DrawImage(b, r.X, r.Y, b.Width, b.Height);
+                                imgList.Add(data);
+                            }
                         }
-                    }
-                    mdData = MDDataWriter.TrimBuffer(mdStream.GetBuffer());
+                        imgList.Sort(NodeData.BitmapTagComparison);
+                        string prevDir = string.Empty;
+                        foreach (NodeData data in imgList)
+                        {
+                            Bitmap b = data.Bmp;
+                            Rectangle r = data.Rect;
+                            IndividualImageTag t = (IndividualImageTag)b.Tag;
+                            string currDir = t.MDumpDir;
+                            if (prevDir != currDir)
+                            {
+                                mddw.WriteDirectory(currDir);
+                                prevDir = currDir;
+                            }
+                            mddw.WriteImageData(t.Name,
+                                r.X, r.Y, b.Width, b.Height);
+                        }
+                        break;
+
+                    case MDumpOptions.PathOptions.PreserveName:
+                        foreach (NodeData data in root)
+                        {
+                            Bitmap b = data.Bmp;
+                            if (b != null)
+                            {
+                                Rectangle r = data.Rect;
+
+                                g.DrawImage(b, r.X, r.Y, b.Width, b.Height);
+                                mddw.WriteImageData(((IndividualImageTag)b.Tag).Name,
+                                    r.X, r.Y, b.Width, b.Height);
+                            }
+                        }
+                        break;
+
+                    case MDumpOptions.PathOptions.Discard:
+                        foreach (NodeData data in root)
+                        {
+                            Bitmap b = data.Bmp;
+                            if (b != null)
+                            {
+                                Rectangle r = data.Rect;
+
+                                g.DrawImage(b, r.X, r.Y, b.Width, b.Height);
+                                mddw.WriteImageData(PathUtils.DiscardedFilename,
+                                    r.X, r.Y, b.Width, b.Height);
+                            }
+                        }
+                        break;
                 }
             }
+            mdData = mddw.MDumpData;
             return merged;
         }
     }

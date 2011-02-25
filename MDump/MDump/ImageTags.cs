@@ -59,9 +59,9 @@ namespace MDump
         /// <summary>
         /// Gets the MDData needed to split the merged image apart
         /// </summary>
-        public byte[] MDData { get; private set; }
+        public string MDData { get; private set; }
 
-        public MergedImageTag(string name, Bitmap bmp, byte[] mdData)
+        public MergedImageTag(string name, Bitmap bmp, string mdData)
             : base(name, bmp)
         {
             MDData = mdData;

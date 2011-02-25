@@ -14,15 +14,18 @@ namespace MDump
     /// </summary>
     class MDDataWriter : MDDataBase
     {
-        private BinaryWriter bw;
+        private string mdData;
+        /// <summary>
+        /// Gets MDump data written by this object
+        /// </summary>
+        public string MDumpData { get { return mdData; } }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="binWriter">The binary writer to write the MDump data to</param>
-        public MDDataWriter(BinaryWriter binWriter)
+        public MDDataWriter()
         {
-            bw = binWriter;
+            mdData = string.Empty;
         }
 
         /// <summary>
@@ -31,8 +34,8 @@ namespace MDump
         /// <param name="numImages">Number of images in the merged image this data represents</param>
         public void WriteNumImages(int numImages)
         {
-            bw.Write(Encoding.GetBytes(numImagesIndicator + subSeparator.ToString()
-                + numImages.ToString() + separator.ToString()));
+            mdData += numImagesIndicator + subSeparator.ToString()
+                + numImages.ToString() + separator.ToString();
         }
 
         /// <summary>
@@ -41,8 +44,7 @@ namespace MDump
         /// <param name="dir">MDump path to write</param>
         public void WriteDirectory(string dir)
         {
-            string write = directoryIndicator + subSeparator.ToString() + dir + separator.ToString();
-            bw.Write(Encoding.GetBytes(write));
+            mdData += directoryIndicator + subSeparator.ToString() + dir + separator.ToString();
         }
 
         /// <summary>
@@ -55,31 +57,9 @@ namespace MDump
         /// <param name="height">The height of the image</param>
         public void WriteImageData(string name, int x, int y, int width, int height)
         {
-            string write = imageIndicator.ToString() + subSeparator.ToString() + name + subSeparator.ToString()
+            mdData += imageIndicator.ToString() + subSeparator.ToString() + name + subSeparator.ToString()
                                     + x.ToString() + subSeparator.ToString() + y.ToString() + subSeparator.ToString()
                                     + width.ToString() + subSeparator.ToString() + height.ToString() + separator.ToString();
-            bw.Write(Encoding.GetBytes(write));
-        }
-
-        /// <summary>
-        /// Trims empty bytes from a byte buffer
-        /// </summary>
-        /// <param name="buff">Buffer to trim</param>
-        /// <returns>Trimmed copy of buff</returns>
-        public static byte[] TrimBuffer(byte[] buff)
-        {
-            byte[] ret;
-
-            for (int c = buff.Length - 1; c > 0; --c)
-            {
-                if (buff[c] != 0)
-                {
-                    ret = new byte[c];
-                    Array.Copy(buff, ret, c);
-                    return ret;
-                }
-            }
-            return buff;
         }
     }
 }

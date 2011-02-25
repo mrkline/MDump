@@ -163,7 +163,7 @@ namespace MDump
                 foreach (Bitmap image in sa.Bitmaps)
                 {
                     //Decode MDump data into a string using the text encoding it was saved with
-                    string[] dataTokens = MDDataReader.DecodeAndSplitData((image.Tag as MergedImageTag).MDData);
+                    string[] dataTokens = MDDataReader.SplitData((image.Tag as MergedImageTag).MDData);
                     
                     //The first token contains the number of images in this merge
                     callback(SplitStage.SplittingNewMerge,

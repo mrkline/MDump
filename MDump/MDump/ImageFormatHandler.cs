@@ -35,7 +35,7 @@ namespace MDump
         /// </summary>
         /// <param name="filepath">Filename of the merged image</param>
         /// <returns>MDump image data from image</returns>
-        byte[] LoadMergedImageData(string filepath);
+        string LoadMergedImageData(string filepath);
 
         /// <summary>
         /// Saves a (assumed merged) image to managed memory
@@ -44,6 +44,6 @@ namespace MDump
         /// <param name="mdData">MDump data string to save</param>
         /// <param name="compLevel">Compression level to use</param>
         /// <returns>Memory containing saved image</returns>
-        byte[] SaveToMemory(Bitmap bitmap, byte[] mdData, MDumpOptions.CompressionLevel compLevel);
+        byte[] SaveToMemory(Bitmap bitmap, string mdData, MDumpOptions.CompressionLevel compLevel);
     }
 }

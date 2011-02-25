@@ -13,6 +13,7 @@ namespace MDump
     class PNGHandler : ImageFormatHandler
     {
         private const string dllNotFound = "PNGOps.dll could not be found.";
+        private readonly Encoding enc = Encoding.UTF8;
 
         #region Return Code Enums
         /// <summary>
@@ -125,7 +126,7 @@ namespace MDump
         /// </summary>
         /// <param name="filepath">Filename of the merged image</param>
         /// <returns>MDump image data from image</returns>
-        public byte[] LoadMergedImageData(string filename)
+        public string LoadMergedImageData(string filename)
         {
             IntPtr unmanaged;
             int unmanagedLen;
@@ -137,7 +138,7 @@ namespace MDump
             byte[] ret = new byte[unmanagedLen];
             Marshal.Copy(unmanaged, ret, 0, unmanagedLen);
             FreeUnmanagedData(unmanaged);
-            return ret;
+            return enc.GetString(ret);
         }
 
         /// <summary>
@@ -147,7 +148,7 @@ namespace MDump
         /// <param name="mdData">MDump data string to save</param>
         /// <param name="compLevel">Compression level to use</param>
         /// <returns>Memory containing saved image</returns>
-        public byte[] SaveToMemory(Bitmap bitmap, byte[] mdData, MDumpOptions.CompressionLevel compLevel)
+        public byte[] SaveToMemory(Bitmap bitmap, string mdData, MDumpOptions.CompressionLevel compLevel)
         {
             System.Drawing.Imaging.BitmapData data =
                 bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
@@ -236,7 +237,7 @@ namespace MDump
         /// <returns>EC_SUCCESS on success</returns>
         [DllImport(DllName)]
         private static extern ECode SavePNGToMemory(IntPtr bitmap, int width, int height,
-            bool flipRGB, byte[] mdData, int mdDataLen, int compLevel,
+            bool flipRGB, string mdData, int mdDataLen, int compLevel,
             out IntPtr memPngOut, out int memPngLenOut);
     }
 }
