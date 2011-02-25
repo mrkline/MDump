@@ -159,6 +159,7 @@ namespace MDump
                 bool overwriteRequired = false;
                 foreach (string file in dirFiles)
                 {
+                    //TODO: Make JPEG friendly
                     //The name format of splits is <name>.split<num>.png
                     string test = Path.GetFileName(file);
                     string[] tokens = Path.GetFileName(file).Split('.');
@@ -211,6 +212,7 @@ namespace MDump
             List<string> filesToOverwrite = new List<string>();
             foreach (string file in dirFiles)
             {
+                //TODO: Make JPEG friendly
                 //The name format of merges is <name>.split<num>.png
                 string test = Path.GetFileName(file);
                 string[] tokens = Path.GetFileName(file).Split('.');

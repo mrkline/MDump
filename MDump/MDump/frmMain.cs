@@ -659,6 +659,7 @@ namespace MDump
             //Gather all merge images
             foreach (string file in dirFiles)
             {
+                //TODO: Make JPEG friendly
                 //The name format of merges is <name>.<num>.png
                 string test = Path.GetFileName(file);
                 string[] tokens = Path.GetFileName(file).Split('.');

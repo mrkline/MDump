@@ -23,6 +23,13 @@ namespace MDump
         string FormatName { get; }
 
         /// <summary>
+        /// Checks if this handler supports a given image extension
+        /// </summary>
+        /// <param name="extension">image extension with no preceding dot</param>
+        /// <returns>true if the extension is supported</returns>
+        bool SupportsImageExtension(string extension);
+
+        /// <summary>
         /// Checks if the image is a MDump merged image supported by this handler
         /// </summary>
         /// <param name="filepath">File path</param>

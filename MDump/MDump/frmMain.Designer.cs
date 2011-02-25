@@ -180,6 +180,7 @@
             // 
             // btnUpFolder
             // 
+            this.btnUpFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpFolder.Enabled = false;
             this.btnUpFolder.Image = global::MDump.Properties.Resources.UpFolder;
             this.btnUpFolder.Location = new System.Drawing.Point(426, 14);
@@ -192,6 +193,7 @@
             // 
             // btnCreateFolder
             // 
+            this.btnCreateFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnCreateFolder.Location = new System.Drawing.Point(93, 284);
             this.btnCreateFolder.Name = "btnCreateFolder";
             this.btnCreateFolder.Size = new System.Drawing.Size(85, 30);
@@ -203,6 +205,7 @@
             // 
             // btnReset
             // 
+            this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnReset.Location = new System.Drawing.Point(184, 284);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(81, 30);

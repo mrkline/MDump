@@ -26,7 +26,7 @@ namespace MDump
 
         /// <summary>
         /// Gets the split keyword for split images which have the file name format of
-        /// (uniqueName).(keyword)(number).png
+        /// (uniqueName).(keyword)(number).ext
         /// </summary>
         public static string SplitKeyword
         {
@@ -181,6 +181,7 @@ namespace MDump
                                Bitmap split = MDDataReader.GetSplitImage(dataTokens[c], image);
                                string saveName = (string)split.Tag;
 
+                               //TODO: Make JPEG friendly
                                //If we're going to discard the file name or it wasn't given, switch to
                                //the name <name>.split<num>.png
                                if (opts.SplitPathOpts == MDumpOptions.PathOptions.Discard

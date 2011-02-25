@@ -36,6 +36,8 @@ namespace MDump
             ImageFormatHandler handler = new PNGHandler();
 
             handlers.Add(handler.FormatName, handler);
+            handler = new JPEGHandler();
+            handlers.Add(handler.FormatName, handler);
         }
         #endregion
 

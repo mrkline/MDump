@@ -1,3 +1,9 @@
+version 0.3.0 (TBD)
+
+- Fixed buttons not properly being moved when window is resized.
+- Added JPEG support. You can now choose between saving merges as
+  JPEG or PNG files.
+
 version 0.2.0 (Feb 11, 2011)
 
 - Added folder system. When merging, and with folder info enabled
