@@ -120,6 +120,17 @@
   <metadata name="ttpExplanations.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>160, 17</value>
   </metadata>
+  <data name="picExplainFormats.ToolTip" xml:space="preserve">
+    <value>JPEG is best used for photo or photo-like images, while PNG is best used for
+other graphics.
+
+JPEG merged images degrade the quality of the original images, but merging
+is faster and compression is greater.
+
+PNG merged images may not compress to be as small of a size as JPEG merged
+images, requiring more merged images to be created from the same image
+set. Unlike JPEG though, they perfectly preserve the original images.</value>
+  </data>
   <data name="picExplainCompression.ToolTip" xml:space="preserve">
     <value>Set the compression level the PNG image format should use while compressing
 the image.

@@ -26,7 +26,7 @@ namespace MDump
                 using (FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Read))
                 {
                     BitmapMetadata meta = new JpegBitmapDecoder(fs,
-                         BitmapCreateOptions.DelayCreation, BitmapCacheOption.None).Metadata;
+                         BitmapCreateOptions.DelayCreation, BitmapCacheOption.None).Frames[0].Metadata as BitmapMetadata;
 
                     if (meta.Comment.StartsWith(magicString, StringComparison.InvariantCulture))
                     {
@@ -47,7 +47,7 @@ namespace MDump
             using (FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Read))
             {
                 BitmapMetadata meta = new JpegBitmapDecoder(fs,
-                    BitmapCreateOptions.DelayCreation, BitmapCacheOption.None).Metadata;
+                    BitmapCreateOptions.DelayCreation, BitmapCacheOption.None).Frames[0].Metadata as BitmapMetadata;
 
                 return meta.Comment.Substring(magicString.Length);
             }
@@ -63,12 +63,15 @@ namespace MDump
                 //HACK: We're jumping in and out of native handles to convert the Bitmap to a BitmapSource
                 IntPtr hBitmap = bitmap.GetHbitmap();
 
+                BitmapMetadata meta = new BitmapMetadata("jpg");
+                meta.Comment = magicString + mdData;
+
                 try
                 {
                     enc.Frames.Add(BitmapFrame.Create(
                         System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
                             hBitmap, IntPtr.Zero, System.Windows.Int32Rect.Empty,
-                            BitmapSizeOptions.FromEmptyOptions())));
+                            BitmapSizeOptions.FromEmptyOptions()),null, meta, null));
                 }
                 finally
                 {
@@ -93,8 +96,6 @@ namespace MDump
                         enc.QualityLevel = 60;
                         break;
                 }
-
-                enc.Metadata.Comment = magicString + mdData;
 
                 enc.Save(ms);
                 buff = ms.GetBuffer();

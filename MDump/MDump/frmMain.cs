@@ -434,83 +434,76 @@ namespace MDump
         #region Event Handlers
         private void lvImages_DragDrop(object sender, DragEventArgs e)
         {
-            try
+            List<string> rootImages = new List<string>(); //Images not contained in a folder
+            List<string> dirs = new List<string>();
+
+            //We don't know whether these are images or folders
+            string[] tokens = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+            foreach (string token in tokens)
             {
-                List<string> rootImages = new List<string>(); //Images not contained in a folder
-                List<string> dirs = new List<string>();
-
-                //We don't know whether these are images or folders
-                string[] tokens = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-                foreach (string token in tokens)
+                //If this is a directory, add all images in it. 
+                if (Directory.Exists(token))
                 {
-                    //If this is a directory, add all images in it. 
-                    if (Directory.Exists(token))
+                    dirs.Add(token);
+                }
+                else
+                {
+                    if (PathUtils.IsSupportedImage(token))
                     {
-                        dirs.Add(token);
-                    }
-                    else
-                    {
-                        if (PathUtils.IsSupportedImage(token))
-                        {
-                            rootImages.Add(token);
-                        }
+                        rootImages.Add(token);
                     }
                 }
+            }
 
-                //Used to set the mode from all iamges at the same time
-                List<string> allImages = new List<string>(rootImages.Count);
-                allImages.AddRange(rootImages);
+            //Used to set the mode from all iamges at the same time
+            List<string> allImages = new List<string>(rootImages.Count);
+            allImages.AddRange(rootImages);
 
-                //Add all images in the directories to allImages
+            //Add all images in the directories to allImages
+            foreach (string dir in dirs)
+            {
+                string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                foreach (string file in files)
+                {
+                    if (PathUtils.IsSupportedImage(file))
+                    {
+                        allImages.Add(file);
+                    }
+                }
+            }
+
+            //Set the correct mode
+            if (!SetModeFromImages(allImages))
+            {
+                return;
+            }
+
+            //If we're keeping track of directories, we have some work to do
+            if (CurrentMode == Mode.Merge
+                && MDumpOptions.Instance.MergePathOpts == MDumpOptions.PathOptions.PreservePath)
+            {
+                AddImages(rootImages);
+
+                List<string> dirImages = new List<string>();
                 foreach (string dir in dirs)
                 {
+                    dirImages.Clear();
                     string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
                     foreach (string file in files)
                     {
                         if (PathUtils.IsSupportedImage(file))
                         {
-                            allImages.Add(file);
+                            dirImages.Add(file);
                         }
                     }
-                }
-
-                //Set the correct mode
-                if (!SetModeFromImages(allImages))
-                {
-                    return;
-                }
-
-                //If we're keeping track of directories, we have some work to do
-                if (CurrentMode == Mode.Merge
-                    && MDumpOptions.Instance.MergePathOpts == MDumpOptions.PathOptions.PreservePath)
-                {
-                    AddImages(rootImages);
-
-                    List<string> dirImages = new List<string>();
-                    foreach (string dir in dirs)
-                    {
-                        dirImages.Clear();
-                        string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
-                        foreach (string file in files)
-                        {
-                            if (PathUtils.IsSupportedImage(file))
-                            {
-                                dirImages.Add(file);
-                            }
-                        }
-                        AddImagesWithPaths(dirImages, Directory.GetParent(dir).FullName);
-                    }
-                }
-                //Otherwise chuck all the images into AddImages
-                else
-                {
-                    AddImages(allImages);
+                    AddImagesWithPaths(dirImages, Directory.GetParent(dir).FullName);
                 }
             }
-            catch
+            //Otherwise chuck all the images into AddImages
+            else
             {
-
+                AddImages(allImages);
             }
         }
 

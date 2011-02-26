@@ -59,6 +59,7 @@
             this.dlgFolderBrowse = new System.Windows.Forms.FolderBrowserDialog();
             this.btnDefaults = new System.Windows.Forms.Button();
             this.ttpExplanations = new System.Windows.Forms.ToolTip(this.components);
+            this.picExplainFormats = new System.Windows.Forms.PictureBox();
             this.tabOptions.SuspendLayout();
             this.tbpMerging.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picExplainAddTitleBar)).BeginInit();
@@ -69,6 +70,7 @@
             this.grpImageNaming.SuspendLayout();
             this.tbpSplitting.SuspendLayout();
             this.grpSplitNames.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainFormats)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSaveOptions
@@ -109,6 +111,7 @@
             // 
             // tbpMerging
             // 
+            this.tbpMerging.Controls.Add(this.picExplainFormats);
             this.tbpMerging.Controls.Add(this.cmbFormat);
             this.tbpMerging.Controls.Add(this.lblFormat);
             this.tbpMerging.Controls.Add(this.picExplainAddTitleBar);
@@ -399,6 +402,17 @@
             this.ttpExplanations.ReshowDelay = 100;
             this.ttpExplanations.Popup += new System.Windows.Forms.PopupEventHandler(this.ttpExplanations_Popup);
             // 
+            // picExplainFormats
+            // 
+            this.picExplainFormats.Image = global::MDump.Properties.Resources.QuestionIcon;
+            this.picExplainFormats.Location = new System.Drawing.Point(197, 108);
+            this.picExplainFormats.Name = "picExplainFormats";
+            this.picExplainFormats.Size = new System.Drawing.Size(20, 20);
+            this.picExplainFormats.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picExplainFormats.TabIndex = 27;
+            this.picExplainFormats.TabStop = false;
+            this.ttpExplanations.SetToolTip(this.picExplainFormats, resources.GetString("picExplainFormats.ToolTip"));
+            // 
             // frmOptions
             // 
             this.AcceptButton = this.btnSaveOptions;
@@ -430,6 +444,7 @@
             this.tbpSplitting.ResumeLayout(false);
             this.grpSplitNames.ResumeLayout(false);
             this.grpSplitNames.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainFormats)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -465,6 +480,7 @@
         private System.Windows.Forms.PictureBox picExplainMaxSize;
         private System.Windows.Forms.ComboBox cmbFormat;
         private System.Windows.Forms.Label lblFormat;
+        private System.Windows.Forms.PictureBox picExplainFormats;
 
     }
 }

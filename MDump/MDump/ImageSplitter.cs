@@ -204,6 +204,10 @@ namespace MDump
                                if (opts.SplitPathOpts == MDumpOptions.PathOptions.PreservePath)
                                {
                                    string dir = splitDir + MDDataReader.GetDirectory(dataTokens[c]);
+                                   if (!Directory.Exists(dir))
+                                   {
+                                       dirsCreated.Add(Path.GetFullPath(dir));
+                                   }
                                    Directory.CreateDirectory(dir);
                                    Directory.SetCurrentDirectory(dir);
                                }

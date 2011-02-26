@@ -150,6 +150,8 @@ namespace MDump
                 MDumpOptions other = (MDumpOptions)obj;
                 return MergePathOpts == other.MergePathOpts
                     && SplitPathOpts == other.SplitPathOpts
+                    && MergeFormat == other.MergeFormat
+                    && CompLevel == other.CompLevel
                     && MaxMergeSize == other.MaxMergeSize
                     && AddTitleBar == other.AddTitleBar;
             }

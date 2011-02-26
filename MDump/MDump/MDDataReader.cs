@@ -34,7 +34,7 @@ namespace MDump
         /// <returns>Tokens containing information about the images to split and directories to place them in</returns>
         public static string[] SplitData(string data)
         {
-            return data.Split(separator);
+            return data.Split(new char[] { separator }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         /// <summary>
