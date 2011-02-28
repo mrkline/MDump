@@ -16,9 +16,9 @@ namespace MDump
         private const string splitTitle = "Splitting Images...";
         private const string startingMerge = "Starting merge process...";
         private const string determiningImgNum = "Determining number of images we can fit in one merged image...\n\n";
-        private const string wasTooLarge = "The last attempt created a PNG too large for the maximum size set in the options.\n"
+        private const string wasTooLarge = "The last attempt created an image too large for the maximum size set in the options.\n"
                                     + "Now trying with fewer images";
-        private const string wasTooSmall = "The last attempt created a PNG too large for the maximum size set in the options.\n"
+        private const string wasTooSmall = "The last attempt created an image too large for the maximum size set in the options.\n"
                                     + "Now trying with more images";
         private const string nowSaving = "Determined the most images that can be fit in this merged image.\n"
                                 + "Now saving ";
@@ -42,13 +42,11 @@ namespace MDump
         {
             if (mode == frmMain.Mode.Merge)
             {
-                prgIndividual.Style = ProgressBarStyle.Marquee;
                 Text = mergeTitle;
                 ImageMerger.MergeImages(bmpList, path, MergeCallback);
             }
             else
             {
-                prgIndividual.Style = ProgressBarStyle.Blocks;
                 Text = splitTitle;
                 ImageSplitter.SplitImages(bmpList, path, SplitCallback);
             }
@@ -142,7 +140,7 @@ namespace MDump
         /// </summary>
         /// <param name="stage">Current stage of split procedure</param>
         /// <param name="data">Has different menaing for each stage</param>
-        private void SplitCallback(ImageSplitter.SplitStage stage, ImageSplitter.SplitCallbackData data)
+        private void SplitCallback(ImageSplitter.SplitStage stage, string data)
         {
             if (InvokeRequired)
             {
@@ -153,27 +151,17 @@ namespace MDump
                 switch (stage)
                 {
                     case ImageSplitter.SplitStage.Starting:
-                        lblWaitStatus.Text = "Starting the split operation on "
-                            + data.IntegerValue.ToString() + " merged images.";
-                        prgOverall.Value = 0;
-                        prgOverall.Maximum = data.IntegerValue;
+                        lblWaitStatus.Text = "Starting the split operation.";
                         break;
 
                     case ImageSplitter.SplitStage.SplittingNewMerge:
-                        currentMerge = data.StringValue;
-                        lblWaitStatus.Text = "Splitting " + data.StringValue + "...\n";
-                        prgIndividual.Maximum = data.IntegerValue;
-                        prgIndividual.Value = 0;
+                        currentMerge = data;
+                        lblWaitStatus.Text = "Splitting " + data + "...\n";
                         break;
 
                     case ImageSplitter.SplitStage.SplittingImage:
-                        lblWaitStatus.Text = "Splitting " + data.StringValue
+                        lblWaitStatus.Text = "Splitting " + data
                             + " from " + currentMerge;
-                        prgIndividual.Value = data.IntegerValue;
-                        break;
-
-                    case ImageSplitter.SplitStage.FinishedMerge:
-                        prgOverall.Value = data.IntegerValue;
                         break;
 
                     case ImageSplitter.SplitStage.Done:

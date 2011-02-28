@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
@@ -53,15 +54,25 @@ namespace MDump
             }
         }
 
-        public byte[] SaveToMemory(System.Drawing.Bitmap bitmap, string mdData, MDumpOptions.CompressionLevel compLevel)
+        public byte[] SaveToMemory(Bitmap bitmap, string mdData, MDumpOptions.CompressionLevel compLevel)
         {
+            int width = bitmap.Width;
+            int height = bitmap.Height;
+            //JPEG's can't handle alpha transparencty. Make the backgroud white
+            Bitmap bmp = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.FillRectangle(new SolidBrush(Color.White), 0, 0, width, height);
+                g.DrawImage(bitmap, 0, 0, width, height);
+            }
+
             byte[] buff;
             using (MemoryStream ms = new MemoryStream())
             {
                 JpegBitmapEncoder enc = new JpegBitmapEncoder();
                 
                 //HACK: We're jumping in and out of native handles to convert the Bitmap to a BitmapSource
-                IntPtr hBitmap = bitmap.GetHbitmap();
+                IntPtr hBitmap = bmp.GetHbitmap();
 
                 BitmapMetadata meta = new BitmapMetadata("jpg");
                 meta.Comment = magicString + mdData;
@@ -81,19 +92,19 @@ namespace MDump
                 switch (compLevel)
                 {
                     case MDumpOptions.CompressionLevel.Low:
-                        enc.QualityLevel = 90;
+                        enc.QualityLevel = 92;
                         break;
 
                     case MDumpOptions.CompressionLevel.Medium:
-                        enc.QualityLevel = 80;
+                        enc.QualityLevel = 85;
                         break;
 
                     case MDumpOptions.CompressionLevel.High:
-                        enc.QualityLevel = 70;
+                        enc.QualityLevel = 75;
                         break;
 
                     case MDumpOptions.CompressionLevel.Maximum:
-                        enc.QualityLevel = 60;
+                        enc.QualityLevel = 65;
                         break;
                 }
 

@@ -223,7 +223,7 @@
             // dlgMerge
             // 
             this.dlgMerge.AddExtension = false;
-            this.dlgMerge.Filter = "MDump Merges|*.png";
+            this.dlgMerge.Filter = "MDump Merges|*.png;*.jpg";
             this.dlgMerge.OverwritePrompt = false;
             this.dlgMerge.SupportMultiDottedExtensions = true;
             this.dlgMerge.FileOk += new System.ComponentModel.CancelEventHandler(this.dlgMerge_FileOk);

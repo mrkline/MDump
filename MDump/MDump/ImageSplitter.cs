@@ -38,59 +38,23 @@ namespace MDump
         public enum SplitStage
         {
             /// <summary>
-            /// Starting split process. Integer value is the number of merges to split.
+            /// Starting split process. String is not used and can be null
             /// </summary>
             Starting,
             /// <summary>
             /// Starting to split a new merged image.
             /// String value is the name of the merged image.
-            /// Integer value is the number of images in the merge.
             /// </summary>
             SplittingNewMerge,
             /// <summary>
             /// Splitting an image out of a merged image.
             /// String value is the name of the image being split from the merge.
-            /// Integer value is the number of images split out of the current merge so far.
             /// </summary>
             SplittingImage,
             /// <summary>
-            /// Finished splitting a merged image.
-            /// Integer value is the number of images merged so far.
-            /// </summary>
-            FinishedMerge,
-            /// <summary>
-            /// Split operation done. Data is not used and can be null
+            /// Split operation done. String is not used and can be null
             /// </summary>
             Done
-        }
-
-        #region Classes
-        /// <summary>
-        /// Used to pass additional information to the callback.
-        /// Means different things depending on the current SplitStage
-        /// </summary>
-        public class SplitCallbackData
-        {
-            public string StringValue { get; private set; }
-            public int IntegerValue { get; private set; }
-
-            public SplitCallbackData(string str, int i)
-            {
-                StringValue = str;
-                IntegerValue = i;
-            }
-
-            public SplitCallbackData(string str)
-            {
-                StringValue = str;
-                IntegerValue = 0;
-            }
-
-            public SplitCallbackData(int i)
-            {
-                StringValue = string.Empty;
-                IntegerValue = i;
-            }
         }
 
         /// <summary>
@@ -110,14 +74,13 @@ namespace MDump
                 Callback = callback;
             }
         }
-#endregion
 
         /// <summary>
         /// A callback to inform the GUI thread of what the split thread is doing
         /// </summary>
         /// <param name="stage">Current stage of split procedure</param>
         /// <param name="data">Has different menaing for each stage</param>
-        public delegate void SplitCallback(SplitStage stage, SplitCallbackData data);
+        public delegate void SplitCallback(SplitStage stage, string data);
 
         /// <summary>
         /// Split and save images in another thread,
@@ -153,24 +116,19 @@ namespace MDump
 
             try
             {
-                callback(SplitStage.Starting, new SplitCallbackData(sa.Bitmaps.Count));
+                callback(SplitStage.Starting, null);
 
                 //Set the starting directory to the specified one
                 Directory.SetCurrentDirectory(splitDir);
 
                 //Split each image
-                int imagesSplit = 0;
                 foreach (Bitmap image in sa.Bitmaps)
                 {
                     //Decode MDump data into a string using the text encoding it was saved with
                     string[] dataTokens = MDDataReader.SplitData((image.Tag as MergedImageTag).MDData);
                     
                     //The first token contains the number of images in this merge
-                    callback(SplitStage.SplittingNewMerge,
-                        new SplitCallbackData(((MergedImageTag)image.Tag).Name,
-                            MDDataReader.GetNumImages(dataTokens[0])));
-
-                    int imagesRead = 0;
+                    callback(SplitStage.SplittingNewMerge, ((MergedImageTag)image.Tag).Name);
 
                     //Parse the rest of the tokens, each of which represents an image in the merged image
                     for (int c = 1; c < dataTokens.Length; ++c)
@@ -193,8 +151,7 @@ namespace MDump
                                {
                                    saveName += ".png";
                                }
-                               callback(SplitStage.SplittingImage,
-                                   new SplitCallbackData(saveName, ++imagesRead));
+                               callback(SplitStage.SplittingImage, saveName);
                                split.Save(saveName,
                                    System.Drawing.Imaging.ImageFormat.Png);
                                splitsSaved.Add(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + saveName);
@@ -218,7 +175,6 @@ namespace MDump
                        }
                         
                     }
-                    callback(SplitStage.FinishedMerge, new SplitCallbackData(++imagesSplit));
                 }
                 MessageBox.Show(successMsg + splitDir, successTitle);
             }

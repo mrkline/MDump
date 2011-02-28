@@ -34,6 +34,7 @@
             this.btnCancelOptions = new System.Windows.Forms.Button();
             this.tabOptions = new System.Windows.Forms.TabControl();
             this.tbpMerging = new System.Windows.Forms.TabPage();
+            this.picExplainFormats = new System.Windows.Forms.PictureBox();
             this.cmbFormat = new System.Windows.Forms.ComboBox();
             this.lblFormat = new System.Windows.Forms.Label();
             this.picExplainAddTitleBar = new System.Windows.Forms.PictureBox();
@@ -59,9 +60,9 @@
             this.dlgFolderBrowse = new System.Windows.Forms.FolderBrowserDialog();
             this.btnDefaults = new System.Windows.Forms.Button();
             this.ttpExplanations = new System.Windows.Forms.ToolTip(this.components);
-            this.picExplainFormats = new System.Windows.Forms.PictureBox();
             this.tabOptions.SuspendLayout();
             this.tbpMerging.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainFormats)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picExplainAddTitleBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picExplainMaxSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picExplainCompression)).BeginInit();
@@ -70,7 +71,6 @@
             this.grpImageNaming.SuspendLayout();
             this.tbpSplitting.SuspendLayout();
             this.grpSplitNames.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picExplainFormats)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSaveOptions
@@ -133,6 +133,17 @@
             this.tbpMerging.TabIndex = 0;
             this.tbpMerging.Text = "Merging Options";
             this.tbpMerging.UseVisualStyleBackColor = true;
+            // 
+            // picExplainFormats
+            // 
+            this.picExplainFormats.Image = global::MDump.Properties.Resources.QuestionIcon;
+            this.picExplainFormats.Location = new System.Drawing.Point(197, 108);
+            this.picExplainFormats.Name = "picExplainFormats";
+            this.picExplainFormats.Size = new System.Drawing.Size(20, 20);
+            this.picExplainFormats.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picExplainFormats.TabIndex = 27;
+            this.picExplainFormats.TabStop = false;
+            this.ttpExplanations.SetToolTip(this.picExplainFormats, resources.GetString("picExplainFormats.ToolTip"));
             // 
             // cmbFormat
             // 
@@ -402,17 +413,6 @@
             this.ttpExplanations.ReshowDelay = 100;
             this.ttpExplanations.Popup += new System.Windows.Forms.PopupEventHandler(this.ttpExplanations_Popup);
             // 
-            // picExplainFormats
-            // 
-            this.picExplainFormats.Image = global::MDump.Properties.Resources.QuestionIcon;
-            this.picExplainFormats.Location = new System.Drawing.Point(197, 108);
-            this.picExplainFormats.Name = "picExplainFormats";
-            this.picExplainFormats.Size = new System.Drawing.Size(20, 20);
-            this.picExplainFormats.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picExplainFormats.TabIndex = 27;
-            this.picExplainFormats.TabStop = false;
-            this.ttpExplanations.SetToolTip(this.picExplainFormats, resources.GetString("picExplainFormats.ToolTip"));
-            // 
             // frmOptions
             // 
             this.AcceptButton = this.btnSaveOptions;
@@ -434,6 +434,7 @@
             this.tabOptions.ResumeLayout(false);
             this.tbpMerging.ResumeLayout(false);
             this.tbpMerging.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picExplainFormats)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picExplainAddTitleBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picExplainMaxSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picExplainCompression)).EndInit();
@@ -444,7 +445,6 @@
             this.tbpSplitting.ResumeLayout(false);
             this.grpSplitNames.ResumeLayout(false);
             this.grpSplitNames.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picExplainFormats)).EndInit();
             this.ResumeLayout(false);
 
         }

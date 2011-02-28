@@ -77,7 +77,7 @@ namespace MDump
                 }
             }
             cmbFormat.SelectedIndex = idx;
-            trkCompression.Maximum = Enum.GetValues(typeof(MDumpOptions.CompressionLevel)).Length;
+            trkCompression.Maximum = Enum.GetValues(typeof(MDumpOptions.CompressionLevel)).Length - 1;
             trkCompression.Value = (int)opts.CompLevel;
             nudMaxMergeSize.Value = Convert.ToDecimal(opts.MaxMergeSize / kBytesPerKB);
             chkAddTitleBar.Checked = opts.AddTitleBar;

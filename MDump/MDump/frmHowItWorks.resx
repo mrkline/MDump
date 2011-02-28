@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="lblExplanation.Text" xml:space="preserve">
-    <value>The PNG image format used to save the merged images can contain text as well as the image data itself. While this text is normally used to save information like the author of the image, the date it was created, etc., MDump uses it to store the additional information it needs to split the image back up.
+    <value>The PNG and JPEG image formats used to save the merged images can contain text as well as the image data itself. While this text is normally used to save information like the author of the image, the date it was created, etc., MDump uses it to store the additional information it needs to split the image back up.
 
-MDump also compresses merged images so that they can be larger while still staying under the maximum merged image size set in the options menu. The only downside to this is that there is no certain way to know the compressed size of an image until after it has been compressed. When it merges images, MDump takes a guess at how many images it can fit in one merged image, then adjusts the number according to the size of the resulting compressed PNG.</value>
+MDump also compresses merged images so that they can be larger while still staying under the maximum merged image size set in the options menu. The only downside to this is that there is no certain way to know the compressed size of an image until after it has been compressed. When it merges images, MDump takes a guess at how many images it can fit in one merged image, then adjusts the number according to the size of the resulting compressed image.</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

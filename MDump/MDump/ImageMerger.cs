@@ -298,7 +298,7 @@ namespace MDump
                 {
                     ret += " Please note that PNG cannot compress large images as well as JPEG"
                         + " since JPEG sacrifices information to make the image smaller."
-                        + " The next major release of MDump will support saving merged images as JPEG ones.";
+                        + " You can switch to JPEG merged images .";
                 }
             return ret;
         }
