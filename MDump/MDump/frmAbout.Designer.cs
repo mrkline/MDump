@@ -56,7 +56,7 @@
             this.lblTitle.Location = new System.Drawing.Point(197, 12);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(169, 57);
-            this.lblTitle.TabIndex = 1;
+            this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "MDump";
             // 
             // lblVersion
@@ -66,7 +66,7 @@
             this.lblVersion.Location = new System.Drawing.Point(204, 69);
             this.lblVersion.Name = "lblVersion";
             this.lblVersion.Size = new System.Drawing.Size(118, 23);
-            this.lblVersion.TabIndex = 2;
+            this.lblVersion.TabIndex = 1;
             this.lblVersion.Text = "Filled at runtime";
             // 
             // lblCopyright
@@ -76,7 +76,7 @@
             this.lblCopyright.Location = new System.Drawing.Point(205, 92);
             this.lblCopyright.Name = "lblCopyright";
             this.lblCopyright.Size = new System.Drawing.Size(103, 20);
-            this.lblCopyright.TabIndex = 3;
+            this.lblCopyright.TabIndex = 2;
             this.lblCopyright.Text = "Filled at runtime";
             // 
             // btnClose
@@ -86,7 +86,7 @@
             this.btnClose.Location = new System.Drawing.Point(307, 205);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
-            this.btnClose.TabIndex = 4;
+            this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Ok";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
@@ -96,7 +96,7 @@
             this.btnHowItWorks.Location = new System.Drawing.Point(197, 205);
             this.btnHowItWorks.Name = "btnHowItWorks";
             this.btnHowItWorks.Size = new System.Drawing.Size(104, 23);
-            this.btnHowItWorks.TabIndex = 5;
+            this.btnHowItWorks.TabIndex = 4;
             this.btnHowItWorks.Text = "How does it work?";
             this.btnHowItWorks.UseVisualStyleBackColor = true;
             this.btnHowItWorks.Click += new System.EventHandler(this.btnHowItWorks_Click);

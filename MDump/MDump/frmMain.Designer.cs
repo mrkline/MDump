@@ -149,7 +149,7 @@
             this.btnAction.Location = new System.Drawing.Point(12, 320);
             this.btnAction.Name = "btnAction";
             this.btnAction.Size = new System.Drawing.Size(460, 30);
-            this.btnAction.TabIndex = 6;
+            this.btnAction.TabIndex = 4;
             this.btnAction.Text = "Set at runtime";
             this.btnAction.UseVisualStyleBackColor = true;
             this.btnAction.Click += new System.EventHandler(this.btnAction_Click);
@@ -160,7 +160,7 @@
             this.btnAddImage.Location = new System.Drawing.Point(12, 284);
             this.btnAddImage.Name = "btnAddImage";
             this.btnAddImage.Size = new System.Drawing.Size(75, 30);
-            this.btnAddImage.TabIndex = 4;
+            this.btnAddImage.TabIndex = 5;
             this.btnAddImage.Text = "Add Images";
             this.ttpMain.SetToolTip(this.btnAddImage, "Add an image to the list");
             this.btnAddImage.UseVisualStyleBackColor = true;
@@ -197,7 +197,7 @@
             this.btnCreateFolder.Location = new System.Drawing.Point(93, 284);
             this.btnCreateFolder.Name = "btnCreateFolder";
             this.btnCreateFolder.Size = new System.Drawing.Size(85, 30);
-            this.btnCreateFolder.TabIndex = 5;
+            this.btnCreateFolder.TabIndex = 6;
             this.btnCreateFolder.Text = "Create Folder";
             this.ttpMain.SetToolTip(this.btnCreateFolder, "Add a folder to put additional images in to");
             this.btnCreateFolder.UseVisualStyleBackColor = true;
@@ -209,7 +209,7 @@
             this.btnReset.Location = new System.Drawing.Point(184, 284);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(81, 30);
-            this.btnReset.TabIndex = 10;
+            this.btnReset.TabIndex = 7;
             this.btnReset.Text = "Reset";
             this.ttpMain.SetToolTip(this.btnReset, "Resets MDump, clearing out all images and/or folders");
             this.btnReset.UseVisualStyleBackColor = true;

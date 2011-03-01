@@ -42,7 +42,7 @@
             this.lblWaitStatus.Location = new System.Drawing.Point(12, 9);
             this.lblWaitStatus.Name = "lblWaitStatus";
             this.lblWaitStatus.Size = new System.Drawing.Size(350, 74);
-            this.lblWaitStatus.TabIndex = 1;
+            this.lblWaitStatus.TabIndex = 0;
             this.lblWaitStatus.Text = "Fill at runtime";
             this.lblWaitStatus.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
@@ -63,7 +63,7 @@
             this.prgOverall.Name = "prgOverall";
             this.prgOverall.Size = new System.Drawing.Size(341, 23);
             this.prgOverall.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.prgOverall.TabIndex = 3;
+            this.prgOverall.TabIndex = 1;
             // 
             // frmWait
             // 

@@ -152,7 +152,7 @@
             this.cmbFormat.Location = new System.Drawing.Point(87, 108);
             this.cmbFormat.Name = "cmbFormat";
             this.cmbFormat.Size = new System.Drawing.Size(104, 21);
-            this.cmbFormat.TabIndex = 26;
+            this.cmbFormat.TabIndex = 2;
             // 
             // lblFormat
             // 
@@ -160,7 +160,7 @@
             this.lblFormat.Location = new System.Drawing.Point(6, 111);
             this.lblFormat.Name = "lblFormat";
             this.lblFormat.Size = new System.Drawing.Size(75, 13);
-            this.lblFormat.TabIndex = 25;
+            this.lblFormat.TabIndex = 1;
             this.lblFormat.Text = "Merge Format:";
             // 
             // picExplainAddTitleBar
@@ -205,7 +205,7 @@
             this.lblCompression.Location = new System.Drawing.Point(3, 144);
             this.lblCompression.Name = "lblCompression";
             this.lblCompression.Size = new System.Drawing.Size(99, 13);
-            this.lblCompression.TabIndex = 1;
+            this.lblCompression.TabIndex = 3;
             this.lblCompression.Text = "Compression Level:";
             // 
             // lblMoreComp
@@ -214,7 +214,7 @@
             this.lblMoreComp.Location = new System.Drawing.Point(229, 166);
             this.lblMoreComp.Name = "lblMoreComp";
             this.lblMoreComp.Size = new System.Drawing.Size(112, 39);
-            this.lblMoreComp.TabIndex = 4;
+            this.lblMoreComp.TabIndex = 6;
             this.lblMoreComp.Text = "More Compression\r\nSlower\r\nFewer Merged Images";
             this.lblMoreComp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -224,7 +224,7 @@
             this.lblLessComp.Location = new System.Drawing.Point(6, 166);
             this.lblLessComp.Name = "lblLessComp";
             this.lblLessComp.Size = new System.Drawing.Size(107, 39);
-            this.lblLessComp.TabIndex = 2;
+            this.lblLessComp.TabIndex = 4;
             this.lblLessComp.Text = "Less Compression\r\nFaster\r\nMore Merged Images";
             this.lblLessComp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -236,7 +236,7 @@
             this.trkCompression.Maximum = 1;
             this.trkCompression.Name = "trkCompression";
             this.trkCompression.Size = new System.Drawing.Size(104, 45);
-            this.trkCompression.TabIndex = 3;
+            this.trkCompression.TabIndex = 5;
             this.trkCompression.Value = 1;
             // 
             // chkAddTitleBar
@@ -245,7 +245,7 @@
             this.chkAddTitleBar.Location = new System.Drawing.Point(12, 274);
             this.chkAddTitleBar.Name = "chkAddTitleBar";
             this.chkAddTitleBar.Size = new System.Drawing.Size(261, 17);
-            this.chkAddTitleBar.TabIndex = 8;
+            this.chkAddTitleBar.TabIndex = 10;
             this.chkAddTitleBar.Text = "Add \"Created with MDump\" bar to merged images";
             this.chkAddTitleBar.UseVisualStyleBackColor = true;
             // 
@@ -255,7 +255,7 @@
             this.lblKB.Location = new System.Drawing.Point(138, 241);
             this.lblKB.Name = "lblKB";
             this.lblKB.Size = new System.Drawing.Size(72, 13);
-            this.lblKB.TabIndex = 7;
+            this.lblKB.TabIndex = 9;
             this.lblKB.Text = "Kilobytes (KB)";
             // 
             // nudMaxMergeSize
@@ -273,7 +273,7 @@
             0});
             this.nudMaxMergeSize.Name = "nudMaxMergeSize";
             this.nudMaxMergeSize.Size = new System.Drawing.Size(120, 20);
-            this.nudMaxMergeSize.TabIndex = 6;
+            this.nudMaxMergeSize.TabIndex = 8;
             this.nudMaxMergeSize.Value = new decimal(new int[] {
             100,
             0,
@@ -286,7 +286,7 @@
             this.lblMaxMergeSize.Location = new System.Drawing.Point(6, 223);
             this.lblMaxMergeSize.Name = "lblMaxMergeSize";
             this.lblMaxMergeSize.Size = new System.Drawing.Size(340, 13);
-            this.lblMaxMergeSize.TabIndex = 5;
+            this.lblMaxMergeSize.TabIndex = 7;
             this.lblMaxMergeSize.Text = "Maximum size of each merged image (max upload size of image board):";
             // 
             // grpImageNaming
