@@ -114,7 +114,7 @@ namespace MDump
         /// <summary>
         /// Loads options from a file using XML serialization
         /// </summary>
-        /// <param name="filepath">XML serialization to load options from</param>
+        /// <param name="filename">XML serialization to load options from</param>
         /// <returns>The new options from the file</returns>
         public static MDumpOptions FromFile(string filename)
         {
@@ -128,7 +128,7 @@ namespace MDump
         /// <summary>
         /// Saves the options using XML serialization
         /// </summary>
-        /// <param name="filepath">the file to serialize to</param>
+        /// <param name="filename">the file to serialize to</param>
         public void SaveToFile(string filename)
         {
             XmlSerializer ser = new XmlSerializer(typeof(MDumpOptions));

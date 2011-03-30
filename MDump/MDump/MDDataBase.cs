@@ -14,7 +14,7 @@ namespace MDump
         /// <summary>
         /// Acts as a sub-separator in the MDump data buffer
         /// </summary>
-        protected const char subSeparator = ';';
+        protected const char subSeparator = '*';
         /// <summary>
         /// Indicates that the following line contains how many images are contained in this merged image
         /// </summary>

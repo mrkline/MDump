@@ -9,6 +9,9 @@ using System.Threading;
 
 namespace MDump
 {
+    /// <summary>
+    /// "Wait" form that displays while the application does its work
+    /// </summary>
     public partial class frmWait : Form
     {
         #region String Constants

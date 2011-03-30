@@ -125,7 +125,7 @@ namespace MDump
         /// Loads MDump data from an image.
         /// Does not test to see if the file is an MDump merged image.
         /// </summary>
-        /// <param name="filepath">Filename of the merged image</param>
+        /// <param name="filename">Filename of the merged image</param>
         /// <returns>MDump image data from image</returns>
         public string LoadMergedImageData(string filename)
         {
@@ -208,13 +208,10 @@ namespace MDump
         private static extern MergedCode IsMergedImage(string filepath);
 
         /// <summary>
-        /// Loads an MDump merged PNG.  Does not test to see if the file is a merged png.  For that see
+        /// Loads an MDump data from a merged PNG.  Does not test to see if the file is a merged png.  For that see
         /// <see cref="IsMergedImage"/>
         /// </summary>
-        /// <param name="filepath">Filename of the merged image</param>
-        /// <param name="bitmapOut">Is set to a pointer to the bitmap data in unmanaged memory</param>
-        /// <param name="widthOut">Is set to the width of the bitmap</param>
-        /// <param name="heightOut">Is set to the height of the bitmap</param>
+        /// <param name="filename">Filename of the merged image</param>
         /// <param name="mdDataOut">Is set to a pointer to the MDump data in unmanaged memory</param>
         /// <param name="mdDataLenOut">Is set to the length of the MDump data</param>
         /// <returns></returns>

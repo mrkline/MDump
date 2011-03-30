@@ -6,6 +6,9 @@ using System.Windows.Media.Imaging;
 
 namespace MDump
 {
+    /// <summary>
+    /// An ImageFormatHandler implementation that deals with JPEG-encoded images
+    /// </summary>
     class JPEGHandler : ImageFormatHandler
     {
         private const string magicString = "MDmpMrge";

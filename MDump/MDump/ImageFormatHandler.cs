@@ -3,6 +3,9 @@ using System.Drawing;
 
 namespace MDump
 {
+    /// <summary>
+    /// An exception type thrown by an ImageFormatHandler
+    /// </summary>
     class FormatHandlerException : ApplicationException
     {
         public FormatHandlerException(string message) : base(message)

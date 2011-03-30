@@ -528,7 +528,7 @@ namespace MDump
         /// <summary>
         /// Sets the active directory using a given path
         /// </summary>
-        /// <param name="path">The path of the directory, from root\</param>
+        /// <param name="path">The path of the directory, from root</param>
         public void SetActiveDirectory(string path)
         {
             //If all fails, fall back to the current directory

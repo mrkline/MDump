@@ -106,7 +106,7 @@ namespace MDump
         /// Loads MDump data from an image.
         /// Finds correct image handler and uses it
         /// </summary>
-        /// <param name="filepath">Filename of the merged image</param>
+        /// <param name="filename">Filename of the merged image</param>
         /// <returns>MDump image data from image</returns>
         public string LoadMergedImageData(string filename)
         {

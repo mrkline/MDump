@@ -195,7 +195,7 @@ namespace MDump
                         //If the PNG merge code weirds out, break out of here.
                         try
                         {
-                            currentMergeMem = CreateMergedImage(currMergeSet, opts);
+                            currentMergeMem = CreateMergedImage(currMergeSet);
                         }
                         catch (FormatHandlerException ex)
                         {
@@ -338,10 +338,8 @@ namespace MDump
         /// Creates the merged PNG image in memory, passing back the buffer that contains the image.
         /// </summary>
         /// <param name="bitmaps">Bitmaps to merge into a PNG</param>
-        /// <param name="opts">Options to use while merging</param>
-        /// <param name="handler">Image format handler to save the image with</param>
         /// <returns>The merged image in managed memory</returns>
-        private static byte[] CreateMergedImage(IEnumerable<Bitmap> bitmaps, MDumpOptions opts)
+        private static byte[] CreateMergedImage(IEnumerable<Bitmap> bitmaps)
         {
             int maxWidth = 0;
             int maxHeight = 0;
@@ -357,10 +355,10 @@ namespace MDump
             string mdData;
             //Merge our images and generate our data
             Bitmap merged = BTBitmapMapper.MergeImages(bitmaps, new Size(maxWidth, maxHeight),
-                PixelFormat.Format32bppArgb, opts, out mdData);
+                PixelFormat.Format32bppArgb, out mdData);
 
             //Tack on the title bar if requested to
-            if (opts.AddTitleBar)
+            if (MDumpOptions.Instance.AddTitleBar)
             {
                 Bitmap titleBar;
                 int mWidth = merged.Width;

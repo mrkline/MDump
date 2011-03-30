@@ -53,6 +53,9 @@ namespace MDump
             /// </summary>
             public int Area { get { return Rect.Width * Rect.Height; } }
 
+            /// <summary>
+            /// A sort function that sorts NodeData objects by the MDump directory of the tagged image
+            /// </summary>
             public static int BitmapTagComparison(NodeData d1, NodeData d2)
             {
                 return ((IndividualImageTag)d1.Bmp.Tag).MDumpDir.CompareTo(((IndividualImageTag)d2.Bmp.Tag).MDumpDir);
@@ -135,7 +138,7 @@ namespace MDump
         /// <param name="mdData">MDump Data to save</param>
         /// <returns>The single bitmap containing all the provided bitmaps.</returns>
         public static Bitmap MergeImages(IEnumerable<Bitmap> bitmaps, Size maxSize, PixelFormat pixelFormat,
-            MDumpOptions opts, out string mdData)
+            out string mdData)
         {
             //Do a quick check to make sure the provided size is <= the total area of all images.
             int totalArea = 0;
@@ -214,7 +217,7 @@ namespace MDump
             {
                 mddw.WriteNumImages(numImages);
 
-                switch (opts.MergePathOpts)
+                switch (MDumpOptions.Instance.MergePathOpts)
                 {
                     case MDumpOptions.PathOptions.PreservePath:
                         //Assemble a list of images that we'll sort by path

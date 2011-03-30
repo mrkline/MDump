@@ -87,7 +87,7 @@ namespace MDump
         /// passing a wait dialog updates on its current state via callbacks
         /// </summary>
         /// <param name="bitmaps">Bitmaps to split and save. Their tag contains afile name or path.</param>
-        /// <param name="SplitPath">Directory to split merge images to</param>
+        /// <param name="splitDir">Directory to split merge images to</param>
         /// <param name="callback">Callback for wait form to show user what is going on</param>
         public static void SplitImages(List<Bitmap> bitmaps, string splitDir,
             SplitCallback callback)
@@ -201,6 +201,7 @@ namespace MDump
         /// This way we don't have a half-baked split.
         /// </summary>
         /// <param name="splitsSaved">Split images already saved</param>
+        /// <param name="dirsCreated">Image directories already created</param>
         private static void CleanupOnSplitFail(List<string> splitsSaved, List<string> dirsCreated)
         {
             foreach (string split in splitsSaved)

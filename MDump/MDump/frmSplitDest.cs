@@ -9,6 +9,9 @@ using System.IO;
 
 namespace MDump
 {
+    /// <summary>
+    /// Form to prompt the user on the location to which files should be split.
+    /// </summary>
     public partial class frmSplitDest : Form
     {
         #region String Constants

@@ -7,6 +7,9 @@ using System.Windows.Forms;
 
 namespace MDump
 {
+    /// <summary>
+    /// About form for the application
+    /// </summary>
     partial class frmAbout : Form
     {
         public frmAbout()

@@ -9,6 +9,9 @@ using System.Windows.Forms;
 
 namespace MDump
 {
+    /// <summary>
+    /// Main form of the application
+    /// </summary>
     public partial class frmMain : Form
     {
         #region String Constants
@@ -76,9 +79,19 @@ namespace MDump
         /// </summary>
         public enum Mode
         {
-            
+            /// <summary>
+            /// The mode has not been set or has been reset.
+            /// This is the initial mode
+            /// </summary>
             NotSet,
+            /// <summary>
+            /// MDump is merging individual images into merged images
+            /// </summary>
             Merge,
+            /// <summary>
+            /// MDump is splitting merged images it previously created
+            /// into individual images
+            /// </summary>
             Split
         }
 
@@ -301,10 +314,6 @@ namespace MDump
         /// Add Images to the current directory
         /// </summary>
         /// <param name="images">paths of each file (assumably images) to add</param>
-        /// <param name="modeAlreadySet">
-        /// true if SetModeFromImages has already been called, i.e., when files are dragged into the list view.
-        /// false if SetModeFromImages has not already been called, i.e., when images are added from the file open dialog.
-        /// </param>
         private void AddImages(IEnumerable<string> images) 
         {
            foreach (string filepath in images)

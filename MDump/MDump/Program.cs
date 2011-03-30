@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Windows.Forms;
 
+//! Base namespace for the application
 namespace MDump
 {
     static class Program

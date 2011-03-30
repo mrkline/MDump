@@ -10,7 +10,7 @@ using System.IO;
 namespace MDump
 {
     /// <summary>
-    /// Form to modify program options
+    /// Form to view and modify program options
     /// </summary>
     public partial class frmOptions : Form
     {
