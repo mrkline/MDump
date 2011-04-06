@@ -192,6 +192,9 @@ namespace MDump
             }
             finally
             {
+                // Set current directory back to us so that the app doesn't have a lock
+                // on the output directory
+                Directory.SetCurrentDirectory(PathUtils.AppDir);
                 callback(SplitStage.Done, null);
             }
         }
