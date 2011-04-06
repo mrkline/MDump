@@ -758,7 +758,7 @@ namespace MDump
                 if(!PathUtils.IsValidDirName(newName))
                 {
                     e.CancelEdit = true;
-                    MessageBox.Show(newName + PathUtils.InvalidDirNameMsg, PathUtils.InvalidDirNameTitle,
+                    MessageBox.Show("\"" + newName + "\"" + PathUtils.InvalidDirNameMsg, PathUtils.InvalidDirNameTitle,
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }

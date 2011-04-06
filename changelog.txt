@@ -1,4 +1,8 @@
-version 0.3.1 (April 06, 2011)
+version 0.3.2 (Apr 06, 2011)
+
+- Stopped ability to rename images and folders to nothing.
+
+version 0.3.1 (Apr 06, 2011)
 
 - App no longer prevents a folder that images have been split to
   from being deleted.

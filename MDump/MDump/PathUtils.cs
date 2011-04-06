@@ -82,7 +82,7 @@ namespace MDump
         /// <returns>true if the provided directory name is valid</returns>
         public static bool IsValidDirName(string name)
         {
-            return name.IndexOfAny(invalidDirNameChars) == -1;
+            return name.Length > 0 && name.IndexOfAny(invalidDirNameChars) == -1;
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace MDump
                         return false;
                     }
                 }
-                return true;
+                return name.Length > 0;
             }
             return false;
         }
