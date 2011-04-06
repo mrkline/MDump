@@ -413,7 +413,13 @@ namespace MDump
         }
 #endregion
         
+        /// <summary>
+        /// Root directory
+        /// </summary>
         private ImageDirectory root;
+        /// <summary>
+        /// Current/active/selected directory
+        /// </summary>
         private ImageDirectory activeDirectory;
 
         /// <summary>
@@ -429,7 +435,7 @@ namespace MDump
         }
 
         /// <summary>
-        /// Gets the path of the active directory, sans root\
+        /// Gets the path of the active directory, sans root
         /// </summary>
         public string CurrentPath
         {

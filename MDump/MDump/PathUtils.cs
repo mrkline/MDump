@@ -9,7 +9,13 @@ namespace MDump
     /// </summary>
     static class PathUtils
     {
+        /// <summary>
+        /// Array of invalid directory MDump character names
+        /// </summary>
         private static char[] invalidDirNameChars;
+        /// <summary>
+        /// Array of invalid characters for the name of an image to be merged
+        /// </summary>
         private static char[] invalidMergeNameChars;
 
         private static readonly string[] supportedImageExtensions = { "bmp", "gif", "exif", "jpg",
@@ -80,7 +86,7 @@ namespace MDump
         }
 
         /// <summary>
-        /// Returns true if the provided bitmap name/name is valid
+        /// Returns true if the provided bitmap name is valid
         /// </summary>
         /// <param name="name">bitmap name to test</param>
         /// <returns>true if the provided bitmap name/name is valid</returns>

@@ -21,9 +21,21 @@ namespace MDump
         /// </summary>
         public enum TokenType
         {
+            /// <summary>
+            /// Token contains the number of images in the merged image
+            /// </summary>
             NumImages,
+            /// <summary>
+            /// Token contains an output directory
+            /// </summary>
             Directory,
+            /// <summary>
+            /// Token contains data about an image in the merged image
+            /// </summary>
             Image,
+            /// <summary>
+            /// Token is of unknown contents
+            /// </summary>
             Unknown
         }
 

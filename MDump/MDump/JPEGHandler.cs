@@ -74,7 +74,7 @@ namespace MDump
             {
                 JpegBitmapEncoder enc = new JpegBitmapEncoder();
                 
-                //HACK: We're jumping in and out of native handles to convert the Bitmap to a BitmapSource
+                //! \todo We're jumping in and out of native handles to convert the Bitmap to a BitmapSource
                 IntPtr hBitmap = bmp.GetHbitmap();
 
                 BitmapMetadata meta = new BitmapMetadata("jpg");
@@ -85,7 +85,7 @@ namespace MDump
                     enc.Frames.Add(BitmapFrame.Create(
                         System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
                             hBitmap, IntPtr.Zero, System.Windows.Int32Rect.Empty,
-                            BitmapSizeOptions.FromEmptyOptions()),null, meta, null));
+                            BitmapSizeOptions.FromEmptyOptions()), null, meta, null));
                 }
                 finally
                 {
@@ -127,6 +127,11 @@ namespace MDump
             return buff;
         }
 
+        /// <summary>
+        /// Used to release the HBitmap handle
+        /// </summary>
+        /// <param name="hObject">Native HBitmap handle</param>
+        /// <see cref="SaveToMemory"/>
         [DllImport("gdi32.dll")]
         private static extern bool DeleteObject(IntPtr hObject);
     }

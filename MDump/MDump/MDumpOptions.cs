@@ -18,7 +18,7 @@ namespace MDump
 
         #region Enums
         /// <summary>
-        /// Options for compressions
+        /// Options for image compression level
         /// </summary>
         public enum CompressionLevel
         {
@@ -167,7 +167,7 @@ namespace MDump
         {
             int hash = (int)MergePathOpts;
             hash += (int)SplitPathOpts << 2;
-            //HACK: Not guaranteed to be unique.
+            //! \todo Not guaranteed to be unique.
             hash += Convert.ToInt32(MaxMergeSize);
             hash += Convert.ToInt32(CompLevel);
             hash += Convert.ToInt32(AddTitleBar);

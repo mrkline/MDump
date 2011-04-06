@@ -2,10 +2,9 @@
 namespace MDump
 {
     /// <summary>
-    /// A class for writing MDump data to a binary stream.
-    /// Strings are written using Encoding.GetBytes to avoid the string length prefix
-    /// that the BinaryWriter.Write overload for strings uses
+    /// A class for writing MDump data to a string.
     /// The number of images should be written first, followed by directory and image info.
+    /// When writing is complete, the generated string can be retrieved from the MDumpData property.
     /// </summary>
     class MDDataWriter : MDDataBase
     {

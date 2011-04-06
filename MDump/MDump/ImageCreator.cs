@@ -4,7 +4,8 @@ using System.IO;
 namespace MDump
 {
     /// <summary>
-    /// Creates and images for use by the rest of MDump 
+    /// Creates and images for use by the rest of MDump.
+    /// The goal here is to abstract image creation away from the rest of the system.
     /// </summary>
     static class ImageCreator
     {

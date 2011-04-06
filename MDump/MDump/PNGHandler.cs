@@ -15,6 +15,7 @@ namespace MDump
         private readonly Encoding enc = Encoding.UTF8;
 
         #region Return Code Enums
+
         /// <summary>
         /// Error codes for PNGOps functions
         /// </summary>
@@ -87,8 +88,14 @@ namespace MDump
         };
         #endregion
 
+        /// <summary>
+        /// Name of the DLL which provides libpng functionality
+        /// </summary>
         public const string DllName = "PNGOps.dll";
 
+        /// <summary>
+        /// Constructor which checks that PNGOps.dll is around to use
+        /// </summary>
         public PNGHandler()
         {
             //Makes sure our DLL is around
@@ -208,9 +215,9 @@ namespace MDump
         private static extern MergedCode IsMergedImage(string filepath);
 
         /// <summary>
-        /// Loads an MDump data from a merged PNG.  Does not test to see if the file is a merged png.  For that see
-        /// <see cref="IsMergedImage"/>
+        /// Loads an MDump data from a merged PNG.  Does not test to see if the file is a merged png.
         /// </summary>
+        /// <see cref="IsMergedImage"/>
         /// <param name="filename">Filename of the merged image</param>
         /// <param name="mdDataOut">Is set to a pointer to the MDump data in unmanaged memory</param>
         /// <param name="mdDataLenOut">Is set to the length of the MDump data</param>

@@ -44,7 +44,6 @@ namespace MDump
         /// Amount of vertical padding to use for title bar
         /// </summary>
         private const int kTitleBarPaddingY = 2;
-
         /// <summary>
         /// Bytes per pixel, assuming 32-bit RGBA format
         /// </summary>
@@ -52,7 +51,7 @@ namespace MDump
         /// <summary>
         /// Approximation of the number of bytes per pixel, once compressed.
         /// Used for guessing output size before an image is actually run through libpng
-        /// TODO: Make dyanamic based on compression level?
+        /// \todo Make dyanamic based on compression level?
         /// </summary>
         private const float kCompressedBytesPerPix = 1.0f;
         #endregion
@@ -118,8 +117,17 @@ namespace MDump
         /// </summary>
         private class MergeThreadArgs
         {
+            /// <summary>
+            /// List of bitmaps to merge
+            /// </summary>
             public List<Bitmap> Bitmaps { get; private set; }
+            /// <summary>
+            /// Directory to save merged images to
+            /// </summary>
             public string MergePath { get; private set; }
+            /// <summary>
+            /// Callback used for reporting results back to the GUI
+            /// </summary>
             public MergeCallback Callback { get; private set; }
 
             public MergeThreadArgs(List<Bitmap> bitmaps,
@@ -397,7 +405,7 @@ namespace MDump
                 merged = mergedWithTitle;
             }
 
-            return MasterFormatHandler.Instance.SaveToMemory(merged, mdData, opts.CompLevel);
+            return MasterFormatHandler.Instance.SaveToMemory(merged, mdData, MDumpOptions.Instance.CompLevel);
         }
 
         /// <summary>

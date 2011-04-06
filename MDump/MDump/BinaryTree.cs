@@ -19,8 +19,21 @@ class BinaryTreeNode<T> : IEnumerable
     /// </summary>
     public BinaryTreeNode<T> Right { get; set; }
 
+    /// <summary>
+    /// Constructs the node with no children and the default data value
+    /// </summary>
     public BinaryTreeNode() : this(default(T), null, null) { }
+    /// <summary>
+    /// Constructs the node with no children and a provided data value
+    /// </summary>
+    /// <param name="data">Data value of the node</param>
     public BinaryTreeNode(T data) : this(data, null, null) { }
+    /// <summary>
+    /// Constructs the node with provided children and a data value
+    /// </summary>
+    /// <param name="data">Data value of the node</param>
+    /// <param name="l">Left child</param>
+    /// <param name="r">Right child</param>
     public BinaryTreeNode(T data, BinaryTreeNode<T> l, BinaryTreeNode<T> r)
     {
         Data = data;
