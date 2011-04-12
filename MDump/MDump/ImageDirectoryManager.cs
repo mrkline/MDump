@@ -50,6 +50,12 @@ namespace MDump
             /// </summary>
             public ImageDirectory Parent { get; private set; }
 
+
+            /// <summary>
+            /// Returns true if the directory has children directories
+            /// </summary>
+            public bool HasChildDirs { get { return children.Count > 0; } }
+
             /// <summary>
             /// Gets a list of all images in the directory and its children
             /// </summary>
@@ -465,7 +471,7 @@ namespace MDump
         {
             get
             {
-                return ImageList.Count == 0;
+                return !root.HasChildDirs && ImageList.Count == 0;
             }
         }
 

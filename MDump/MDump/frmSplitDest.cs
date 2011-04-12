@@ -70,7 +70,6 @@ namespace MDump
         {
             txtFilename.Text = string.Empty;
             txtFilename.BackColor = defaultTextBackColor;
-            btnOK.Enabled = false;
             if (MDumpOptions.Instance.SplitPathOpts == MDumpOptions.PathOptions.Discard)
             {
                 lblSelectFilename.Text = ignoreInfoLabel;
@@ -79,6 +78,8 @@ namespace MDump
             {
                 lblSelectFilename.Text = useInfoLabel;
             }
+            // Necessary in case the previously selected directory was deleted
+            UpdateFilenameAndOKStatus();
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)

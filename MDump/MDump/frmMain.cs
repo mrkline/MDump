@@ -736,7 +736,8 @@ namespace MDump
 
         private void lvImages_ItemActivate(object sender, EventArgs e)
         {
-            if (dirMan.ItemRepresentsDirectory(lvImages.SelectedItems[0]))
+            if (lvImages.SelectedItems.Count > 0
+                && dirMan.ItemRepresentsDirectory(lvImages.SelectedItems[0]))
             {
                 dirMan.MoveToChildDirecory(lvImages.SelectedItems[0]);
                 RefreshDirUI();
