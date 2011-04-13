@@ -17,7 +17,6 @@ namespace MDump
         #region String Constants
         private const string ignoreInfoLabel = "Select a name to save all split images as:";
         private const string useInfoLabel = "Select a name to use for any merges that didn't save file info:";
-        private const string invalidDirStatus = "This is not an existing folder";
         private const string overwriteFilenameStatus = "Split files with this name already exist in this folder.\nThey will be overwritten.";
         private const string hasExtensionFilenameStatus = "Do not add an extension to the file name.\nIt will be done automatically";
         private const string invalidFilenameStatus = "This is not a valid file name.";
@@ -28,7 +27,7 @@ namespace MDump
         public frmSplitDest()
         {
             InitializeComponent();
-            lblDirStatus.ForeColor = Colors.InvalidColor;
+            lblInvalidDir.ForeColor = Colors.InvalidColor;
             defaultTextBackColor = txtFilename.BackColor;
             //Set current directory to the application directory so relative paths
             //work as expected
@@ -69,7 +68,6 @@ namespace MDump
         private void frmSplitDest_Load(object sender, EventArgs e)
         {
             txtFilename.Text = string.Empty;
-            txtFilename.BackColor = defaultTextBackColor;
             if (MDumpOptions.Instance.SplitPathOpts == MDumpOptions.PathOptions.Discard)
             {
                 lblSelectFilename.Text = ignoreInfoLabel;
@@ -92,22 +90,6 @@ namespace MDump
 
         private void txtDir_TextChanged(object sender, EventArgs e)
         {
-            if (txtDir.Text.Length == 0)
-            {
-                lblDirStatus.Visible = false;
-                txtDir.BackColor = defaultTextBackColor;
-            }
-            else if (!Directory.Exists(txtDir.Text))
-            {
-                lblDirStatus.Text = invalidDirStatus;
-                lblDirStatus.Visible = true;
-                txtDir.BackColor = Colors.InvalidColor;
-            }
-            else
-            {
-                lblDirStatus.Visible = false;
-                txtDir.BackColor = Colors.ValidBGColor;
-            }
             UpdateFilenameAndOKStatus();
         }
 
@@ -118,12 +100,14 @@ namespace MDump
 
         private void UpdateFilenameAndOKStatus()
         {
+            bool filenameOkay, dirOkay;
+
             //Text length is zero, so don't judge it yet.
             if(txtFilename.Text.Length == 0)
             {
                 lblFilenameStatus.Visible = false;
                 txtFilename.BackColor = defaultTextBackColor;
-                btnOK.Enabled = false;
+                filenameOkay = false;
             }
             //File name has invalid characters
             else if (txtFilename.Text.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
@@ -132,7 +116,7 @@ namespace MDump
                 lblFilenameStatus.Text = invalidFilenameStatus;
                 lblFilenameStatus.Visible = true;
                 txtFilename.BackColor = Colors.InvalidBGColor;
-                btnOK.Enabled = false;
+                filenameOkay = false;
             }
             //Filename has extension (which we don't want them to do)
             else if (txtFilename.Text.IndexOf('.') != -1)
@@ -141,18 +125,22 @@ namespace MDump
                 lblFilenameStatus.Text = hasExtensionFilenameStatus;
                 lblFilenameStatus.Visible = true;
                 txtFilename.BackColor = Colors.InvalidBGColor;
-                btnOK.Enabled = false;
+                filenameOkay = false;
             }
-            //File is valid and directory is nonexistant.  This is a valid case.
-            else if (txtDir.Text.Length == 0)
+            else
             {
                 lblFilenameStatus.Visible = false;
                 txtFilename.BackColor = Colors.ValidBGColor;
-                btnOK.Enabled = true;
+                filenameOkay = true;
             }
+
             //Check if directory is valid and check if an overwrite would be needed
-            else if (Directory.Exists(txtDir.Text))
+            if (txtDir.Text.Length == 0 || Directory.Exists(txtDir.Text))
             {
+                dirOkay = true;
+                lblInvalidDir.Visible = false;
+                txtDir.BackColor = txtDir.Text.Length > 0 ? Colors.ValidBGColor : defaultTextBackColor;
+
                 //Get all images in the directory that start with the name provided
                 string[] dirFiles = Directory.GetFiles(SplitDir);
 
@@ -184,23 +172,17 @@ namespace MDump
                     lblFilenameStatus.Text = overwriteFilenameStatus;
                     lblFilenameStatus.Visible = true;
                     txtFilename.BackColor = Colors.WarningBGColor;
-                    btnOK.Enabled = true;
-                }
-                //Filename is good to go
-                else
-                {
-                    lblFilenameStatus.Visible = false;
-                    txtFilename.BackColor = Colors.ValidBGColor;
-                    btnOK.Enabled = true;
                 }
             }
-            //Filename is good to go, but directory isn't.
+            // Directory isn't good to go
             else
             {
-                lblFilenameStatus.Visible = false;
-                txtFilename.BackColor = Colors.ValidBGColor;
-                btnOK.Enabled = false;
+                txtDir.BackColor = Colors.InvalidBGColor;
+                lblInvalidDir.Visible = true;
+                dirOkay = false;
             }
+
+            btnOK.Enabled = filenameOkay && dirOkay;
         }
 
         private void btnOK_Click(object sender, EventArgs e)

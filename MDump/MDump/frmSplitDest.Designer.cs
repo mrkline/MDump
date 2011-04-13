@@ -38,7 +38,7 @@
             this.lblSelectFilename = new System.Windows.Forms.Label();
             this.txtFilename = new System.Windows.Forms.TextBox();
             this.lblFilenameStatus = new System.Windows.Forms.Label();
-            this.lblDirStatus = new System.Windows.Forms.Label();
+            this.lblInvalidDir = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnOK
@@ -126,13 +126,13 @@
             // 
             // lblDirStatus
             // 
-            this.lblDirStatus.AutoSize = true;
-            this.lblDirStatus.Location = new System.Drawing.Point(12, 61);
-            this.lblDirStatus.Name = "lblDirStatus";
-            this.lblDirStatus.Size = new System.Drawing.Size(87, 13);
-            this.lblDirStatus.TabIndex = 3;
-            this.lblDirStatus.Text = "Status goes here";
-            this.lblDirStatus.Visible = false;
+            this.lblInvalidDir.AutoSize = true;
+            this.lblInvalidDir.Location = new System.Drawing.Point(12, 61);
+            this.lblInvalidDir.Name = "lblDirStatus";
+            this.lblInvalidDir.Size = new System.Drawing.Size(137, 13);
+            this.lblInvalidDir.TabIndex = 3;
+            this.lblInvalidDir.Text = "This is not an existing folder";
+            this.lblInvalidDir.Visible = false;
             // 
             // frmSplitDest
             // 
@@ -141,7 +141,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(354, 207);
-            this.Controls.Add(this.lblDirStatus);
+            this.Controls.Add(this.lblInvalidDir);
             this.Controls.Add(this.lblFilenameStatus);
             this.Controls.Add(this.txtFilename);
             this.Controls.Add(this.lblSelectFilename);
@@ -174,6 +174,6 @@
         private System.Windows.Forms.Label lblSelectFilename;
         private System.Windows.Forms.TextBox txtFilename;
         private System.Windows.Forms.Label lblFilenameStatus;
-        private System.Windows.Forms.Label lblDirStatus;
+        private System.Windows.Forms.Label lblInvalidDir;
     }
 }
