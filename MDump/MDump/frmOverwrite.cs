@@ -18,36 +18,40 @@ namespace MDump
         /// <summary>
         /// Possible actions the user can take to resolve conflicts
         /// </summary>
-        public enum Action
+        [Flags]
+        public enum Action : short
         {
             /// <summary>
             /// The user did not take an action yet. (default value)
             /// </summary>
-            None,
+            None = 0,
             /// <summary>
             /// Overwrite the old file with the new one.
             /// </summary>
-            Overwrite,
-            /// <summary>
-            /// Overwrite the old file and do so for all conflicts.
-            /// </summary>
-            OverwriteAll,
+            Overwrite = 1,
             /// <summary>
             /// Rename the new file.
             /// </summary>
-            Rename,
-            /// <summary>
-            /// Rename the new file and do so for all conflicts.
-            /// </summary>
-            RenameAll,
-            /// <summary>
+            Rename = 2,
             /// Do not save the new file.
             /// </summary>
-            Skip,
+            Skip = 3,
             /// <summary>
-            /// Do not save the new file and do so for all conflicts.
+            /// Bit for when actions should be applied to a single item
             /// </summary>
-            SkipAll
+            SingleAction = 1 << 14,
+            /// <summary>
+            /// Bit for when actions should be applied to all subsequent items
+            /// </summary>
+            ContinuingAction = 1 << 15,
+            /// <summary>
+            /// Mask for bits indicating the action taken
+            /// </summary>
+            ActionMask = 3,
+            /// <summary>
+            /// Mask for bits indicating the length of the action
+            /// </summary>
+            DurationMask = 0xC000
         }
 
         /// <summary>
@@ -74,42 +78,42 @@ namespace MDump
         private void btnOverwrite_Click(object sender, EventArgs e)
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
-            SelectedAction = Action.Overwrite;
+            SelectedAction = Action.Overwrite | Action.SingleAction;
             Close();
         }
 
         private void btnOverwriteAll_Click(object sender, EventArgs e)
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
-            SelectedAction = Action.OverwriteAll;
+            SelectedAction = Action.Overwrite | Action.ContinuingAction;
             Close();
         }
 
         private void btnRename_Click(object sender, EventArgs e)
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
-            SelectedAction = Action.Rename;
+            SelectedAction = Action.Rename | Action.SingleAction;
             Close();
         }
 
         private void btnRenameAll_Click(object sender, EventArgs e)
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
-            SelectedAction = Action.RenameAll;
+            SelectedAction = Action.Rename | Action.ContinuingAction;
             Close();
         }
 
         private void btnSkip_Click(object sender, EventArgs e)
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
-            SelectedAction = Action.Skip;
+            SelectedAction = Action.Skip | Action.SingleAction;
             Close();
         }
 
         private void btnSkipAll_Click(object sender, EventArgs e)
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
-            SelectedAction = Action.SkipAll;
+            SelectedAction = Action.Skip | Action.ContinuingAction;
             Close();
         }
 

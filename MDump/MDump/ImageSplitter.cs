@@ -105,7 +105,7 @@ namespace MDump
         {
             SplitThreadArgs sa = args as SplitThreadArgs;
 
-            //Cache our args since we'll be using them constantly
+            // Cache our args since we'll be using them constantly
             SplitCallback callback = sa.Callback;
             MDumpOptions opts = MDumpOptions.Instance;
             string splitPath = sa.SplitPath;
@@ -113,24 +113,25 @@ namespace MDump
             string splitName = splitPath.Substring(splitPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
             List<string> splitsSaved = new List<string>();
             List<string> dirsCreated = new List<string>();
+            frmOverwrite dlgOverwrite = new frmOverwrite();
 
             try
             {
                 callback(SplitStage.Starting, null);
 
-                //Set the starting directory to the specified one
+                // Set the starting directory to the specified one
                 Directory.SetCurrentDirectory(splitDir);
 
-                //Split each image
+                // Split each image
                 foreach (Bitmap image in sa.Bitmaps)
                 {
-                    //Decode MDump data into a string using the text encoding it was saved with
+                    // Decode MDump data into a string using the text encoding it was saved with
                     string[] dataTokens = MDDataReader.SplitData((image.Tag as MergedImageTag).MDData);
                     
-                    //The first token contains the number of images in this merge
+                    // The first token contains the number of images in this merge
                     callback(SplitStage.SplittingNewMerge, ((MergedImageTag)image.Tag).Name);
 
-                    //Parse the rest of the tokens, each of which represents an image in the merged image
+                    // Parse the rest of the tokens, each of which represents an image in the merged image
                     for (int c = 1; c < dataTokens.Length; ++c)
                     {
                        switch(MDDataReader.GetTokenType(dataTokens[c]))
@@ -139,9 +140,9 @@ namespace MDump
                                Bitmap split = MDDataReader.GetSplitImage(dataTokens[c], image);
                                string saveName = (string)split.Tag;
 
-                               //If we're going to discard the file name or it wasn't given, switch to
-                               //the name <name>.split<num>.png
-                               //Right now we're only splitting to PNG, regardless of merge format
+                               // If we're going to discard the file name or it wasn't given, switch to
+                               // the name <name>.split<num>.png
+                               // Right now we're only splitting to PNG, regardless of merge format
                                if (opts.SplitPathOpts == MDumpOptions.PathOptions.Discard
                                    || saveName == PathUtils.DiscardedFilename)
                                {
@@ -152,8 +153,39 @@ namespace MDump
                                    saveName += ".png";
                                }
                                callback(SplitStage.SplittingImage, saveName);
-                               split.Save(saveName,
-                                   System.Drawing.Imaging.ImageFormat.Png);
+                               // Check if we need an overwrite
+                               if (File.Exists(saveName))
+                               {
+                                   // If the selected action is not a continuous one, show the dialog again
+                                   if ((dlgOverwrite.SelectedAction & frmOverwrite.Action.ContinuingAction) == 0)
+                                   {
+                                       // If the user clicked abort, stop the splitting, but don't do cleanup
+                                       // as when an error takes place.
+                                       dlgOverwrite.Filename = saveName;
+                                       if (dlgOverwrite.ShowDialog() != DialogResult.OK)
+                                       {
+                                           return;
+                                       }
+                                   }
+                                   switch (dlgOverwrite.SelectedAction & frmOverwrite.Action.ActionMask)
+                                   {
+                                       case frmOverwrite.Action.Overwrite:
+                                           File.Delete(saveName);
+                                           split.Save(saveName, System.Drawing.Imaging.ImageFormat.Png);
+                                           break;
+
+                                       case frmOverwrite.Action.Rename:
+                                           // TODO: Get rename name
+                                           break;
+
+                                       case frmOverwrite.Action.Skip:
+                                           continue;
+                                   }
+                               }
+                               else
+                               {
+                                   split.Save(saveName, System.Drawing.Imaging.ImageFormat.Png);
+                               }
                                splitsSaved.Add(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + saveName);
                                break;
 
