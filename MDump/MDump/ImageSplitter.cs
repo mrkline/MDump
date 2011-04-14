@@ -175,7 +175,7 @@ namespace MDump
                                            break;
 
                                        case frmOverwrite.Action.Rename:
-                                           // TODO: Get rename name
+                                           split.Save(PathUtils.GetRename(saveName), System.Drawing.Imaging.ImageFormat.Png);
                                            break;
 
                                        case frmOverwrite.Action.Skip:

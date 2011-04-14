@@ -19,7 +19,7 @@ namespace MDump
         /// Possible actions the user can take to resolve conflicts
         /// </summary>
         [Flags]
-        public enum Action : short
+        public enum Action :  ushort
         {
             /// <summary>
             /// The user did not take an action yet. (default value)
@@ -69,59 +69,60 @@ namespace MDump
             InitializeComponent();
         }
 
-        private void frmOverwrite_Load(object sender, EventArgs e)
-        {
-            DialogResult = System.Windows.Forms.DialogResult.Abort;
-            SelectedAction = Action.None;
-        }
-
         private void btnOverwrite_Click(object sender, EventArgs e)
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
             SelectedAction = Action.Overwrite | Action.SingleAction;
-            Close();
         }
 
         private void btnOverwriteAll_Click(object sender, EventArgs e)
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
             SelectedAction = Action.Overwrite | Action.ContinuingAction;
-            Close();
         }
 
         private void btnRename_Click(object sender, EventArgs e)
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
             SelectedAction = Action.Rename | Action.SingleAction;
-            Close();
         }
 
         private void btnRenameAll_Click(object sender, EventArgs e)
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
             SelectedAction = Action.Rename | Action.ContinuingAction;
-            Close();
         }
 
         private void btnSkip_Click(object sender, EventArgs e)
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
             SelectedAction = Action.Skip | Action.SingleAction;
-            Close();
         }
 
         private void btnSkipAll_Click(object sender, EventArgs e)
         {
             DialogResult = System.Windows.Forms.DialogResult.OK;
             SelectedAction = Action.Skip | Action.ContinuingAction;
-            Close();
         }
 
         private void btnAbort_Click(object sender, EventArgs e)
         {
             SelectedAction = Action.None;
             DialogResult = System.Windows.Forms.DialogResult.Abort;
-            Close();
+        }
+
+        private void frmOverwrite_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                SelectedAction = Action.None;
+                DialogResult = System.Windows.Forms.DialogResult.Abort;
+            }
+        }
+
+        private void frmOverwrite_Load(object sender, EventArgs e)
+        {
+            lblFilename.Text = Filename;
         }
     }
 }

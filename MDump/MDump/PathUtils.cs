@@ -74,6 +74,27 @@ namespace MDump
             return true;
         }
 
+        /// <summary>
+        /// Gets a new name for a duplicate filename
+        /// </summary>
+        /// <param name="filename">Original filename</param>
+        /// <returns>The new, non-conflicting filename</returns>
+        public static string GetRename(string filename)
+        {
+            string nameSansExt = Path.GetFileNameWithoutExtension(filename);
+            string ext = Path.GetExtension(filename);
+            string newName;
+            int copyNum = 2;
+
+            do
+            {
+                newName = nameSansExt + " (" + copyNum.ToString() + ")" + ext;
+                ++copyNum;
+            } while (File.Exists(newName));
+
+            return newName;
+        }
+
 
         /// <summary>
         /// Returns true if the provided directory name is valid

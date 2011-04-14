@@ -161,6 +161,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Duplicate Image";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmOverwrite_FormClosing);
             this.Load += new System.EventHandler(this.frmOverwrite_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
