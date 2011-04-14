@@ -91,10 +91,10 @@ namespace MDump
         /// </summary>
         public MDumpOptions()
         {
-            MergePathOpts = PathOptions.PreservePath; //Save file path while merging
-            SplitPathOpts = PathOptions.PreservePath; //Respect file path info when splitting
-            MaxMergeSize = 2048 * 1024; //Default max merge size of 2 megabytes
-            //Use first format in the master format handler
+            MergePathOpts = PathOptions.PreservePath; // Save file path while merging
+            SplitPathOpts = PathOptions.PreservePath; // Respect file path info when splitting
+            MaxMergeSize = 2048 * 1024; // Default max merge size of 2 megabytes
+            // Use first format in the master format handler
             using (IEnumerator<string> enumer =
                 MasterFormatHandler.Instance.SupportedFormatNames.GetEnumerator())
             {
@@ -167,7 +167,7 @@ namespace MDump
         {
             int hash = (int)MergePathOpts;
             hash += (int)SplitPathOpts << 2;
-            //! \todo Not guaranteed to be unique.
+            //! \todo Hash isn't guaranteed to be unique.
             hash += Convert.ToInt32(MaxMergeSize);
             hash += Convert.ToInt32(CompLevel);
             hash += Convert.ToInt32(AddTitleBar);

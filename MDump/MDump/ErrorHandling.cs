@@ -69,7 +69,7 @@ namespace MDump
             }
             catch
             {
-                //This would be a sad day indeed.
+                // This would be a sad day indeed.
                 System.Windows.Forms.MessageBox.Show("An error occurred, and another error occurred while"
                     + " trying to save info about the error.  This program will now go cry in a corner.",
                     "Error recording error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);

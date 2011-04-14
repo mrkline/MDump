@@ -80,7 +80,7 @@ namespace MDump
         private static BinaryTreeNode<NodeData> GetNextAppropriateNode(BinaryTreeNode<NodeData> root,
             Size requiredSize)
         {
-            //Run a BFS for the next appropriate node to hold a bitmap of the given size
+            // Run a BFS for the next appropriate node to hold a bitmap of the given size
             List<BinaryTreeNode<NodeData>> appropriateNodes = new List<BinaryTreeNode<NodeData>>();
             Queue<BinaryTreeNode<NodeData>> q = new Queue<BinaryTreeNode<NodeData>>();
             q.Enqueue(root);
@@ -107,17 +107,17 @@ namespace MDump
                 }
             }
 
-            //This shouldn't happen, but return null if no fitting node can be found
+            // This shouldn't happen, but return null if no fitting node can be found
             if (appropriateNodes.Count == 0)
             {
                 return null;
             }
 
-            //Pick the best node (closest to the top, to conserve height) to insert the next image in to.
+            // Pick the best node (closest to the top, to conserve height) to insert the next image in to.
 
             BinaryTreeNode<NodeData> bestNode = appropriateNodes[0];
 
-            //Pick the best node (by smallest y value)
+            // Pick the best node (by smallest y value)
             foreach (BinaryTreeNode<NodeData> node in appropriateNodes)
             {
                 if (node.Data.Rect.Y < bestNode.Data.Rect.Y)
@@ -151,7 +151,7 @@ namespace MDump
                 throw new ArgumentException(maxSizeTooSmallMsg);
             }
 
-            //To be used later to clip final bitmap if it takes up less space than the given max
+            // To be used later to clip final bitmap if it takes up less space than the given max
             Size actualSize = new Size(0, 0);
 
             List<Bitmap> sortedBitmaps = new List<Bitmap>(bitmaps);
@@ -166,7 +166,7 @@ namespace MDump
                 curr.Data.Bmp = bmp;
                 Rectangle currRect = curr.Data.Rect;
 
-                //Push the boundaries of our image
+                // Push the boundaries of our image
                 if (currRect.X + bmp.Width > actualSize.Width)
                 {
                     actualSize.Width = currRect.X + bmp.Width;
@@ -177,7 +177,7 @@ namespace MDump
                 }
 
                 Rectangle lRect, rRect;
-                //If the image is wider than it is big, make one child the area below and the other the rest
+                // If the image is wider than it is big, make one child the area below and the other the rest
                 if (bmp.Width > bmp.Height)
                 {
                     lRect = new Rectangle(currRect.X, currRect.Y + bmp.Height + 1,
@@ -185,7 +185,7 @@ namespace MDump
                     rRect = new Rectangle(currRect.X + bmp.Width + 1, currRect.Y,
                         currRect.Width - bmp.Width, bmp.Height);
                 }
-                //If the image is taller than it is big, make one child the area to the right and the other the rest
+                // If the image is taller than it is big, make one child the area to the right and the other the rest
                 else
                 {
                     lRect = new Rectangle(currRect.X, currRect.Y + bmp.Height + 1,
@@ -197,10 +197,10 @@ namespace MDump
                 curr.Right = new BinaryTreeNode<NodeData>(new NodeData(rRect));
             }
 
-            //Assemble our image and generate our data
+            // Assemble our image and generate our data
             Bitmap merged = new Bitmap(actualSize.Width, actualSize.Height, pixelFormat);            
 
-            //Calculate MDData and stream it to the above byte buffer
+            // Calculate MDData and stream it to the above byte buffer
 
             int numImages = 0;
             foreach(NodeData data in root)
@@ -220,7 +220,7 @@ namespace MDump
                 switch (MDumpOptions.Instance.MergePathOpts)
                 {
                     case MDumpOptions.PathOptions.PreservePath:
-                        //Assemble a list of images that we'll sort by path
+                        // Assemble a list of images that we'll sort by path
                         List<NodeData> imgList = new List<NodeData>();
                         foreach (NodeData data in root)
                         {

@@ -163,7 +163,7 @@ namespace MDump
                 System.Drawing.Imaging.ImageLockMode.ReadOnly,
                 System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-            int compVal = 6; //Default, decent compression
+            int compVal = 6; // Default, decent compression
             switch (compLevel)
             {
                 case MDumpOptions.CompressionLevel.Low:

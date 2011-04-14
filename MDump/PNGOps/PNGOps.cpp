@@ -1,12 +1,16 @@
 #include <png.h>
-#include <new>
 #include <memory>
 #include <cstdlib>
+
 #include "PNGOps.h"
 
+//! Magic string indicating that this file is a MDump merged image.
 static char* MagicString = "MDmpMrge";
+//! PNG signiature length
 static const size_t kPngSigLen = 8;
+//! Color depth for pixels
 static const int kBitDepth = 8;
+//! Bytes per pixel
 static const int kBytesPerPix = 4;
 
 extern "C"
@@ -19,8 +23,8 @@ extern "C"
 			return MC_ERROR;
 		}
 
-		//Read the first 8 bytes (the size of the png signiature)
-		//and check to see if it's a PNG
+		// Read the first 8 bytes (the size of the png signiature)
+		// and check to see if it's a PNG
 		png_byte* rBuff = static_cast<unsigned char*>(malloc(8));
 		if(rBuff == nullptr)
 		{
@@ -30,13 +34,13 @@ extern "C"
 		if(fread(rBuff, 1, kPngSigLen, fr.GetFilePointer()) != kPngSigLen)
 		{
 			free(rBuff);
-			//There weren't even 8 bytes in the file.
-			//Any image would have at least 8
+			// There weren't even 8 bytes in the file.
+			// Any image would have at least 8
 			return MC_ERROR;
 		}
 		if(png_sig_cmp(rBuff, 0, kPngSigLen))
 		{
-			//Not a PNG
+			// Not a PNG
 			free(rBuff);
 			return MC_NOT_MERGED;
 		}
@@ -72,7 +76,7 @@ extern "C"
 
 		MergedCode ret = MC_NOT_MERGED;
 
-		//MDump files only have one text field and the key is the magic string
+		// MDump files only have one text field and the key is the magic string
 		if(numTextFields == 1
 			&& strcmp(textInfo->key, MagicString) == 0)
 		{
@@ -87,8 +91,8 @@ extern "C"
 	__declspec(dllexport) ECode EXP_CALL_CONV LoadMergedImageData(char* filename,
 		char** mdDataOut, int* mdDataLenOut)
 	{
-		//Set initial value of out arguments to null or 0, so if the function errors out, they have
-		//this value on exit
+		// Set initial value of out arguments to null or 0, so if the function errors out, they have
+		// this value on exit
 		*mdDataOut = nullptr;
 		*mdDataLenOut = 0;
 
@@ -98,7 +102,7 @@ extern "C"
 			return EC_IO_FAILURE;
 		}
 
-		//Assume we've already checked to make sure that image is a png
+		// Assume we've already checked to make sure that image is a png
 
 		png_structp readStruct = png_create_read_struct(PNG_LIBPNG_VER_STRING,
 			nullptr, nullptr, nullptr);
@@ -132,14 +136,14 @@ extern "C"
 		int numTextFields;
 		png_get_text(readStruct, info, &textInfo, &numTextFields);
 
-		//MDump files only have one text field and the key is the magic string
+		// MDump files only have one text field and the key is the magic string
 		if(numTextFields != 1
 			 || strcmp(textInfo->key, MagicString) != 0)
 		{
 			png_destroy_read_struct(&readStruct, &info, nullptr);
 			return EC_RW_INFO_FAILURE;
 		}
-		//Get mdump data and copy it to a buffer
+		// Get mdump data and copy it to a buffer
 		png_size_t mdDataLen = textInfo[0].text_length;
 		char* mdData = static_cast<char*>(malloc(mdDataLen));
 		if(mdData == nullptr)
@@ -150,10 +154,10 @@ extern "C"
 		memcpy(mdData, textInfo[0].text, mdDataLen);
 				
 
-		//Assign the out arguments with their values
+		// Assign the out arguments with their values
 		*mdDataLenOut = mdDataLen;
 		*mdDataOut = mdData;
-		//Close up shop
+		// Close up shop
 		png_destroy_read_struct(&readStruct, &info, nullptr);
 		return EC_SUCCESS;
 	}
@@ -161,8 +165,8 @@ extern "C"
 	__declspec(dllexport) ECode EXP_CALL_CONV SavePNGToMemory(png_bytep bitmap, int width, int height,
 		bool flipRGB, char* mdData, int mdDataLen, int compLevel,  png_bytepp memPngOut, int* memPngLenOut)
 	{
-		//Set initial value of out arguments to null or 0, so if the function errors out, they have
-		//this value on exit
+		// Set initial value of out arguments to null or 0, so if the function errors out, they have
+		// this value on exit
 		*memPngOut = nullptr;
 		*memPngLenOut = 0;
 
@@ -175,7 +179,7 @@ extern "C"
 		png_bytep outBuff = nullptr;
 		try
 		{
-			//Create a buffer the size of the bitmap (no way it will be too small to fit the compressed PNG).
+			// Create a buffer the size of the bitmap (no way it will be too small to fit the compressed PNG).
 			outBuff = static_cast<png_bytep>(malloc(width * height * kBytesPerPix));
 			if(outBuff == nullptr)
 			{
@@ -212,20 +216,20 @@ extern "C"
 				png_destroy_write_struct(&writeStruct, &info);
 				return EC_INIT_FAILURE;
 			}
-			//Use maximum compression level
+			// Use the provided compression level
 			png_set_compression_level(writeStruct, compLevel);
-			//Set compression strategy
+			// Set compression strategy
 			png_set_compression_strategy(writeStruct, Z_FILTERED);
-			//Use all filters
+			// Use all filters
 			png_set_filter(writeStruct, 0, PNG_ALL_FILTERS);
 
 			if(flipRGB)
 			{
-				//Swap RGB to BGR (since the bitmaps appear to be supplied in this manner)
+				// Swap RGB to BGR (since the bitmaps appear to be supplied in this manner)
 				png_set_bgr(writeStruct);
 			}
 
-			//Set up MDump info
+			// Set up MDump info
 			png_textp textInfo = static_cast<png_textp>(malloc(sizeof(png_text)));
 			if(textInfo == nullptr)
 			{
@@ -249,7 +253,7 @@ extern "C"
 			textInfo->key = MagicString;
 			png_set_text(writeStruct, info, textInfo, 1);
 
-			//Write header
+			// Write header
 			if(setjmp(png_jmpbuf(writeStruct)))
 			{
 				free(textInfo);
@@ -263,7 +267,7 @@ extern "C"
 			png_write_info(writeStruct, info);
 
 
-			//Split image into rows
+			// Split image into rows
 			int rowLen = width * kBytesPerPix;
 			png_bytepp rowPointers = static_cast<png_bytepp>(malloc(height * sizeof(png_bytep)));
 			if(rowPointers == nullptr)
@@ -301,12 +305,11 @@ extern "C"
 			}
 			png_write_end(writeStruct, info);
 
-			//TEMP: Swap out file i/o for mem i/o later
 			free(textInfo);
 			free(rowPointers);
 			png_destroy_write_struct(&writeStruct, &info);
 			*memPngLenOut = mw->GetBytesWritten();
-			*memPngOut = mw->TrimBuff(); //Set the output to the trimmed buffer
+			*memPngOut = mw->TrimBuff(); // Set the output to the trimmed buffer
 			return EC_SUCCESS;
 		}
 		catch(std::bad_alloc)

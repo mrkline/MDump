@@ -115,7 +115,7 @@ namespace MDump
         {
             if (name.IndexOfAny(invalidMergeNameChars) == -1)
             {
-                //No image extensions allowed!
+                // No image extensions allowed!
                 foreach (string ext in supportedImageExtensions)
                 {
                     if (name.EndsWith('.' + ext))

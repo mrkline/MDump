@@ -178,7 +178,7 @@ namespace MDump
             /// </returns>
             public ListViewItem AddImagePath(Bitmap img, string dirPath)
             {
-                //Get rid of any formatting concerns
+                // Get rid of any formatting concerns
                 char dirSepChar = System.IO.Path.DirectorySeparatorChar;
                 dirPath = dirPath.Replace(System.IO.Path.AltDirectorySeparatorChar, dirSepChar);
                 string[] dirs = dirPath.Split(new char[] { dirSepChar },
@@ -187,7 +187,7 @@ namespace MDump
                 ImageDirectory currDir = this;
                 int dirIdx;
 
-                //dirs[dirs.Length - 1] is the image name itself
+                // dirs[dirs.Length - 1] is the image name itself
                 for (dirIdx = 0; dirIdx < dirs.Length; ++dirIdx)
                 {
                     if (currDir.HasChild(dirs[dirIdx]))
@@ -202,7 +202,7 @@ namespace MDump
 
                 bool returnLVI = dirIdx == 0;
 
-                //If the directories don't exist all the way in, create them
+                // If the directories don't exist all the way in, create them
                 if (dirIdx < dirs.Length)
                 {
                     for (; dirIdx < dirs.Length; ++dirIdx)
@@ -279,15 +279,15 @@ namespace MDump
                 {
                     foreach (Bitmap img in images)
                     {
-                        //We should just be able to do a reference test since the name should be
-                        //pointing at the bitmap in our list
+                        // We should just be able to do a reference test since the name should be
+                        // pointing at the bitmap in our list
                         if (bmp == img)
                         {
                             images.Remove(img);
                             return;
                         }
                     }
-                    //If we didn't find it, we didn't have it to begin with
+                    // If we didn't find it, we didn't have it to begin with
                     throw new ArgumentException(noSuchItemMsg);
                 }
             }
@@ -543,12 +543,12 @@ namespace MDump
         /// <param name="path">The path of the directory, from root</param>
         public void SetActiveDirectory(string path)
         {
-            //If all fails, fall back to the current directory
+            // If all fails, fall back to the current directory
             ImageDirectory fallback = activeDirectory;
 
             try
             {
-                //Get rid of any formatting concerns
+                // Get rid of any formatting concerns
                 path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
                 string[] dirs = path.Split(new char[] { Path.DirectorySeparatorChar },
                     StringSplitOptions.RemoveEmptyEntries);
@@ -556,14 +556,14 @@ namespace MDump
 
                 for (int c = 0; c < dirs.Length; ++c)
                 {
-                    //Will throw an ArgumentException if the activedirectory does not have the desired child
+                    // Will throw an ArgumentException if the activedirectory does not have the desired child
                     activeDirectory = activeDirectory.GetChild(dirs[c]);
                 }
 
             }
             catch (ArgumentException)
             {
-                //A directory couldn't be resolved from the given path
+                // A directory couldn't be resolved from the given path
                 MessageBox.Show(noSuchPathMsg, noSuchPathTitle,
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 activeDirectory = fallback;

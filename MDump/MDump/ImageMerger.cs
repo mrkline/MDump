@@ -45,13 +45,9 @@ namespace MDump
         /// </summary>
         private const int kTitleBarPaddingY = 2;
         /// <summary>
-        /// Bytes per pixel, assuming 32-bit RGBA format
-        /// </summary>
-        private const int kBytesPerPix = 4;
-        /// <summary>
         /// Approximation of the number of bytes per pixel, once compressed.
         /// Used for guessing output size before an image is actually run through libpng
-        /// \todo Make dyanamic based on compression level?
+        /// \todo Make compression estimates dyanamic based on compression level?
         /// </summary>
         private const float kCompressedBytesPerPix = 1.0f;
         #endregion
@@ -160,22 +156,22 @@ namespace MDump
         /// <param name="args">A MergeThreadArgs object containing the thread arguments</param>
         private static void MergeThreadProc(object args)
         {
-            //Cast arguments to their actual type
+            // Cast arguments to their actual type
             MergeThreadArgs ta = args as MergeThreadArgs;
 
-            //Cache commonly used values
+            // Cache commonly used values
             List<Bitmap> bitmaps = ta.Bitmaps;
             MergeCallback callback = ta.Callback;
             MDumpOptions opts = MDumpOptions.Instance;
             string mergePath = ta.MergePath;
             int maxMergeSize = opts.MaxMergeSize;
 
-            //Keep track of how many images have been merged
+            // Keep track of how many images have been merged
             int imagesMerged = 0;
 
             callback(MergeStage.Starting, 0, bitmaps.Count);
 
-            //Keep track of the merges saved (we'll have to clean them up on error)
+            // Keep track of the merges saved (we'll have to clean them up on error)
             List<string> mergesSaved = new List<string>();
 
             try
@@ -184,11 +180,11 @@ namespace MDump
                 {
                     List<Bitmap> currMergeSet = new List<Bitmap>();
 
-                    //Filename of the current merge image
+                    // Filename of the current merge image
                     string filename = mergePath + "." + mergesSaved.Count + "." + MasterFormatHandler.Instance.Extension;
 
-                    //Start by determining the number of images that can be into one merge.
-                    //A good starting guess is based on the uncompressed size of the images
+                    // Start by determining the number of images that can be into one merge.
+                    // A good starting guess is based on the uncompressed size of the images
                     currMergeSet = EstimateMerge(bitmaps, imagesMerged, maxMergeSize);
 
                     callback(MergeStage.DeterminingNumPerMerge, imagesMerged,
@@ -196,11 +192,11 @@ namespace MDump
 
                     byte[] currentMergeMem = null, lastMergeMem = null;
 
-                    //Test the resulting PNG size of the current merge set, then add or remove images
-                    //in order to get as close as we can to the max without going over
+                    // Test the resulting PNG size of the current merge set, then add or remove images
+                    // in order to get as close as we can to the max without going over
                     while (true)
                     {
-                        //If the PNG merge code weirds out, break out of here.
+                        // If the PNG merge code weirds out, break out of here.
                         try
                         {
                             currentMergeMem = CreateMergedImage(currMergeSet);
@@ -211,25 +207,24 @@ namespace MDump
                         }
                         if (currentMergeMem.Length > maxMergeSize)
                         {
-                            //If not even a single image could fit in the merge, we have an issue
+                            // If not even a single image could fit in the merge, we have an issue
                             if (currMergeSet.Count == 1)
                             {
                                 throw new MergeException(GenerateTooSmallMessage((currMergeSet[0].Tag as ImageTagBase).Name,
                                     currMergeSet[0].RawFormat.Guid == ImageFormat.Jpeg.Guid));
                             }
 
-                            //If the current merge size is over the limit but the last wasn't, use the last one
+                            // If the current merge size is over the limit but the last wasn't, use the last one
                             else if (lastMergeMem != null && currentMergeMem.Length <= maxMergeSize)
                             {
                                 callback(MergeStage.Saving, imagesMerged, filename);
                                 File.WriteAllBytes(filename, lastMergeMem);
                                 mergesSaved.Add(filename);
-                                //We've saved the current set count - 1 since we're using the last
-                                //merge
+                                // We've saved the current set count - 1 since we're using the last merge
                                 imagesMerged += currMergeSet.Count - 1;
                                 break;
                             }
-                            //Otherwise decrease the current merge set
+                            // Otherwise decrease the current merge set
                             else
                             {
                                 callback(MergeStage.DeterminingNumPerMerge,
@@ -239,8 +234,8 @@ namespace MDump
                         }
                         else if (currentMergeMem.Length < maxMergeSize)
                         {
-                            //If the current merge size is under the limit but the last wasn't
-                            //or we've reached the end of our merge set, use the current merge
+                            // If the current merge size is under the limit but the last wasn't
+                            // or we've reached the end of our merge set, use the current merge
                             if (imagesMerged + currMergeSet.Count == bitmaps.Count
                                 || lastMergeMem != null && lastMergeMem.Length > maxMergeSize)
                             {
@@ -250,7 +245,7 @@ namespace MDump
                                 imagesMerged += currMergeSet.Count;
                                 break;
                             }
-                            //Otherwise increase the current merge set
+                            // Otherwise increase the current merge set
                             else
                             {
                                 callback(MergeStage.DeterminingNumPerMerge,
@@ -258,7 +253,7 @@ namespace MDump
                                 currMergeSet.Add(bitmaps[imagesMerged + currMergeSet.Count]);
                             }
                         }
-                        //The current merge is spot on
+                        // The current merge is spot on
                         else
                         {
                             callback(MergeStage.Saving, imagesMerged, filename);
@@ -361,11 +356,11 @@ namespace MDump
             }
 
             string mdData;
-            //Merge our images and generate our data
+            // Merge our images and generate our data
             Bitmap merged = BTBitmapMapper.MergeImages(bitmaps, new Size(maxWidth, maxHeight),
                 PixelFormat.Format32bppArgb, out mdData);
 
-            //Tack on the title bar if requested to
+            // Tack on the title bar if requested to
             if (MDumpOptions.Instance.AddTitleBar)
             {
                 Bitmap titleBar;
@@ -390,14 +385,10 @@ namespace MDump
                 Bitmap mergedWithTitle = new Bitmap(merged.Width,
                     merged.Height + titleHeight);
 
-                //Draw the title bar
+                // Draw the title bar
                 using (Graphics g = Graphics.FromImage(mergedWithTitle))
                 {
                     g.DrawImage(merged, 0, 0, merged.Width, merged.Height);
-
-                    //Uncomment to add a background to the bar
-                    //Brush rectBrush = new SolidBrush(Color.Red);
-                    //g.FillRectangle(rectBrush, 0, titleY, merged.Width, titleHeight);
                     g.DrawImage(titleBar, kTitleBarPaddingX, titleY + kTitleBarPaddingY,
                         titleBar.Width, titleBar.Height);
                 }

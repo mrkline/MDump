@@ -61,7 +61,7 @@ namespace MDump
         {
             int width = bitmap.Width;
             int height = bitmap.Height;
-            //JPEG's can't handle alpha transparencty. Make the backgroud white
+            // JPEGs can't handle alpha transparencty. Make the backgroud white
             Bitmap bmp = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             using (Graphics g = Graphics.FromImage(bmp))
             {
@@ -74,7 +74,8 @@ namespace MDump
             {
                 JpegBitmapEncoder enc = new JpegBitmapEncoder();
                 
-                //! \todo We're jumping in and out of native handles to convert the Bitmap to a BitmapSource
+                //! \todo We're jumping in and out of native handles to convert the Bitmap to a BitmapSource.
+                //!         Come up with a more portable, elegant solution.
                 IntPtr hBitmap = bmp.GetHbitmap();
 
                 BitmapMetadata meta = new BitmapMetadata("jpg");
@@ -131,7 +132,6 @@ namespace MDump
         /// Used to release the HBitmap handle
         /// </summary>
         /// <param name="hObject">Native HBitmap handle</param>
-        /// <see cref="SaveToMemory"/>
         [DllImport("gdi32.dll")]
         private static extern bool DeleteObject(IntPtr hObject);
     }
